@@ -1,0 +1,67 @@
+.dummy_flex {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.Label {
+  border: 1px solid #CCCCCC;
+  border-radius: 14px;
+  background-color: #FFFFFF; /* default white background */
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 28px;
+  padding: 0 12px;
+  gap: 8px;
+}
+
+.LabelText {
+  display: inline-block;
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 120%;
+}
+
+.Label_CloseBtn {
+  display: inline-block;
+  border: none;
+  background-color: transparent;
+}
+
+.FilterList {
+  /* as a container*/
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 16px;
+}
+
+.Menu {
+  width: 25vw;
+  max-width: 400px;
+  min-width: 240px;
+  background-color: #FFFFFF; /* default white background */
+  box-shadow: 8px 0px 16px rgba(170, 170, 170, 0.16), 0px 0px 40px 8px rgba(204, 204, 204, 0.25);
+  /* as a container (module layout) */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.MenuModule {
+  /* as an item */
+  border-bottom: 1px solid #CCCCCC;
+  align-self: stretch;
+  /* as a container */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px;
+  gap: 24px;
+}
