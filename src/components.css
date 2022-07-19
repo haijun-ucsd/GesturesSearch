@@ -5,6 +5,9 @@
   gap: 8px;
 }
 
+
+/* Label */
+
 .Label {
   border: 1px solid #CCCCCC;
   border-radius: 14px;
@@ -39,15 +42,71 @@
   flex-direction: row;
   flex-wrap: wrap;
   align-content: flex-start;
+  min-height: 30px; /* 28px label height + 2 * 1px border */
   gap: 16px;
 }
 
+
+/* Btn */
+
+.Btn_primary {
+  background: #EEEEEE;
+  border: 1px solid #CCCCCC;
+  border-radius: 8px;
+  box-shadow:
+    0px 4px 8px rgba(170, 170, 170, 0.16),
+    0px 0px 16px rgba(170, 170, 170, 0.08);
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px;
+  gap: 8px;
+}
+
+.Btn_secondary {
+  border: 1px solid #CCCCCC;
+  border-radius: 8px;
+  filter:
+    drop-shadow(0px 4px 8px rgba(170, 170, 170, 0.16))
+    drop-shadow(0px 0px 16px rgba(170, 170, 170, 0.08));
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px;
+  gap: 8px;
+}
+
+.Btn_small {
+  border: 1px solid #CCCCCC;
+  border-radius: 8px;
+  filter:
+    drop-shadow(0px 4px 8px rgba(170, 170, 170, 0.16))
+    drop-shadow(0px 0px 16px rgba(170, 170, 170, 0.08));
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 4px;
+}
+
+
 .Menu {
+  position: absolute;
+  left: 0px;
+  top: 0px;
   width: 25vw;
   max-width: 400px;
   min-width: 240px;
+  height: 100vh;
   background-color: #FFFFFF; /* default white background */
-  box-shadow: 8px 0px 16px rgba(170, 170, 170, 0.16), 0px 0px 40px 8px rgba(204, 204, 204, 0.25);
+  box-shadow:
+    8px 0px 16px rgba(170, 170, 170, 0.16),
+    0px 0px 40px 8px rgba(204, 204, 204, 0.25);
   /* as a container (module layout) */
   display: flex;
   flex-direction: column;

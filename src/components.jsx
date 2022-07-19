@@ -92,12 +92,19 @@ class FilterList extends React.Component {
     // DEBUG
     console.log("add filter: " + this.newValue.value);
 
-    // Add filter. TODO
+    // Check for empty.
+    if (this.newValue.value == "") { return; }
+
+    // Add filter to filterlist.
+    const newVal = this.newValue.value;
     this.setState (prevState => (
       {list: [...this.state.list,
-        {value: this.newValue.value, category: "category1"}
+        {value: newVal, category: "category1"}
       ]}
     ));
+
+    // Clear input box.
+    this.newValue.value = "";
 
     // Update gallery.
   }
@@ -145,9 +152,12 @@ class FilterList extends React.Component {
           <input
             type="text"
             placeholder="new filter"
-            ref={(ip) => {this.newValue = ip}}
+            ref={(el) => {this.newValue = el}}
           />
-          <button onClick={() => this.add_filter()}>
+          <button
+            className="Btn"
+            onClick={() => this.add_filter()}
+          >
             +
           </button>
         </div>
@@ -187,7 +197,7 @@ class Menu extends React.Component {
   render() {
     return (
       <div className="Menu">
-        <div clssName="MenuModule" />
+        <FilterList />
       </div>
     );
   }
@@ -208,4 +218,4 @@ class Menu extends React.Component {
 /* Info */
 /* Imgs */
 
-export { Label, Filter, FilterList};
+export { Label, Filter, FilterList, Menu};
