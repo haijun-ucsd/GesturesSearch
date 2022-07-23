@@ -7,6 +7,7 @@ import './components.css';
  *
  * states:
  *  - value: string
+ *  - id: int
  *  - category (→ color): string
  *
  * functions:
@@ -45,6 +46,7 @@ class Label extends React.Component {
  *
  * parent props:
  *  - value: string
+ *  - id: int
  *  - category: string
  *  - remove_filter()
  */
@@ -69,6 +71,9 @@ function Filter(props) {
  * functions:
  *  - add_filter()
  *  - remove_filter()
+ *
+ * references:
+ *  https://robinpokorny.medium.com/index-as-a-key-is-an-anti-pattern-e0349aece318
  */
 class FilterList extends React.Component {
 
@@ -76,9 +81,10 @@ class FilterList extends React.Component {
     super(props);
     this.state = {
       list: [
-        {value: "value1", category: "category1"},
-        {value: "value2", category: "category2"},
+        {value: "value1", id:1, category: "category1"},
+        {value: "value2", id:2, category: "category2"},
       ],
+      id_counter: 2, // TODO: helper, will remove
     };
   }
 
@@ -86,27 +92,43 @@ class FilterList extends React.Component {
    *
    * references:
    *  https://stackoverflow.com/questions/43784554/how-to-add-input-data-to-list-in-react-js
+   *  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some
    */
   add_filter() {
 
     // DEBUG
-    console.log("add filter: " + this.newValue.value);
+    console.log("try adding filter: " + this.newValue.value);
 
     // Check for empty.
     if (this.newValue.value == "") { return; }
 
-    // Add filter to filterlist.
+    // Store newValue, clear input box.
     const newVal = this.newValue.value;
-    this.setState (prevState => (
-      {list: [...this.state.list,
-        {value: newVal, category: "category1"}
-      ]}
-    ));
-
-    // Clear input box.
     this.newValue.value = "";
 
+    // Check for existence.
+    if (this.state.list.some(
+      (item) => item.value === newVal
+    )) {
+
+      // DEBUG
+      console.log("repeated filter: " + newVal);
+
+      return;
+    }
+
+    // Add filter to filterlist.
+    this.state.id_counter++;  // TODO: helper, will remove
+    this.setState (prevState => (
+      {list: [...this.state.list,
+        {value: newVal, id:this.state.id_counter, category: "category1"}
+      ]}
+    ));    
+
     // Update gallery.
+
+    // DEBUG
+    console.log("added filter: " + newVal);
   }
 
   /* remove_filter
@@ -117,16 +139,16 @@ class FilterList extends React.Component {
    *  https://stackoverflow.com/questions/36326612/how-to-delete-an-item-from-state-array
    *  https://stackoverflow.com/questions/35338961/how-to-remove-the-li-element-on-click-from-the-list-in-reactjs
    */
-  remove_filter(index) {
+  remove_filter(val) {
 
     // DEBUG
-    console.log("remove filter: " + this.state.list[index].value);
+    console.log("remove filter: " + val);
 
     // Reset state.list to remove the current filter.
     this.setState (prevState => (
       {list:
         this.state.list.filter(
-          (e, i) => i!==index
+          (item) => item.value!==val
         )
       }
     ));
@@ -139,11 +161,11 @@ class FilterList extends React.Component {
       <div className="MenuModule">
         <div className="FilterList">
           {this.state.list.map(
-            (item, i) => <div key={i}>
+            (item) => <div key={item.id}>
               <Filter
                 value={item.value}
                 category={item.category}
-                onClick={() => this.remove_filter(i)}
+                onClick={() => this.remove_filter(item.value)}
               />
             </div>
           )}
