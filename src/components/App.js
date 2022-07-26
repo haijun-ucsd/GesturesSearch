@@ -1,7 +1,7 @@
 import './App.css';
 import { useState , useEffect } from 'react';
 import { storage } from '../firebase';
-import { getDatabase, ref as ref_db, set} from 'firebase/database';
+import { getDatabase, onValue, ref as ref_db, set} from 'firebase/database';
 import { ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage';
 import { v4 } from 'uuid';
 import { Container, Row, Col, Button, InputGroup } from 'react-bootstrap';
@@ -33,7 +33,9 @@ function App() {
   const [btnDisabled, setBtnState] = useState(true);
   const [imageUpload, setImageUpload] = useState(null);
   const[imageList, setImageList] = useState([]);
-  const imageListRef = ref(storage, 'images/');
+  // const imageListRef = ref(storage, 'images/');
+
+  console.log(imageList)
 
   const uploadImage = () => {
     if (imageUpload == null) return;
@@ -45,20 +47,31 @@ function App() {
         /**
          * Store url and labels here to firebase realtime database
          */
-        console.log(url)
-        storeLabels(key, url, labelData);
-        setImageList((prev) => [...prev, url]);
+        console.log(key)
+        let finalLabels = storeLabels(key, url, labelData);
+        // setImageList((prev) => [...prev, [key, finalLabels]]);
       });
     });
   };
 
   useEffect(() => {
-    listAll(imageListRef).then((response) => {
-      response.items.forEach((item) => {
-        getDownloadURL(item).then((url) => {
-          setImageList((prev) => [...prev, url]);
-        })
-      })
+    // listAll(imageListRef).then((response) => {
+    //   response.items.forEach((item) => {
+    //     getDownloadURL(item).then((url) => {
+    //       setImageList((prev) => [...prev, url]);
+    //     })
+    //   })
+    // })
+    const db = getDatabase()
+    const dbRef = ref_db(db, 'images')
+    onValue(dbRef, (snapshot) => {
+      const data = snapshot.val();
+      // console.log(data)
+      let append = []
+      for (const [imgKey, labels] of Object.entries(data)) {
+        append.push([imgKey, labels])
+      }
+      setImageList(append);
     })
   }, [])
 
@@ -68,10 +81,6 @@ function App() {
 
   const passData = (formData) => {
     setLabelData(formData)
-    let timer_id = setTimeout(() => {
-      console.log(labelData)
-    }, 500);
-    clearTimeout(timer_id);
   }
 
   const validation = () => {
@@ -86,40 +95,35 @@ function App() {
   // First get the UUID of uploaded image
   // Then get the labels associated with that image
   const storeLabels = (id, url, data) => {
-    let finalLabels = processData(data);
+    console.log(url)
+    let finalLabels = processData(data, url);
+    console.log(finalLabels)
     const db = getDatabase()
     const path = 'images/' + id;
     console.log(path);
     set(ref_db(db, path), finalLabels);
+    return finalLabels
     // imageRef.push(finalLabels);
   }
 
-  const processData = (data) => {
+  const processData = (data, url) => {
     const spectators_group = ['all', 'density', 'attentive']
     const modality_group = ['head', 'eyes', 'mouth', 'facial_expression', 'arms', 'l_hand', 'r_hand', 'legs', 'feet']
     const demographic_group = ['age', 'sex', 'occupation']
     let finalLabels = {
+      'url': url,
       'location': '',
       'spectators': {},
       'modality': {},
       'demographic': {}
     }
     for (let label in data) {
-      if (label in spectators_group) {
-        finalLabels['spectators'] = {
-          ...finalLabels['spectators'],
-          label : data[label]
-        }
-      } else if (label in modality_group) {
-        finalLabels['modality'] = {
-          ...finalLabels['modality'],
-          label : data[label]
-        }
-      } else if (label in demographic_group) {
-        finalLabels['demographic'] = {
-          ...finalLabels['demographic'],
-          label : data[label]
-        }
+      if (spectators_group.includes(label)) {
+        finalLabels['spectators'] = {...finalLabels['spectators'], [label] : data[label]}
+      } else if (modality_group.includes(label)) {
+        finalLabels['modality'] = {...finalLabels['modality'], [label] : data[label]}
+      } else if (demographic_group.includes(label)) {
+        finalLabels['demographic'] = {...finalLabels['demographic'], [label] : data[label]}
       } else {
         finalLabels[label] = data[label];
       }
@@ -146,9 +150,35 @@ function App() {
       </div>
       <div className='textCenter'>
         <div className='images'>
-          {imageList.map((url) => {
-            return <img src={url} />
-          })}
+          { 
+            imageList.map((data) => {
+              let available_modalities = [];
+              for (let modality in data[1].modality) {
+                console.log(modality)
+                if (data[1].modality[modality]) {
+                  available_modalities.push(modality)
+                }
+              }
+              const modalities = available_modalities.join(', ');
+              console.log(modalities)
+              return (<div key={data[0]} className='textLeft'>
+                        <img key={data[0]} src={data[1].url}/> 
+                        <p>Age: {data[1].demographic.age}</p>
+                        <p>Occupation: {data[1].demographic.occupation}</p>
+                        <p>Sex: {data[1].demographic.sex}</p>
+                        <p>Location: {data[1].location}</p>
+                        <p>Available modalities: {modalities}</p>
+                        {/* {
+                          available_modalities.map((modality) => {
+                            return <p> modality </p>
+                          })
+                        } */}
+                        <p>All: {data[1].spectators.all}</p>
+                        <p>Attentive: {data[1].spectators.attentive}</p>
+                        <p>Density: {data[1].spectators.density}</p>
+                      </div>)
+            })
+          }
         </div>
       </div>
     </div>

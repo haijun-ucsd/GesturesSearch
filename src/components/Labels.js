@@ -29,7 +29,7 @@ export default function Labels(props) {
 
     const getFormData = (event) => {
         event.preventDefault()
-        console.log(formData)
+        // console.log(formData)
         props.passData(formData)
     }
 
