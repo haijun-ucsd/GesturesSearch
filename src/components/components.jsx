@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './components.css';
-//import { useState , useEffect } from 'react';
+import { labels_data } from "./labels_data.js";
+import { useState , useEffect } from 'react';
 
 /* Label
  *
@@ -41,6 +42,67 @@ class Label extends React.Component {
     );
   }
 }
+
+/* CheckLabel
+ *
+ * A checkbox input field, but in label format. Check to highlight the current label.
+ *
+ * parent props:
+ *  - value: string
+ *  - color: string
+ *
+ * references:
+ *  https://stackoverflow.com/questions/62768262/styling-the-label-of-a-checkbox-when-it-is-checked-with-radium
+ *  https://stackoverflow.com/questions/68715629/how-to-style-a-label-when-input-inside-it-is-checked
+ */
+function CheckLabel(props) {
+  const [checked, setChecked] = useState(false);
+  return (
+    <label
+      className="Label"
+      style={{
+        borderColor: checked ? props.color : "#CCCCCC",
+        backgroundColor: checked ? props.color+14 : "#FFFFFF"  // +14 = 8% opacity
+      }}
+    >
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={() => setChecked(prev => !prev)}
+      />
+      <div
+        className="LabelText"
+        style={{
+          color: checked ? "#000000" : "#AAAAAA"
+        }}
+      >
+        {props.value}
+      </div>
+    </label>
+  )
+}
+
+/* CheckLabelList
+ *
+ * Display all labels in the given list, each label is checkable.
+ *
+ * parent props:
+ *  - list
+ *
+function CheckLabelList(props) {
+  return (
+    <div className="LabelList">
+      {props.list.map(
+        (item) => <div key={item.key}>
+          <CheckLabel
+            value={item.value}
+            category={item.category}
+          />
+        </div>
+      )}
+    </div>
+  )
+}*/
 
 /* Filter
  *
@@ -225,6 +287,105 @@ class Menu extends React.Component {
   }
 }
 
+/* Form
+ *
+ * The form to guide labeling.
+ * TODO: Currently implemented with a fixed dummy list, will replace with fetching data from database.
+ */
+class Form extends React.Component {
+
+  render_category(category) {
+
+    // Determine color according to category.
+    var color = category.color;
+
+    // Render subcategories.
+    return (
+      <div className="FormCategory">
+        <div className="CategoryHeader">
+          <div
+            className="CategoryName"
+            style={{color:color}}
+          >
+            {category.category}
+          </div>
+        </div>
+        {category.subcategories.map(
+          (subcategory) => this.render_subcategory(subcategory, color)
+        )}
+      </div>
+    );
+  }
+
+  /*
+   * @param color: Inherit color from category.
+   *
+   * references:
+   *  https://stackoverflow.com/questions/8605516/default-select-option-as-blank
+   */
+  render_subcategory(subcategory, color) {
+
+    // Check subcategory type, determine style accordingly.
+    if (subcategory.type == 1) {
+
+      // Type 1 → dropdown (each picture should strictly have =1 label under this category.)
+      return (
+        <div className="FormSubcategory">
+          <div className="SubcategoryHeader">
+            <div className="SubcategoryName">
+              {subcategory.subcategory}
+            </div>
+          </div>
+          <select className="Dropdown" id={subcategory.subcategory}>
+              <option disabled selected value>
+                ---
+              </option>
+            {subcategory.labels.map((label) =>
+              <option
+                value={label.label}
+                key={label.label_id}
+              >
+                {label.label}
+              </option>
+            )}
+          </select>
+        </div>
+      );
+    } else {
+
+      // Type 2 → checklabel list (accepts a list of labels, any number from 0 to all possible.)
+      // TODO: make searchable
+      return (
+        <div className="FormSubcategory">
+          <div className="SubcategoryHeader">
+            <div className="SubcategoryName">
+              {subcategory.subcategory}
+            </div>
+          </div>
+          <div className="LabelList" id={subcategory.subcategory}>
+            {subcategory.labels.map((label) =>
+              <CheckLabel
+                value={label.label}
+                color={color}
+                key={label.label_id}
+              />
+            )}
+          </div>
+        </div>
+      );
+    }
+  }
+
+  render() {
+    return (
+      <div className="Form">
+        {labels_data.map(
+          (category) => this.render_category(category)
+        )}
+      </div>
+    );
+  }
+}
 
 
 /* Applied filters */
@@ -240,4 +401,4 @@ class Menu extends React.Component {
 /* Info */
 /* Imgs */
 
-export { Label, Filter, FilterList, Menu};
+export { Label, CheckLabel, Filter, FilterList, Form, Menu };

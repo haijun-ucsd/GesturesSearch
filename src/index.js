@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
-import { Label, Filter, FilterList, Menu } from './components';
+//import App from './components/App';
+import { Label, CheckLabel, Filter, FilterList, Form, Menu } from './components/components';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <Menu />
+    <Form />
   </React.StrictMode>
 );
 
