@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css'
+import { BodyComponent } from './BodyComponent.tsx';
 
 const initialFormData = Object.freeze({
     location: '',
@@ -24,6 +25,63 @@ const initialFormData = Object.freeze({
 });
 
 export default function Labels(props) {
+
+    const state = {
+        bodyState: {
+          head: {
+            show: true,
+            selected: true
+          },
+          left_shoulder: {
+            show: true,
+            selected: true
+          },
+          right_shoulder: {
+            show: true,
+            selected: true
+          },
+          left_arm: {
+            show: true,
+            selected: true
+          },
+          right_arm: {
+            show: true,
+            selected: true
+          },
+          chest: {
+            show: true,
+            selected: true
+          },
+          stomach: {
+            show: true,
+            selected: true
+          },
+          left_leg: {
+            show: true,
+            selected: true
+          },
+          right_leg: {
+            show: true,
+            selected: true
+          },
+          left_hand: {
+            show: true,
+            selected: true
+          },
+          right_hand: {
+            show: true,
+            selected: true
+          },
+          left_foot: {
+            show: true,
+            selected: true
+          },
+          right_foot: {
+            show: true,
+            selected: true
+          }
+        }
+    }
 
     const [formData, setFormData] = useState(initialFormData)
 

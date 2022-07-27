@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import image from './body.png';
+
 // import './BodyComponent.css'
 
 const Wrapper = styled.div`
 & {
-  width: 207px;
+  width: 250px;
   position: relative;
-  padding-top: 20px;
-  height: 500px;
+  padding-top: 10px;
+  height: 250px;
   display: block;
   margin: 40px auto;
 }
@@ -17,75 +19,69 @@ const Wrapper = styled.div`
 }
 
 & svg:hover path {
-  fill: #ff7d16;
+  fill: #EE4B2B;
 }
 & svg.selected path {
-  fill: #ff7d16;
+  fill: #F88379;
 }
 
 & svg {
   position: absolute;
   left: 50%;
-  fill: #57c9d5;
+  fill: #E3735E;
 }
 
 & svg#head {
-  margin-left: -28.5px;
-  top: -6px;
+  margin-left: -25.4px;
+  top: -5px;
 }
 
 & svg#left_shoulder {
-  margin-left: -53.5px;
-  top: 69px;
+  margin-left: -50px;
+  top: 58px;
 }
-
 & svg#right_shoulder {
   margin-left: 13.5px;
-  top: 69px;
+  top: 58px;
 }
-
 & svg#left_arm {
-  margin-left: -78px;
-  top: 112px;
+  margin-left: -66.7px;
+  top: 109px;
 }
-
 & svg#right_arm {
-  margin-left: 38px;
-  top: 112px;
+  margin-left: 36.5px;
+  top: 109px;
   z-index: 10001;
 }
-
 & svg#chest {
-  margin-left: -43.5px;
-  top: 88px;
+  margin-left: -15.5px;
+  top: 20px;
 }
-
 & svg#stomach {
-  margin-left: -37.5px;
-  top: 130px;
+  margin-left: -9.5px;
+  top: 38px;
 }
 
 & svg#left_leg {
-  margin-left: -46.5px;
-  top: 205px;
+  margin-left: -25.4px;
+  top: 120px;
   z-index: 9999;
 }
 
 & svg#right_leg {
-  margin-left: 1.5px;
-  top: 205px;
+  margin-left: -26.5px;
+  top: 215px;
   z-index: 9999;
 }
 
 & svg#left_hand {
-  margin-left: -102.5px;
-  top: 224px;
+  margin-left: -17.5px;
+  top: 1px;
 }
 
 & svg#right_hand {
-  margin-left: 66.5px;
-  top: 224px;
-  z-index: 10000;
+  margin-left: -30px;
+  top: -6px;
 }
 
 & svg#left_foot {
@@ -142,30 +138,47 @@ export const BodyComponent: React.FC<BodyComponentProps> = ({ onClick, onChange,
   }
 
   const svgElements: any = {
-    'head': (selected: boolean) => <svg onClick={onClickSvg} data-position="head" key="head" id="head" className={(selected ? 'selected ' : '') + "head"} xmlns="http://www.w3.org/2000/svg" width="56.594" height="95.031" viewBox="0 0 56.594 95.031"><path d="M24.5 1C35.2696 1 44 9.73045 44 20.5L43.833 25.5109C46.4392 25.6823 48.5 27.8505 48.5 30.5V31.5C48.5 35.0528 46.184 38.0647 42.9794 39.1084C41.6759 43.9798 38.0303 49.5865 33.25 52.9584C30.6114 54.8197 27.6271 56 24.5 56C21.373 56 18.3887 54.8197 15.7501 52.9584C10.9697 49.5865 7.32418 43.9798 6.02063 39.1084C2.81602 38.0647 0.500031 35.0528 0.500031 31.5V30.5C0.500031 27.8505 2.56088 25.6823 5.16706 25.5109L5.00003 20.5C5.00003 9.73045 13.7305 1 24.5 1Z" fill="#A4DDED" fill-opacity="0.35" stroke="white" stroke-linecap="round" stroke-linejoin="round"/></svg>,
-    'left_shoulder': (selected: boolean) => <svg onClick={onClickSvg} data-position="left_shoulder" key="left_shoulder" id="left_shoulder" className={(selected ? 'selected ' : '') + "left_shoulder"} xmlns="http://www.w3.org/2000/svg" width="109.532" height="46.594" viewBox="0 0 109.532 46.594"><path d="m 38.244,-0.004 1.98,9.232 -11.653,2.857 -7.474,-2.637 z M 17.005,10.536 12.962,8.35 0.306,22.35 0.244,27.675 c 0,0 16.52,-17.015 16.764,-17.14 z m 1.285,0.58 C 18.3,11.396 0.528,30.038 0.528,30.038 L -0.01,46.595 6.147,36.045 18.017,30.989 26.374,15.6 Z" /></svg>,
-    'right_shoulder': (selected: boolean) => <svg onClick={onClickSvg} data-position="right_shoulder" key="right_shoulder" id="right_shoulder" className={(selected ? 'selected ' : '') + "right_shoulder"} xmlns="http://www.w3.org/2000/svg" width="109.532" height="46.594" viewBox="0 0 109.532 46.594"><path d="m 3.2759972,-0.004 -1.98,9.232 11.6529998,2.857 7.473999,-2.637 z m 21.2379988,10.54 4.044,-2.187 12.656,14 0.07,5.33 c 0,0 -16.524,-17.019 -16.769,-17.144 z m -1.285,0.58 c -0.008,0.28 17.762,18.922 17.762,18.922 l 0.537,16.557 -6.157,-10.55 -11.871,-5.057 L 15.147997,15.6 Z" /></svg>,
-    'left_arm': (selected: boolean) => <svg onClick={onClickSvg} data-position="left_arm" key="left_arm" id="left_arm" className={(selected ? 'selected ' : '') + "left_arm"} xmlns="http://www.w3.org/2000/svg" width="156.344" height="119.25" viewBox="0 0 156.344 119.25"><path d="m21.12,56.5a1.678,1.678 0 0 1 -0.427,0.33l0.935,8.224l12.977,-13.89l1.2,-8.958a168.2,168.2 0 0 0 -14.685,14.294zm1.387,12.522l-18.07,48.91l5.757,1.333l19.125,-39.44l3.518,-22.047l-10.33,11.244zm-5.278,-18.96l2.638,18.74l-17.2,46.023l-2.657,-1.775l6.644,-35.518l10.575,-27.47zm18.805,-12.323a1.78,1.78 0 0 1 0.407,-0.24l3.666,-27.345l-7.037,-10.139l-7.258,10.58l-6.16,37.04l0.566,4.973a151.447,151.447 0 0 1 15.808,-14.87l0.008,0.001zm-13.742,-28.906l-3.3,35.276l-2.2,-26.238l5.5,-9.038z" /></svg>,
-    'right_arm': (selected: boolean) => <svg onClick={onClickSvg} data-position="right_arm" key="right_arm" id="right_arm" className={(selected ? 'selected ' : '') + "right_arm"} xmlns="http://www.w3.org/2000/svg" width="156.344" height="119.25" viewBox="0 0 156.344 119.25"><path d="m 18.997,56.5 a 1.678,1.678 0 0 0 0.427,0.33 L 18.489,65.054 5.512,51.164 4.312,42.206 A 168.2,168.2 0 0 1 18.997,56.5 Z m -1.387,12.522 18.07,48.91 -5.757,1.333 L 10.798,79.825 7.28,57.778 17.61,69.022 Z m 5.278,-18.96 -2.638,18.74 17.2,46.023 2.657,-1.775 L 33.463,77.532 22.888,50.062 Z M 4.083,37.739 A 1.78,1.78 0 0 0 3.676,37.499 L 0.01,10.154 7.047,0.015 l 7.258,10.58 6.16,37.04 -0.566,4.973 A 151.447,151.447 0 0 0 4.091,37.738 l -0.008,10e-4 z m 13.742,-28.906 3.3,35.276 2.2,-26.238 -5.5,-9.038 z" /></svg>,
-    'chest': (selected: boolean) => <svg onClick={onClickSvg} data-position="chest" key="chest" id="chest" className={(selected ? 'selected ' : '') + "chest"} xmlns="http://www.w3.org/2000/svg" width="86.594" height="45.063" viewBox="0 0 86.594 45.063"><path d="M19.32 0l-9.225 16.488-10.1 5.056 6.15 4.836 4.832 14.07 11.2 4.616 17.85-8.828-4.452-34.7zm47.934 0l9.225 16.488 10.1 5.056-6.15 4.836-4.833 14.07-11.2 4.616-17.844-8.828 4.45-34.7z" /></svg>,
-    'stomach': (selected: boolean) => <svg onClick={onClickSvg} data-position="stomach" key="stomach" id="stomach" className={(selected ? 'selected ' : '') + "stomach"} xmlns="http://www.w3.org/2000/svg" width="75.25" height="107.594" viewBox="0 0 75.25 107.594"><path d="M19.25 7.49l16.6-7.5-.5 12.16-14.943 7.662zm-10.322 8.9l6.9 3.848-.8-9.116zm5.617-8.732L1.32 2.15 6.3 15.6zm-8.17 9.267l9.015 5.514 1.54 11.028-8.795-5.735zm15.53 5.89l.332 8.662 12.286-2.665.664-11.826zm14.61 84.783L33.28 76.062l-.08-20.53-11.654-5.736-1.32 37.5zM22.735 35.64L22.57 46.3l11.787 3.166.166-16.657zm-14.16-5.255L16.49 35.9l1.1 11.25-8.8-7.06zm8.79 22.74l-9.673-7.28-.84 9.78L-.006 68.29l10.564 14.594 5.5.883 1.98-20.735zM56 7.488l-16.6-7.5.5 12.16 14.942 7.66zm10.32 8.9l-6.9 3.847.8-9.116zm-5.617-8.733L73.93 2.148l-4.98 13.447zm8.17 9.267l-9.015 5.514-1.54 11.03 8.8-5.736zm-15.53 5.89l-.332 8.662-12.285-2.665-.664-11.827zm-14.61 84.783l3.234-31.536.082-20.532 11.65-5.735 1.32 37.5zm13.78-71.957l.166 10.66-11.786 3.168-.166-16.657zm14.16-5.256l-7.915 5.514-1.1 11.25 8.794-7.06zm-8.79 22.743l9.673-7.28.84 9.78 6.862 12.66-10.564 14.597-5.5.883-1.975-20.74z" /></svg>,
-    'left_leg': (selected: boolean) => <svg onClick={onClickSvg} data-position="left_leg" key="left_leg" id="left_leg" className={(selected ? 'selected ' : '') + "left_leg"} xmlns="http://www.w3.org/2000/svg" width="93.626" height="250.625" viewBox="0 0 93.626 250.625"><path d="m 18.00179,139.99461 -0.664,5.99 4.647,5.77 1.55,9.1 3.1,1.33 2.655,-13.755 1.77,-4.88 -1.55,-3.107 z m 20.582,0.444 -3.32,9.318 -7.082,13.755 1.77,12.647 5.09,-14.2 4.205,-7.982 z m -26.557,-12.645 5.09,27.29 -3.32,-1.777 -2.656,8.875 z m 22.795,42.374 -1.55,4.88 -3.32,20.634 -0.442,27.51 4.65,26.847 -0.223,-34.39 4.87,-13.754 0.663,-15.087 z m -10.623,12.424 1.106,41.267 c 14.157565,64.57987 -5.846437,10.46082 -16.8199998,-29.07 l 5.5329998,-36.384 z m -9.71,-178.164003 0,22.476 15.71,31.073 9.923,30.850003 -1.033,-21.375 z m 25.49,30.248 0.118,-0.148 -0.793,-2.024 -16.545,-18.16 -1.242,-0.44 10.984,28.378 z m -6.255,10.766 6.812,17.6 2.274,-21.596 -1.344,-3.43 z m -26.4699998,17.82 0.827,25.340003 12.8159998,35.257 -3.928,10.136 -12.6099998,-44.51 z M 31.81879,76.04161 l 0.345,0.826 6.47,15.48 -4.177,38.342 -6.594,-3.526 5.715,-35.7 z m -21.465,-74.697003 0.827,21.373 L 4.1527902,65.02561 0.84679017,30.870607 Z m 2.068,27.323 14.677,32.391 3.307,26.000003 -6.2,36.58 -13.437,-37.241 -0.8269998,-38.342003 z" /></svg>,
-    'right_leg': (selected: boolean) => <svg onClick={onClickSvg} data-position="right_leg" key="right_leg" id="right_leg" className={(selected ? 'selected ' : '') + "right_leg"} xmlns="http://www.w3.org/2000/svg" width="80" height="250.625" viewBox="0 0 80 250.625"><path d="m 26.664979,139.7913 0.663,5.99 -4.647,5.77 -1.55,9.1 -3.1,1.33 -2.655,-13.755 -1.77,-4.88 1.55,-3.107 z m -20.5820002,0.444 3.3200005,9.318 7.0799997,13.755 -1.77,12.647 -5.0899997,-14.2 -4.2000005,-7.987 z m 3.7620005,29.73 1.5499997,4.88 3.32,20.633 0.442,27.51 -4.648,26.847 0.22,-34.39 -4.8670002,-13.754 -0.67,-15.087 z m 10.6229997,12.424 -1.107,41.267 -8.852,33.28 9.627,-4.55 16.046,-57.8 -5.533,-36.384 z m -13.9460002,74.991 c -5.157661,19.45233 -2.5788305,9.72616 0,0 z M 30.177979,4.225305 l 0,22.476 -15.713,31.072 -9.9230002,30.850005 1.033,-21.375005 z m -25.4930002,30.249 -0.118,-0.15 0.793,-2.023 16.5450002,-18.16 1.24,-0.44 -10.98,28.377 z m 6.2550002,10.764 -6.8120002,17.6 -2.274,-21.595 1.344,-3.43 z m 26.47,17.82 -0.827,25.342005 -12.816,35.25599 3.927,10.136 12.61,-44.50999 z m -24.565,12.783005 -0.346,0.825 -6.4700002,15.48 4.1780002,38.34199 6.594,-3.527 -5.715,-35.69999 z m 19.792,51.74999 -5.09,27.29 3.32,-1.776 2.655,8.875 z m 1.671,-126.452995 -0.826,21.375 7.03,42.308 3.306,-34.155 z m -2.066,27.325 -14.677,32.392 -3.308,26.000005 6.2,36.57999 13.436,-37.23999 0.827,-38.340005 z" /></svg>,
-    'left_hand': (selected: boolean) => <svg onClick={onClickSvg} data-position="left_hand" key="left_hand" id="left_hand" className={(selected ? 'selected ' : '') + "left_hand"} xmlns="http://www.w3.org/2000/svg" width="90" height="38.938" viewBox="0 0 90 38.938"><path d="m 21.255,-0.00198191 2.88,6.90000201 8.412,1.335 0.664,12.4579799 -4.427,17.8 -2.878,-0.22 2.8,-11.847 -2.99,-0.084 -4.676,12.6 -3.544,-0.446 4.4,-12.736 -3.072,-0.584 -5.978,13.543 -4.428,-0.445 6.088,-14.1 -2.1,-1.25 L 4.878,34.934 1.114,34.489 12.4,12.9 11.293,11.12 0.665,15.57 0,13.124 8.635,5.3380201 Z" /></svg>,
-    'right_hand': (selected: boolean) => <svg onClick={onClickSvg} data-position="right_hand" key="right_hand" id="right_hand" className={(selected ? 'selected ' : '') + "right_hand"} xmlns="http://www.w3.org/2000/svg" width="90" height="38.938" viewBox="0 0 90 38.938"><path d="m 13.793386,-0.00198533 -2.88,6.90000163 -8.4120002,1.335 -0.664,12.4579837 4.427,17.8 2.878,-0.22 -2.8,-11.847 2.99,-0.084 4.6760002,12.6 3.544,-0.446 -4.4,-12.736 3.072,-0.584 5.978,13.543 4.428,-0.445 -6.088,-14.1 2.1,-1.25 7.528,12.012 3.764,-0.445 -11.286,-21.589 1.107,-1.78 10.628,4.45 0.665,-2.447 -8.635,-7.7859837 z" /></svg>,
-    'left_foot': (selected: boolean) => <svg onClick={onClickSvg} data-position="left_foot" key="left_foot" id="left_foot" className={(selected ? 'selected ' : '') + "left_foot"} xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30"><path d="m 19.558357,1.92821 c -22.1993328,20.55867 -11.0996668,10.27933 0,0 z m 5.975,5.989 -0.664,18.415 -1.55,6.435 -4.647,0 -1.327,-4.437 -1.55,-0.222 0.332,4.437 -5.864,-1.778 -1.5499998,-0.887 -6.64,-1.442 -0.22,-5.214 6.418,-10.87 4.4259998,-5.548 c 9.991542,-3.26362 9.41586,-8.41457 12.836,1.111 z" /></svg>,
-    'right_foot': (selected: boolean) => <svg onClick={onClickSvg} data-position="right_foot" key="right_foot" id="right_foot" className={(selected ? 'selected ' : '') + "right_foot"} xmlns="http://www.w3.org/2000/svg" width="90" height="38.938" viewBox="0 0 90 38.938"><path d="m 11.723492,2.35897 c -40.202667,20.558 -20.1013335,10.279 0,0 z m -5.9740005,5.989 0.663,18.415 1.546,6.435 4.6480005,0 1.328,-4.437 1.55,-0.222 -0.333,4.437 5.863,-1.778 1.55,-0.887 6.638,-1.442 0.222,-5.214 -6.418,-10.868 -4.426,-5.547 -10.8440005,-4.437 z" /> </svg>
+    //head
+    'head': (selected: boolean) => <svg onClick={onClickSvg} data-position="head" key="head" id="head" className={(selected ? 'selected ' : '') + "head"} xmlns="http://www.w3.org/2000/svg" width="56.594" height="60" viewBox="0 0 56.594 60"><path d="M24.5 1C35.2696 1 44 9.73045 44 20.5L43.833 25.5109C46.4391 25.6823 48.5 27.8505 48.5 30.5V31.5C48.5 35.0528 46.184 38.0647 42.9794 39.1084C41.6758 43.9798 38.0303 49.5865 33.25 52.9584C30.6114 54.8197 27.627 56 24.5 56C21.373 56 18.3886 54.8197 15.75 52.9584C10.9697 49.5865 7.32415 43.9798 6.0206 39.1084C2.81599 38.0647 0.5 35.0528 0.5 31.5V30.5C0.5 27.8505 2.56085 25.6823 5.16703 25.5109L5 20.5C5 9.73045 13.7304 1 24.5 1Z" fill="#A4DDED" stroke="white" stroke-linecap="round" stroke-linejoin="round" /></svg>,
+    //l arm
+    'left_shoulder': (selected: boolean) => <svg onClick={onClickSvg} data-position="left_shoulder" key="left_shoulder" id="left_shoulder" className={(selected ? 'selected ' : '') + "left_shoulder"} xmlns="http://www.w3.org/2000/svg" width="40" height="100" viewBox="0 0 40 100">
+    <path d="M33.25 0.5C31.75 1 25.75 0.5 21.5 4.75C17.25 9 17 14.5 16.25 17.5C15.5001 20.5 13.25 28.5 12 30.75C10.75 33 8.5 36 7 38.75C5.5 41.5 1.5 52.5 1 53.25L10.75 60C11 59.25 18.5 49.25 20.5 46C22.5 42.75 23.5 39.5 24.5 37.5C25.5 35.5 31 27.25 31 27.25L33.25 0.5Z" fill="#A4DDED" stroke="white" stroke-linecap="round" stroke-linejoin="round"/></svg>,
+    //r arm
+    'right_shoulder': (selected: boolean) => <svg onClick={onClickSvg} data-position="right_shoulder" key="right_shoulder" id="right_shoulder" className={(selected ? 'selected ' : '') + "right_shoulder"} xmlns="http://www.w3.org/2000/svg" width="40" height="100" viewBox="0 0 40 100"><path d="M0.75 0.5C2.25 1 8.24999 0.5 12.5 4.75C16.75 9 17 14.5 17.75 17.5C18.5 20.5 20.75 28.5 22 30.75C23.25 33 25.5 36 27 38.75C28.5 41.5 32.5 52.5 33 53.25L23.25 60C23 59.25 15.5 49.25 13.5 46C11.5 42.75 10.5 39.5 9.50002 37.5C8.50002 35.5 3 27.25 3 27.25L0.75 0.5Z" fill="#A4DDED" stroke="white" stroke-linecap="round" stroke-linejoin="round" /></svg>,
+    //l hand
+    'left_arm': (selected: boolean) => <svg onClick={onClickSvg} data-position="left_arm" key="left_arm" id="left_arm" className={(selected ? 'selected ' : '') + "left_arm"} xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><path d="M26.5 14.75C26.75 13.25 26.5 8.75 26.75 8L17 1.25C16.5 2 11.25 4.75 10 6.5C8.75 8.25 8.25 9.75 7.25 10.75C6.25 11.75 5.5 12.75 4.25 13.75C3 14.75 1 16.75 1 17.5C1 18.25 3.5 20 6 18.75C8.5 17.5 10.25 15.25 10.25 15.25C10.25 15.25 7.25 20.75 6.75 22.75C6.25 24.75 5.5 31.75 5.5 31.75C5.5 31.75 6.5 32.75 7.25 32.75C8 32.75 9.25 32.5 10.25 31.25C11.25 30 11.75 25.5 12.25 24.5C12.75 23.5 14.5 21.75 14.5 21.75C14.5 21.75 15 29.75 15.5 30.5C16 31.25 17.5 32.75 19.75 32.25C22 31.75 24 29.25 24.75 28.25C25.5 27.25 25.75 25.75 25.5 24.25C25.25 22.75 25 19.5 25 18.75C25 18 26.25 16.25 26.5 14.75Z" fill="#A4DDED" /></svg>,
+    //r hand
+    'right_arm': (selected: boolean) => <svg onClick={onClickSvg} data-position="right_arm" key="right_arm" id="right_arm" className={(selected ? 'selected ' : '') + "right_arm"} xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><path d="M1.5 14.75C1.25 13.25 1.5 8.75 1.25 8L11 1.25C11.5 2 16.75 4.75 18 6.5C19.25 8.25 19.75 9.75 20.75 10.75C21.75 11.75 22.5 12.75 23.75 13.75C25 14.75 27 16.75 27 17.5C27 18.25 24.5 20 22 18.75C19.5 17.5 17.75 15.25 17.75 15.25C17.75 15.25 20.75 20.75 21.25 22.75C21.75 24.75 22.5 31.75 22.5 31.75C22.5 31.75 21.5 32.75 20.75 32.75C20 32.75 18.75 32.5 17.75 31.25C16.75 30 16.25 25.5 15.75 24.5C15.25 23.5 13.5 21.75 13.5 21.75C13.5 21.75 13 29.75 12.5 30.5C12 31.25 10.5 32.75 8.25 32.25C6 31.75 4 29.25 3.25 28.25C2.5 27.25 2.25 25.75 2.5 24.25C2.75 22.75 3 19.5 3 18.75C3 18 1.75 16.25 1.5 14.75Z" fill="#A4DDED" /></svg>,
+    //facial expressions
+    'left_hand': (selected: boolean) => <svg onClick={onClickSvg} data-position="left_hand" key="left_hand" id="left_hand" className={(selected ? 'selected ' : '') + "left_hand"} xmlns="http://www.w3.org/2000/svg" width="35" height="60" viewBox="0 0 35 60"><path d="M16.5 0.5C25.8888 0.5 32.5 8.11116 32.5 17.5L32.3544 21.8685L32.0641 30.5769C32.0641 31.5513 31.9066 32.6152 31.6102 33.7227C30.4738 37.9696 28.2956 41.8575 24.1282 44.7971C21.8279 46.4197 19.2261 47.4487 16.5 47.4487C13.7739 47.4487 11.1721 46.4197 8.87182 44.7971C4.70436 41.8575 2.52618 37.9696 1.38975 33.7227C1.0934 32.6152 0.935897 31.5513 0.935897 30.5769L0.645616 21.8685L0.5 17.5C0.5 8.11116 7.11116 0.5 16.5 0.5Z" fill="#A4DDED" stroke="white" stroke-linecap="round" stroke-linejoin="round" /></svg>,
+    //eyes
+    'chest': (selected: boolean) => <svg onClick={onClickSvg} data-position="chest" key="chest" id="chest" className={(selected ? 'selected ' : '') + "chest"} xmlns="http://www.w3.org/2000/svg" width="30" height="10" viewBox="0 0 30 10"><path d="M7 1.49986C5.25 1.24986 0.5 3.49986 0.5 3.49986C0.5 3.49986 3.53086 7.34345 5.5 7.99983C8.5 8.99983 12 5.49986 12 5.49986C12 5.49986 8.75 1.74986 7 1.49986Z M22 1.49986C23.75 1.24986 28.5 3.49986 28.5 3.49986C28.5 3.49986 25.4691 7.34345 23.5 7.99983C20.5 8.99983 17 5.49986 17 5.49986C17 5.49986 20.25 1.74986 22 1.49986Z" fill="#A4DDED" stroke="white" /></svg>,
+    //voice
+    'stomach': (selected: boolean) => <svg onClick={onClickSvg} data-position="stomach" key="stomach" id="stomach" className={(selected ? 'selected ' : '') + "stomach"} xmlns="http://www.w3.org/2000/svg" width="20" height="10" viewBox="0 0 20 10"><path d="M8.5 5C5.5 5 0.5 1.25 0.5 1.25C0.5 1.25 6.5 0.499996 8.5 0.499996C10.5 0.499996 16.5 1.25 16.5 1.25C16.5 1.25 11.5 5 8.5 5Z" fill="#A4DDED" fill-opacity="0.35" stroke="white" stroke-linecap="round" stroke-linejoin="round" /></svg>,
+    //legs
+    'left_leg': (selected: boolean) => <svg onClick={onClickSvg} data-position="left_leg" key="left_leg" id="left_leg" className={(selected ? 'selected ' : '') + "left_leg"} xmlns="http://www.w3.org/2000/svg" width="60" height="120" viewBox="0 0 60 120"><path d="M1.74998 28.5C0.749977 20.5 0.75003 8.99999 1.75 0.999992L22.5 9.99999C22.5 9.99999 24.5 13.25 24.5 29.25V61.25C24.5 62.8241 24.3451 64.7854 24.1573 67.1643C23.8678 70.8305 23.5 75.4885 23.5 81.25C23.5 87.0115 23.8678 90.9339 24.1573 94.0211C24.1888 94.3568 24.2193 94.6827 24.2484 95H8.75C8.74999 94.1343 7.95379 89.1472 7.03036 83.363C5.82032 75.7837 4.39181 66.8358 4.25 64C4.07414 60.4831 4.39305 56.1005 4.59771 53.2879C4.68402 52.1018 4.75001 51.1949 4.75 50.75C4.74999 49.926 4.14652 45.7076 3.43682 40.7466C2.85451 36.6761 2.20068 32.1056 1.74998 28.5Z M47.2499 0.999992C48.2499 8.99999 48.25 20.5 47.25 28.5C46.7993 32.1056 46.1454 36.6761 45.5631 40.7466C44.8534 45.7076 44.25 49.926 44.2499 50.75C44.2499 51.1949 44.3159 52.1018 44.4022 53.2879C44.6069 56.1005 44.9258 60.4831 44.7499 64C44.6081 66.8358 43.1796 75.7837 41.9696 83.363C41.0462 89.1472 40.25 94.1343 40.2499 95H24.7516C24.7806 94.6827 24.8112 94.3568 24.8427 94.0211C25.1322 90.9339 25.5 87.0115 25.5 81.25C25.5 75.4885 25.1322 70.8305 24.8427 67.1643C24.6548 64.7854 24.5 62.8241 24.5 61.25V29.25C24.5 13.25 26.5 9.99999 26.5 9.99999L47.2499 0.999992Z" fill="#A4DDED" /></svg>,
+    //feet
+    'right_leg': (selected: boolean) => <svg onClick={onClickSvg} data-position="right_leg" key="right_leg" id="right_leg" className={(selected ? 'selected ' : '') + "right_leg"} xmlns="http://www.w3.org/2000/svg" width="50" height="40" viewBox="0 0 50 40"><path d="M25.2484 1H9.74999C9.75002 3 5.74997 10.25 4.74999 11.25C4.34033 11.6597 3.67889 12.1113 3.00635 12.5705C2.03727 13.2322 1.04514 13.9097 0.749994 14.5C0.250021 15.5 0.499967 17.5 1.49999 18C2.50002 18.5 21.2499 19.5 22.75 19.5C24.25 19.5 25.5 18.25 25.5 18.25V5.25C25.5 3.93971 25.3927 2.57577 25.2484 1Z M41.2499 1H25.7516C25.6073 2.57577 25.5 3.93971 25.5 5.25V18.25C25.5 18.25 26.7499 19.5 28.25 19.5C29.75 19.5 48.4999 18.5 49.4999 18C50.5 17.5 50.7499 15.5 50.2499 14.5C49.9548 13.9097 48.9627 13.2322 47.9936 12.5705C47.321 12.1113 46.6596 11.6597 46.2499 11.25C45.25 10.25 41.2499 3 41.2499 1Z" fill="#A4DDED" /></svg>,
+    // 'left_hand': (selected: boolean) => <svg onClick={onClickSvg} data-position="left_hand" key="left_hand" id="left_hand" className={(selected ? 'selected ' : '') + "left_hand"} xmlns="http://www.w3.org/2000/svg" width="90" height="38.938" viewBox="0 0 90 38.938"><path d="m 21.255,-0.00198191 2.88,6.90000201 8.412,1.335 0.664,12.4579799 -4.427,17.8 -2.878,-0.22 2.8,-11.847 -2.99,-0.084 -4.676,12.6 -3.544,-0.446 4.4,-12.736 -3.072,-0.584 -5.978,13.543 -4.428,-0.445 6.088,-14.1 -2.1,-1.25 L 4.878,34.934 1.114,34.489 12.4,12.9 11.293,11.12 0.665,15.57 0,13.124 8.635,5.3380201 Z" /></svg>,
+    // 'right_hand': (selected: boolean) => <svg onClick={onClickSvg} data-position="right_hand" key="right_hand" id="right_hand" className={(selected ? 'selected ' : '') + "right_hand"} xmlns="http://www.w3.org/2000/svg" width="90" height="38.938" viewBox="0 0 90 38.938"><path d="m 13.793386,-0.00198533 -2.88,6.90000163 -8.4120002,1.335 -0.664,12.4579837 4.427,17.8 2.878,-0.22 -2.8,-11.847 2.99,-0.084 4.6760002,12.6 3.544,-0.446 -4.4,-12.736 3.072,-0.584 5.978,13.543 4.428,-0.445 -6.088,-14.1 2.1,-1.25 7.528,12.012 3.764,-0.445 -11.286,-21.589 1.107,-1.78 10.628,4.45 0.665,-2.447 -8.635,-7.7859837 z" /></svg>,
+    // 'left_foot': (selected: boolean) => <svg onClick={onClickSvg} data-position="left_foot" key="left_foot" id="left_foot" className={(selected ? 'selected ' : '') + "left_foot"} xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30"><path d="m 19.558357,1.92821 c -22.1993328,20.55867 -11.0996668,10.27933 0,0 z m 5.975,5.989 -0.664,18.415 -1.55,6.435 -4.647,0 -1.327,-4.437 -1.55,-0.222 0.332,4.437 -5.864,-1.778 -1.5499998,-0.887 -6.64,-1.442 -0.22,-5.214 6.418,-10.87 4.4259998,-5.548 c 9.991542,-3.26362 9.41586,-8.41457 12.836,1.111 z" /></svg>,
+    // 'right_foot': (selected: boolean) => <svg onClick={onClickSvg} data-position="right_foot" key="right_foot" id="right_foot" className={(selected ? 'selected ' : '') + "right_foot"} xmlns="http://www.w3.org/2000/svg" width="90" height="38.938" viewBox="0 0 90 38.938"><path d="m 11.723492,2.35897 c -40.202667,20.558 -20.1013335,10.279 0,0 z m -5.9740005,5.989 0.663,18.415 1.546,6.435 4.6480005,0 1.328,-4.437 1.55,-0.222 -0.333,4.437 5.863,-1.778 1.55,-0.887 6.638,-1.442 0.222,-5.214 -6.418,-10.868 -4.426,-5.547 -10.8440005,-4.437 z" /> </svg>
   }
 
   return (
-    <Wrapper className="human-body">
-      {Object.keys(svgElements)
-        .filter(part => !parts[part] || parts[part].show !== false)
-        .map((part: string) => {
-          let selected = false
-          if (parts[part]) selected = parts[part].selected
-          return svgElements[part](selected)
-        })}
-    </Wrapper>
+    <div>
+      <div className="Outline">
+        <img  src={image} alt="fireSpot"/>
+      </div>
+      <Wrapper className="human-body">
+        {Object.keys(svgElements)
+          .filter(part => !parts[part] || parts[part].show !== false)
+          .map((part: string) => {
+            let selected = false
+            if (parts[part]) selected = parts[part].selected
+            return svgElements[part](selected)
+          })}
+      </Wrapper>
+    </div>
   )
 }

@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom/client';
 import './components.css';
 import { labels_data } from "./labels_data.js";
 import { useState , useEffect } from 'react';
-import bodyState from './human.js';
-import { BodyComponent } from 'reactjs-human-body';
+// import bodyState from './human.js';
+import { BodyComponent } from './BodyComponent.tsx';
 
 /* Label
  *
@@ -296,6 +296,63 @@ class Menu extends React.Component {
  */
 class Form extends React.Component {
 
+  state = {
+    bodyState: {
+      head: {
+        show: true,
+        selected: false
+      },
+      left_shoulder: {
+        show: true,
+        selected: false
+      },
+      right_shoulder: {
+        show: true,
+        selected: false
+      },
+      left_arm: {
+        show: true,
+        selected: false
+      },
+      right_arm: {
+        show: true,
+        selected: false
+      },
+      chest: {
+        show: true,
+        selected: false
+      },
+      stomach: {
+        show: true,
+        selected: false
+      },
+      left_leg: {
+        show: true,
+        selected: false
+      },
+      right_leg: {
+        show: true,
+        selected: false
+      },
+      left_hand: {
+        show: true,
+        selected: false
+      },
+      right_hand: {
+        show: true,
+        selected: false
+      },
+      left_foot: {
+        show: true,
+        selected: false
+      },
+      right_foot: {
+        show: true,
+        selected: false
+      }
+    }
+  }
+
   render_category(category) {
 
     // Determine color according to category.
@@ -372,14 +429,7 @@ class Form extends React.Component {
                 key={label.label_id}
               />
             )}
-          </div>
-          <div className="human">
-            <h1>Hello CodeSandbox</h1>
-            <h2>Start editing to see some magic happen!</h2>
-            <div>
-              <BodyComponent partsInput={bodyState} />
-            </div>
-          </div>          
+          </div>     
         </div>
       );
     }
@@ -388,6 +438,11 @@ class Form extends React.Component {
   render() {
     return (
       <div className="Form">
+        <div className="Human">
+          <div>
+            <BodyComponent partsInput={this.state.bodyState} />
+          </div>
+        </div>
         {labels_data.map(
           (category) => this.render_category(category)
         )}
