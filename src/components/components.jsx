@@ -50,6 +50,10 @@ class Label extends React.Component {
  * parent props:
  *  - value: string
  *  - color: string
+ *  - form_change_handler()
+ *
+ * hooks:
+ *  - checked: To help toggling the color of CheckLabels upon checking.
  *
  * references:
  *  https://stackoverflow.com/questions/62768262/styling-the-label-of-a-checkbox-when-it-is-checked-with-radium
@@ -68,7 +72,10 @@ function CheckLabel(props) {
       <input
         type="checkbox"
         checked={checked}
-        onChange={() => setChecked(prev => !prev)}
+        onChange={(e) => {
+          setChecked(prev => !prev);
+          props.form_change_handler(e);
+        }}
       />
       <div
         className="LabelText"
@@ -263,28 +270,66 @@ class FilterRearrange extends React.Component {
   }
 }
 
-/* btn */
-/* <div
-  className="btn"
-  onClick={() => this.<callback function>()}
->
-</div> */
-/* Checkbox */
-/* Checkbox list */
-/* Dropdown */
-/* Top bar */
+/* Navbar */
 
-/* Menu
+/* WaitingRoom
+ *
+ * Waiting room for pictures to be labeled before being uploaded to filebase.
+ *
+ * hooks:
+ *  - addedPic (same as the old "imageUpload")
+ *  - addedPicUrl: View-only display of the current added pic.
+ *  - addedLabels: View-only list of added labels.
+ *  TODO: will need to update when allowing adding multiple pictures.
+ *
+ * references:
+ *  https://stackoverflow.com/questions/43992427/how-to-display-a-image-selected-from-input-type-file-in-reactjs
+ *  https://stackoverflow.com/questions/68491348/react-checking-if-an-image-source-url-is-empty-then-return-a-different-url
+ *  https://stackoverflow.com/questions/15922344/hide-image-if-src-is-empty
  */
-class Menu extends React.Component {
-
-  render() {
-    return (
-      <div className="Menu">
-        <FilterList />
+function WaitingRoom(props) {
+  const [addedPic, setAddedPic] = useState(null);
+  const [addedPicUrl, setAddedPicUrl] = useState("");
+  const [addedLabels, setAddedLabels] = useState([]);
+  return (
+    <div style={{/* as an item */ flexGrow: 1}}>
+      <div className="WaitingRoomControl">
+        <label for="add-pic" className="Btn_primary">
+          {addedPic == null ? // TODO: change after supporting adding multiple pictures.
+            <span>+ Add picture</span>
+          :
+            <span>&#8634; Change picture</span>
+          }
+        </label>
+        <input
+          id="add-pic"
+          type="file"
+          onChange={(event) => {
+            // On picture change, check for validity, then accept and display the new picture.
+            if (event.target.files && event.target.files[0]) {
+              console.log("Valid new picture, refresh waiting room."); //DUBUG
+              setAddedPic(event.target.files[0]);
+              setAddedPicUrl(URL.createObjectURL(event.target.files[0]));
+            }
+          }}
+          style={{display:"none"}}
+        />
       </div>
-    );
-  }
+      <div className="WaitingRoom">
+        {addedPic != null ?
+          <div>
+            <img
+              className="WaitingPic"
+              src={addedPicUrl}
+            />
+            <div className="LabelList">
+              {addedLabels.map((label) => <div className="Label">{label}</div>)}
+            </div>
+          </div>
+        : null}
+      </div>
+    </div>
+  );
 }
 
 /* Form
@@ -293,6 +338,12 @@ class Menu extends React.Component {
  * TODO: Currently implemented with a fixed dummy list, will replace with fetching data from database.
  */
 class Form extends React.Component {
+
+  form_change_handler(e) {
+    e.preventDefault();
+    console.log(this.props.formData); //DEBUG
+    this.props.passData(this.props.formData); // function from parent props
+  }
 
   render_category(category) {
 
@@ -336,7 +387,11 @@ class Form extends React.Component {
               {subcategory.subcategory}
             </div>
           </div>
-          <select className="Dropdown" id={subcategory.subcategory}>
+          <select
+            className="Dropdown"
+            id={subcategory.subcategory}
+            onChange = {(e) => this.form_change_handler(e)}
+          >
               <option disabled selected value>
                 ---
               </option>
@@ -387,6 +442,20 @@ class Form extends React.Component {
   }
 }
 
+/* Menu (TODO: replace with "Facet" and add more)
+ */
+class Menu extends React.Component {
+
+  render() {
+    return (
+      <div className="Menu">
+        <FilterList />
+      </div>
+    );
+  }
+}
+
+
 
 /* Applied filters */
 /* Search bar */
@@ -400,5 +469,9 @@ class Form extends React.Component {
 /* Statistics */
 /* Info */
 /* Imgs */
+/* Btn */
+/* Checkbox */
+/* CheckboxList */
+/* Dropdown */
 
-export { Label, CheckLabel, Filter, FilterList, Form, Menu };
+export { Label, CheckLabel, Filter, FilterList, WaitingRoom, Form, Menu };
