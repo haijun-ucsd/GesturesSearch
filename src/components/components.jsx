@@ -4,7 +4,7 @@ import './components.css';
 import { labels_data } from "./labels_data.js";
 import { useState , useEffect } from 'react';
 import bodyState from './human.js';
-import { BodyComponent } from './BodyComponent.tsx';
+import { BodyComponent } from 'reactjs-human-body';
 
 /* Label
  *
