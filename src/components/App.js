@@ -132,61 +132,6 @@ function App() {
     return finalLabels
   }
 
-  const [bodyState, setBodyState] = useState({
-    head: {
-      show: true,
-      selected: true
-    },
-    left_shoulder: {
-      show: true,
-      selected: true
-    },
-    right_shoulder: {
-      show: true,
-      selected: true
-    },
-    left_arm: {
-      show: true,
-      selected: true
-    },
-    right_arm: {
-      show: true,
-      selected: true
-    },
-    chest: {
-      show: true,
-      selected: true
-    },
-    stomach: {
-      show: true,
-      selected: true
-    },
-    left_leg: {
-      show: true,
-      selected: true
-    },
-    right_leg: {
-      show: true,
-      selected: true
-    },
-    left_hand: {
-      show: true,
-      selected: true
-    },
-    right_hand: {
-      show: true,
-      selected: true
-    },
-    left_foot: {
-      show: true,
-      selected: true
-    },
-    right_foot: {
-      show: true,
-      selected: true
-    }
-  });
-
   return (
     <div className="App">
       <div className='img-upload textCenter'>
