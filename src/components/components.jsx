@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client';
 import './components.css';
 import { labels_data } from "./labels_data.js";
 import { useState , useEffect } from 'react';
+import bodyState from './human.js';
+import { BodyComponent } from './BodyComponent.tsx';
 
 /* Label
  *
@@ -371,6 +373,13 @@ class Form extends React.Component {
               />
             )}
           </div>
+          <div className="human">
+            <h1>Hello CodeSandbox</h1>
+            <h2>Start editing to see some magic happen!</h2>
+            <div>
+              <BodyComponent partsInput={bodyState} />
+            </div>
+          </div>          
         </div>
       );
     }
