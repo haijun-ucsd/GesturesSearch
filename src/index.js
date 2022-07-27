@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 //import App from './components/App';
 import { Label, CheckLabel, Filter, FilterList, Form, Menu } from './components/components';
 import reportWebVitals from './reportWebVitals';
-import Human from './components/human.js'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
