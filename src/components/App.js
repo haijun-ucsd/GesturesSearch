@@ -7,6 +7,9 @@ import { v4 } from 'uuid';
 import { Container, Row, Col, Button, InputGroup } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import Labels from './Labels';
+import "./style.css";
+import { BodyComponent } from "./BodyComponent.tsx";
+import { useEffect, useState } from "react";
 
 const initialFormData = Object.freeze({
   location: '',
@@ -64,6 +67,7 @@ function App() {
   }, [])
 
   useEffect(() => {
+    console.log(111);
     validation();
   }, [labelData, imageList])
 
@@ -128,6 +132,61 @@ function App() {
     return finalLabels
   }
 
+  const [bodyState, setBodyState] = useState({
+    head: {
+      show: true,
+      selected: true
+    },
+    left_shoulder: {
+      show: true,
+      selected: true
+    },
+    right_shoulder: {
+      show: true,
+      selected: true
+    },
+    left_arm: {
+      show: true,
+      selected: true
+    },
+    right_arm: {
+      show: true,
+      selected: true
+    },
+    chest: {
+      show: true,
+      selected: true
+    },
+    stomach: {
+      show: true,
+      selected: true
+    },
+    left_leg: {
+      show: true,
+      selected: true
+    },
+    right_leg: {
+      show: true,
+      selected: true
+    },
+    left_hand: {
+      show: true,
+      selected: true
+    },
+    right_hand: {
+      show: true,
+      selected: true
+    },
+    left_foot: {
+      show: true,
+      selected: true
+    },
+    right_foot: {
+      show: true,
+      selected: true
+    }
+  });
+
   return (
     <div className="App">
       <div className='img-upload textCenter'>
@@ -144,6 +203,9 @@ function App() {
         <Button onClick={uploadImage} variant="primary" disabled={btnDisabled} type="submit">
             Upload
         </Button>
+      </div>
+      <div>
+        <BodyComponent partsInput={bodyState} />
       </div>
       <div className='textCenter'>
         <div className='images'>
