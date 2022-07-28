@@ -281,47 +281,6 @@ class FilterRearrange extends React.Component {
 }
 
 /**
- * LabelStructure
- *
- * The template of label structure to help display and upload.
- * (updated from the old "initialFormData")
- *
- * references:
- *  https://medium.com/@alifabdullah/never-confuse-json-and-javascript-object-ever-again-7c32f4c071ad
- */
-const LabelStructure = Object.freeze({
-  url: "",
-  location: {
-    in_outdoor: "",
-    purpose: [],
-    architecture_component: [],
-  },
-  spectators: {
-    quantity: "",
-    density: "",
-    attentive: "",
-  },
-  demographic: {
-    age: "",
-    sex: "",
-    social_role: [],
-  },
-  modality: {
-    head: true,
-    eyes: true,
-    voice: true,
-    facial_expression: true,
-    r_arm: true,
-    l_arm: true,
-    r_hand: true,
-    l_hand: true,
-    legs: true,
-    feet: true,
-  },
-  posture: [],
-})
-
-/**
  * Navbar */
 
 /**
@@ -331,6 +290,7 @@ const LabelStructure = Object.freeze({
  *
  * parent props:
  *  - setImageUpload()
+ *  - uploadImage()
  *
  * hooks:
  *  - addedPic (same as the old "imageUpload")
@@ -367,10 +327,8 @@ function WaitingRoom(props) {
                 if (event.target.files && event.target.files[0]) {
                   console.log("Valid new picture, refresh waiting room."); //DUBUG
                   setAddedPic(event.target.files[0]);
-                  let newUrl = URL.createObjectURL(event.target.files[0]);
-                  setAddedPicUrl(newUrl);
-                  // props.setImageUpload(newUrl);
                   props.setImageUpload(event.target.files[0]);
+                  setAddedPicUrl(URL.createObjectURL(event.target.files[0]));
                 }
               }}
               style={{display:"none"}}
@@ -380,7 +338,10 @@ function WaitingRoom(props) {
             <button
               className="Btn_primary"
               type="submit"
-              onClick={props.uploadImage}
+              onClick={(e) => {
+                alert("Picture is being uploaded!")
+                props.uploadImage();
+              }}
               variant="primary"
               //disabled={btnDisabled}
             >
@@ -455,5 +416,98 @@ class Menu extends React.Component {
  * CheckboxList */
 /**
  * Dropdown */
+
+
+
+/**------------ TEMPLATES ------------**/
+
+/**
+ * LabelStructure
+ *
+ * The template of label structure to help display and upload.
+ * (updated from the old "initialFormData")
+ *
+ * references:
+ *  https://medium.com/@alifabdullah/never-confuse-json-and-javascript-object-ever-again-7c32f4c071ad
+ */
+const LabelStructure = Object.freeze({
+  url: "",
+  location: {
+    in_outdoor: "",
+    purpose: [],
+    architecture_component: [],
+  },
+  spectators: {
+    quantity: "",
+    density: "",
+    attentive: "",
+  },
+  demographic: {
+    age: "",
+    sex: "",
+    social_role: [],
+  },
+  modality: {
+    head: true,
+    eyes: true,
+    voice: true,
+    facial_expression: true,
+    r_arm: true,
+    l_arm: true,
+    r_hand: true,
+    l_hand: true,
+    legs: true,
+    feet: true,
+  },
+  posture: [],
+})
+
+ /**
+ * HumanfigureState
+ *
+ * The template of human figure states to listen to update on the human figure.
+ *
+const HumanfigureState = Object.freeze({
+  head: {
+    show: true,
+    selected: false
+  },
+  left_arm: {
+    show: true,
+    selected: false
+  },
+  right_arm: {
+    show: true,
+    selected: false
+  },
+  left_hand: {
+    show: true,
+    selected: false
+  },
+  right_hand: {
+    show: true,
+    selected: false
+  },
+  facial_expression: {
+    show: true,
+    selected: false
+  },
+  eyes: {
+    show: true,
+    selected: false
+  },
+  voice: {
+    show: true,
+    selected: false
+  },
+  legs: {
+    show: true,
+    selected: false
+  },
+  feet: {
+    show: true,
+    selected: false
+  },
+})*/
 
 export { CheckLabel, LabelStructure, WaitingRoom };

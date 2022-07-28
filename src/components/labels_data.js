@@ -2,6 +2,7 @@
  *
  *  type 1: each picture should strictly have =1 label under this category.
  *  type 2: accepts a list of labels, any number from 0 to all possible.
+ *  type 3: human figure.
  */
 
 export const labels_data = [
@@ -163,7 +164,7 @@ export const labels_data = [
     subcategories: [
       { subcategory: "head",
         subcategory_displaytext: "Head",
-        type: 1,
+        type: 3,
         labels: [
           { label: "available",
             label_id: 0,
@@ -177,7 +178,7 @@ export const labels_data = [
       },
       { subcategory: "eyes",
         subcategory_displaytext: "Eyes",
-        type: 1,
+        type: 3,
         labels: [
           { label: "available",
             label_id: 0,
@@ -191,7 +192,7 @@ export const labels_data = [
       },
       { subcategory: "voice",
         subcategory_displaytext: "Voice",
-        type: 1,
+        type: 3,
         labels: [
           { label: "available",
             label_id: 0,
@@ -205,7 +206,7 @@ export const labels_data = [
       },
       { subcategory: "facial_expression",
         subcategory_displaytext: "Facial expression",
-        type: 1,
+        type: 3,
         labels: [
           { label: "available",
             label_id: 0,
@@ -219,7 +220,7 @@ export const labels_data = [
       },
       { subcategory: "r_arm",
         subcategory_displaytext: "Right arm",
-        type: 1,
+        type: 3,
         labels: [
           { label: "available",
             label_id: 0,
@@ -233,7 +234,7 @@ export const labels_data = [
       },
       { subcategory: "l_arm",
         subcategory_displaytext: "Left arm",
-        type: 1,
+        type: 3,
         labels: [
           { label: "available",
             label_id: 0,
@@ -247,7 +248,7 @@ export const labels_data = [
       },
       { subcategory: "r_hand",
         subcategory_displaytext: "Right hand",
-        type: 1,
+        type: 3,
         labels: [
           { label: "available",
             label_id: 0,
@@ -261,7 +262,7 @@ export const labels_data = [
       },
       { subcategory: "l_hand",
         subcategory_displaytext: "Left hand",
-        type: 1,
+        type: 3,
         labels: [
           { label: "available",
             label_id: 0,
@@ -275,7 +276,7 @@ export const labels_data = [
       },
       { subcategory: "legs",
         subcategory_displaytext: "Legs",
-        type: 1,
+        type: 3,
         labels: [
           { label: "available",
             label_id: 0,
@@ -289,7 +290,7 @@ export const labels_data = [
       },
       { subcategory: "feet",
         subcategory_displaytext: "Feet",
-        type: 1,
+        type: 3,
         labels: [
           { label: "available",
             label_id: 0,
