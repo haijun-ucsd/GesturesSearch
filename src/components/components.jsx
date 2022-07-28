@@ -369,7 +369,8 @@ function WaitingRoom(props) {
                   setAddedPic(event.target.files[0]);
                   let newUrl = URL.createObjectURL(event.target.files[0]);
                   setAddedPicUrl(newUrl);
-                  props.setImageUpload(newUrl);
+                  // props.setImageUpload(newUrl);
+                  props.setImageUpload(event.target.files[0]);
                 }
               }}
               style={{display:"none"}}
