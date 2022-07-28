@@ -1,0 +1,351 @@
+/**------------ TEMPORARY ------------**/
+
+.dummy_flex {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+
+
+/**------------ BASIC ITEMS ------------**/
+
+/* Label */
+
+.Label {
+  border: 1px solid #CCCCCC;
+  border-radius: 14px;
+  background-color: #FFFFFF; /* default white background */
+  /* as a container */
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  height: 28px;
+  padding: 0 12px;
+  gap: 8px;
+}
+
+.LabelText {
+  display: inline-block;
+  /* font */
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 120%;
+  letter-spacing: 0.01em;
+}
+
+.Label_CloseBtn {
+  display: inline-block;
+  border: none;
+  background-color: transparent;
+}
+
+.LabelList {
+  /* as a container*/
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 8px;
+}
+
+.FilterList {
+  /* as a container*/
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  min-height: 30px; /* 28px label height + 2 * 1px border */
+  gap: 16px;
+}
+
+
+/* Btn */
+
+.Btn_primary {
+  background: #EEEEEE;
+  border: 1px solid #CCCCCC;
+  border-radius: 8px;
+  box-shadow:
+    0px 4px 8px rgba(170, 170, 170, 0.16),
+    0px 0px 16px rgba(170, 170, 170, 0.08);
+  /* as a container */
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px;
+  gap: 8px;
+}
+
+.Btn_secondary {
+  border: 1px solid #CCCCCC;
+  border-radius: 8px;
+  filter:
+    drop-shadow(0px 4px 8px rgba(170, 170, 170, 0.16))
+    drop-shadow(0px 0px 16px rgba(170, 170, 170, 0.08));
+  /* as a container */
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px;
+  gap: 8px;
+}
+
+.Btn_small {
+  border: 1px solid #CCCCCC;
+  border-radius: 8px;
+  filter:
+    drop-shadow(0px 4px 8px rgba(170, 170, 170, 0.16))
+    drop-shadow(0px 0px 16px rgba(170, 170, 170, 0.08));
+  /* as a container */
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 4px;
+}
+
+
+/* Dropdown */
+
+.Dropdown {
+  background: #FFFFFF;
+  border: 1px solid #CCCCCC;
+  border-radius: 8px;
+  padding: 4px 4px 4px 8px;
+  min-width: 160px;
+  /* font */
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 120%;
+  letter-spacing: 0.01em;
+  color: #333333;
+}
+
+
+
+/**------------ BIG BLOCKS ------------**/
+
+/* PageBox */
+.PageBox {
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding-top: 40px;
+}
+
+/* WaitingRoom */
+
+.WaitingRoomControl {
+  /*position: absolute;
+  left: 0;
+  top: 0;
+  align-self: stretch;*/
+  /* as a container */
+  background-color: #FFFFFF;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 24px 40px;
+}
+
+.WaitingRoomControl_addpic {
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+}
+
+.WaitingRoomControl_selectpic {  /* right now same as WaitingRoomControl_addpic */
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+}
+
+.WaitingRoom {
+  /* as a container */
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  padding: 24px 40px 40px;
+  gap: 24px;
+}
+
+.WaitingPic {
+  width: 800px;
+  height: 600px;
+  /*width: 400px;
+  height: 300px;*/
+  object-fit: cover;
+}
+/*.WaitingPic[src=""] {
+  display: none;
+}*/
+
+
+/* Form */
+
+.LabelsForm {
+  /*position: absolute;
+  right: 0;
+  top: 0;*/
+  height: calc(100vh - 40px); /* Minus height of Navbar */
+  overflow: scroll;
+  width: 40vw;
+  max-width: 800px;
+  min-width: 400px;
+  border-left: 1px solid #CCCCCC; /* TODO: dropshadow */
+  /* as an item */
+  flex-grow: 0;
+  /* as a container */
+  background-color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.FormCategory {
+  border-bottom: 1px solid #CCCCCC;
+  /* as an item */
+  align-self: stretch;
+  /* as a container */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px;
+  gap: 16px;
+}
+
+.CategoryHeader {
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.CategoryName {
+  /* font */
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 120%;
+  letter-spacing: 0.01em;
+}
+
+.FormSubcategory {
+  /* as a container */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.SubcategoryHeader {  /* right now same as CategoryHeader */
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.SubcategoryName {
+  /* font */
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 120%;
+  letter-spacing: 0.01em;
+  color: #AAAAAA;
+}
+
+
+/* Menu? Facet? */
+
+.Menu {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 25vw;
+  max-width: 400px;
+  min-width: 240px;
+  /*height: 100vh;*/
+  background-color: #FFFFFF; /* default white background */
+  box-shadow:
+    8px 0px 16px rgba(170, 170, 170, 0.16),
+    0px 0px 40px 8px rgba(204, 204, 204, 0.25);
+  /* as a container (module layout) */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.MenuModule {
+  /* as an item */
+  border-bottom: 1px solid #CCCCCC;
+  align-self: stretch;
+  /* as a container */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px;
+  gap: 24px;
+}
+
+/* Navbar */
+
+.Navbar {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  height: 40px;
+  width: 100vw;
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0px;
+  gap: 64px;
+  background: #FFFFFF;
+  border-bottom: 1px solid #CCCCCC;
+}
+
+.Navtab {
+  /* as an element */
+  flex-grow: 0;
+  /* as a container */
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4px;
+  /* font */
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 150%;
+  letter-spacing: 0.01em;
+  color: #000000;
+  text-decoration-line: none;
+}
+.Navtab.active {
+  font-weight: 700;
+  letter-spacing: 0.003em;
+  text-decoration-line: underline;
+}
