@@ -12,6 +12,7 @@ export const labels_data = [
     subcategories: [
       { subcategory: "in_outdoor",
         subcategory_displaytext: "In/outdoor",
+        description: "In/outdoor",
         type: 1,
         labels: [
           { label: "indoor",
@@ -26,6 +27,8 @@ export const labels_data = [
       },
       { subcategory: "purpose",
         subcategory_displaytext: "Purpose of the place",
+        description:
+          "e.g. subway, gym, swimming pool, beach, hospital, parking lot",
         type: 2,
         labels: [
           { label: "library",
@@ -48,6 +51,8 @@ export const labels_data = [
       },
       { subcategory: "architecture_component",
         subcategory_displaytext: "Architecture component",
+        description:
+          "e.g. at the entrance, in the corridor, in the waiting room, inside the pool",
         type: 2,
         labels: [
           { label: "entrance",
@@ -76,6 +81,8 @@ export const labels_data = [
     subcategories: [
       { subcategory: "quantity",
         subcategory_displaytext: "Quantity",
+        description:
+          "number of people appearing in the photo minus the observed subject",
         type: 1,
         labels: [
           { label: "none",
@@ -94,6 +101,7 @@ export const labels_data = [
       },
       { subcategory: "density",
         subcategory_displaytext: "Density",
+        description: "",
         type: 1,
         labels: [
           { label: "none",
@@ -112,6 +120,7 @@ export const labels_data = [
       },
       { subcategory: "attentive",
         subcategory_displaytext: "Attentive",
+        description: "input a number, or “many” if N > 8",
         type: 1,
         labels: [
           { label: "0",
@@ -354,6 +363,8 @@ export const labels_data = [
       },
       { subcategory: "social_role",
         subcategory_displaytext: "Social role",
+        description:
+          "e.g. staff, coach, cleaner, customer, passenger, patient, caregiver",
         type: 2,
         labels: [
           { label: "staff",
@@ -378,6 +389,7 @@ export const labels_data = [
   },
   { category: "posture",
     category_displaytext: "Posture",
+    description: "choose from list",
     color: "#AC92EB",
     subcategories: [
       { subcategory: "posture",

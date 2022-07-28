@@ -6,6 +6,7 @@ import { CheckLabel, LabelStructure } from './components';
 import './components.css';
 import { labels_data } from "./labels_data.js";
 import BodyComponent from './BodyComponent.tsx';
+import DescriptionHover from "./DescriptionHover.js";
 
 /**
  * LabelsForm
@@ -103,6 +104,7 @@ export default function LabelsForm(props) {
               <div className="SubcategoryName">
                 {subcategory.subcategory_displaytext}
               </div>
+              <DescriptionHover text={subcategory.description}/>
             </div>
             <select
               className="Dropdown"
@@ -134,6 +136,7 @@ export default function LabelsForm(props) {
               <div className="SubcategoryName">
                 {subcategory.subcategory_displaytext}
               </div>
+              <DescriptionHover text={subcategory.description}/>
             </div>
             <div
               className="LabelList"

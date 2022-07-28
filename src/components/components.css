@@ -168,14 +168,17 @@ p {
 }
 
 .Humanfigure_container {
-  margin-top: -275px; /* to correct for the top margin caused by svg? TODO: improve*/
+  /*margin-top: -275px; /* to correct for the top margin caused by svg? TODO: improve*/
+  position: relative;
+  height: 250px;
+  width: 250px;
 }
 
 .Humanfigure_outline_div {
+  position: absolute;
   margin-left: 58.5px;
-  top: 275px;
+  top: 36px;
   /*top: 278px;*/
-  position: relative;
   /*z-index: 1;*/
   /*height: 120%;
   width: auto;*/
@@ -188,8 +191,8 @@ p {
 }
 
 .Humanfigure_highlights {
+  position: absolute;
   width: 250px;
-  position: relative;
   padding-top: 10px;
   height: 250px;
   display: block;
