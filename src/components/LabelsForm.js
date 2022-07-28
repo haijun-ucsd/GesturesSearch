@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import { CheckLabel, LabelStructure } from './components';
 import './components.css';
 import { labels_data } from "./labels_data.js";
+import BodyComponent from './BodyComponent.tsx';
 
 /**
  * LabelsForm
@@ -15,6 +16,7 @@ import { labels_data } from "./labels_data.js";
  * parent props:
  *  - form_change_handler_type1 (e, categoryname, subcategoryname)
  *  - form_change_handler_type2 (e, checked, categoryname, subcategoryname)
+ *  - form_change_handler_type3 (e, categoryname)
  *
  * references:
  *  https://stackoverflow.com/questions/35537229/how-can-i-update-the-parents-state-in-react
@@ -44,10 +46,31 @@ export default function LabelsForm(props) {
             {category.category_displaytext}
           </div>
         </div>
-        {category.subcategories.map(
-          (subcategory) =>
-          render_subcategory(subcategory, category.category, color)
-        )}
+        {
+          // Special case: modality.
+          category.category == "modality" ?
+            <div className="ModalityDisplay">
+              <div>
+                <BodyComponent
+                  partsInput={LabelStructure.modality}
+                  form_change_handler={props.form_change_handler_type3}
+                />
+              </div>
+              <div className="FormSubcategories">
+                {category.subcategories.map(
+                  (subcategory) =>
+                  render_subcategory(subcategory, category.category, color)
+                )}
+              </div>
+            </div>
+          :
+            <div className="FormSubcategories">
+              {category.subcategories.map(
+                (subcategory) =>
+                render_subcategory(subcategory, category.category, color)
+              )}
+            </div>
+        }
       </div>
     );
   };
@@ -63,65 +86,93 @@ export default function LabelsForm(props) {
   const render_subcategory = (subcategory, categoryname, color) => {
 
     // Check subcategory type, determine style accordingly.
-    if (subcategory.type == 1) {
+    switch (subcategory.type) {
 
       // Type 1 → dropdown (each picture should strictly have =1 label under this category.)
-      return (
-        <div className="FormSubcategory">
-          <div className="SubcategoryHeader">
-            <div className="SubcategoryName">
-              {subcategory.subcategory_displaytext}
+      case 1:
+        return (
+          <div className="FormSubcategory">
+            <div className="SubcategoryHeader">
+              <div className="SubcategoryName">
+                {subcategory.subcategory_displaytext}
+              </div>
             </div>
+            <select
+              className="Dropdown"
+              id={subcategory.subcategory}
+              onChange={(e) => props.form_change_handler_type1(e, categoryname, subcategory.subcategory)}
+            >
+                <option disabled selected value>
+                  ---
+                </option>
+              {subcategory.labels.map((label) =>
+                <option
+                  value={label.label}
+                  key={label.label_id}
+                >
+                  {label.label}
+                </option>
+              )}
+            </select>
           </div>
-          <select
-            className="Dropdown"
-            id={subcategory.subcategory}
-            onChange={(e) => props.form_change_handler_type1(e, categoryname, subcategory.subcategory)}
-          >
-              <option disabled selected value>
-                ---
-              </option>
-            {subcategory.labels.map((label) =>
-              <option
-                value={label.label}
-                key={label.label_id}
-              >
-                {label.label}
-              </option>
-            )}
-          </select>
-        </div>
-      );
-    } else {
+        );
+        break;
 
       // Type 2 → checklabel list (accepts a list of labels, any number from 0 to all possible.)
       // TODO: make searchable
-      return (
-        <div className="FormSubcategory">
-          <div className="SubcategoryHeader">
+      case 2:
+        return (
+          <div className="FormSubcategory">
+            <div className="SubcategoryHeader">
+              <div className="SubcategoryName">
+                {subcategory.subcategory_displaytext}
+              </div>
+            </div>
+            <div
+              className="LabelList"
+              id={subcategory.subcategory}
+              category={categoryname}
+              subcategory={subcategory.subcategory}
+            >
+              {subcategory.labels.map((label) =>
+                <CheckLabel
+                  value={label.label}
+                  color={color}
+                  key={label.label_id}
+                  category={categoryname}
+                  subcategory={subcategory.subcategory}
+                  form_change_handler={props.form_change_handler_type2}
+                />
+              )}
+            </div>
+          </div>
+        );
+        break;
+
+      // Type 3 → human figure
+      case 3:
+        return (
+          <div className="ModalityDisplay_statelist">
             <div className="SubcategoryName">
               {subcategory.subcategory_displaytext}
             </div>
+            <input
+              type="checkbox"
+//              value={checked}
+//              checked={checked}
+//              onChange={(e) => {
+//                setChecked(prev => !prev);
+//                //console.log("checked state in CheckLabel: " + checked); //DEBUG
+//                props.form_change_handler(e, !checked, props.category, props.subcategory);  // note: use "!checked" instead of "checked" because check state has not changed yet here
+//              }}
+              style={{display:"none"}}
+            />
           </div>
-          <div
-            className="LabelList"
-            id={subcategory.subcategory}
-            category={categoryname}
-            subcategory={subcategory.subcategory}
-          >
-            {subcategory.labels.map((label) =>
-              <CheckLabel
-                value={label.label}
-                color={color}
-                key={label.label_id}
-                category={categoryname}
-                subcategory={subcategory.subcategory}
-                form_change_handler={props.form_change_handler_type2}
-              />
-            )}
-          </div>
-        </div>
-      );
+        );
+        break;
+
+      default:
+        // TODO: when type number is invalid
     }
   };
 

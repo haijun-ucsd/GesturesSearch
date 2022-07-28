@@ -76,6 +76,23 @@ export default function UploadPage() {
     console.log("updated formData ↓"); console.log(formData); //DEBUG
   };
 
+  /**
+   * Handle update in type 3 (modality) subcategories.
+   */
+  const form_change_handler_type3 = (categoryname, subcategoryname) => {
+    //e.preventDefault();
+    console.log("form_change_handler_type3"); //DEBUG
+
+    // Update formData by toggling the value of the current subcategory.
+    setFormData((prev) => {
+      console.log("before change: " + categoryname + " >> " + subcategoryname + " >> " + prev[categoryname][subcategoryname]); //DEBUG
+      prev[categoryname][subcategoryname] = !prev[categoryname][subcategoryname];
+      console.log("after change: " + categoryname + " >> " + subcategoryname + " >> " + prev[categoryname][subcategoryname]); //DEBUG
+      return prev;
+    });
+    console.log("updated formData ↓"); console.log(formData); //DEBUG
+  };
+
 
 /* To collect data from WaitingRoom (pictures) */
 
@@ -108,6 +125,10 @@ export default function UploadPage() {
         //setImageList((prev) => [...prev, [key, finalLabels]]);
       });
     });
+
+    // Clear imageUpload. TODO???
+    setImageUpload(null);
+    console.log("imageUpload should be cleared: " + imageUpload); //DEBUG
   };
 
   // Implement Firebase Realtime Database Storage:
@@ -135,7 +156,7 @@ export default function UploadPage() {
     const modality_group = ['head', 'eyes', 'mouth', 'facial_expression', 'arms', 'l_hand', 'r_hand', 'legs', 'feet']
     const demographic_group = ['age', 'sex', 'occupation']
     let finalLabels = {
-      'url': url,
+      'url': '',
       'location': '',
       'spectators': {},
       'modality': {},
@@ -152,6 +173,7 @@ export default function UploadPage() {
         finalLabels[label] = data[label];
       }
     }
+    finalLabels['url'] = url;
     return finalLabels;
   }
 
@@ -211,6 +233,7 @@ export default function UploadPage() {
       <LabelsForm
         form_change_handler_type1={form_change_handler_type1}
         form_change_handler_type2={form_change_handler_type2}
+        form_change_handler_type3={form_change_handler_type3}
       />
     </div>
   );
