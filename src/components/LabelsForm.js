@@ -35,6 +35,13 @@ export default function LabelsForm(props) {
     // Determine color according to category.
     var color = category.color;
 
+    // Disabling posture category from rendering for now
+    if (category.category === 'posture') {
+      console.log('hit')
+      return (
+        <div></div>
+      )    
+    }
     // Render subcategories.
     return (
       <div className="FormCategory">

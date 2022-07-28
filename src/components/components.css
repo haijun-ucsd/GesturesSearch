@@ -1,3 +1,20 @@
+/**------------ ExplorePage ------------**/
+
+img {
+  height: 200px;
+  width: 300px;
+  margin: 10px;
+}
+
+.image {
+  margin: 2em;
+  text-align: center;
+}
+
+p {
+  text-align: center;
+}
+
 /**------------ TEMPORARY ------------**/
 
 .dummy_flex {

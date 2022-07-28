@@ -12,6 +12,7 @@ import { LabelStructure, WaitingRoom } from './components';
 export default function UploadPage() {
   const [uploadDisabled, setUploadDisabled] = useState(true);  // modified based on the old "btnDisabled"
   const [imageUpload, setImageUpload] = useState(null);
+  // const [currImg, setCurrImg] = useState(null);
 
 
 /* To collect data from LabelsForm (labels) */
@@ -120,6 +121,7 @@ export default function UploadPage() {
 
         // Store url and labels to firebase realtime database.
         console.log("upload image with labels at key: " + key); //DEBUG
+        console.log(url)
         let finalLabels = storeLabels(key, url, formData);
         console.log("final labels ↓"); console.log(finalLabels); //DEBUG
         //setImageList((prev) => [...prev, [key, finalLabels]]);
@@ -137,7 +139,7 @@ export default function UploadPage() {
   const storeLabels = (id, url, data) => {
     //console.log(url)
     let finalLabels = processData(data, url);
-    //console.log(finalLabels)
+    console.log('labels from processData: ', finalLabels)
     const db = getDatabase()
     const path = 'images/' + id;
     //console.log(path);
@@ -177,6 +179,10 @@ export default function UploadPage() {
     return finalLabels;
   }
 
+  // const handleImageAdd = (currImg) => {
+  //   console.log(currImg);
+  //   setCurrImg(currImg)
+  // }
 
 /* Regular check effects */
 
@@ -201,6 +207,7 @@ export default function UploadPage() {
 //    })
 //  }, [])
 
+
   /**
    * Validation
    * 
@@ -220,6 +227,10 @@ export default function UploadPage() {
       setUploadDisabled(false);
     }
   }, [formData])
+
+  useEffect(() => {
+    console.log(imageUpload);
+  }, [imageUpload])
 
 
 /* Render */
