@@ -53,6 +53,7 @@ export default function LabelsForm(props) {
           >
             {category.category_displaytext}
           </div>
+          <DescriptionHover text={category.description}/>
         </div>
         {
           // Special case: modality.

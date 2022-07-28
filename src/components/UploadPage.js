@@ -218,9 +218,17 @@ export default function UploadPage() {
 
     // Check: image exists.
     let validImg = (imageUpload !== null);
+    let validLabels = true;
 
     // Check: all required fields are filled. TODO
-    let validLabels = (formData !== LabelStructure);
+    if ((formData['location']['in_outdoor'] === "") || (formData['location']['purpose'] === "") ||
+        (formData['demographic']['age'] === "") || (formData['demographic']['sex'] === "") ||
+        (formData['spectators']['quantity']) === "") {
+          validLabels = false;
+    }
+    // let validLabels = (formData !== LabelStructure);
+
+    console.log("validLabels: " + validLabels);
 
     // If all valid, enable upload button.
     if (validLabels && validImg) {

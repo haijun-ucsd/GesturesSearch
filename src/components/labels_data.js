@@ -169,6 +169,7 @@ export const labels_data = [
   },
   { category: "modality",
     category_displaytext: "Modality",
+    description: "select unavailable modalities (green for available and red for unavailable)",
     color: "#4FC1E8",
     subcategories: [
       { subcategory: "head",
