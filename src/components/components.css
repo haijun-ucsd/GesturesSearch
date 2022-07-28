@@ -157,13 +157,29 @@
   padding: 24px 40px;
 }
 
+.WaitingRoomControl_addpic {
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+}
+
+.WaitingRoomControl_selectpic {  /* right now same as WaitingRoomControl_addpic */
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+}
+
 .WaitingRoom {
   /* as a container */
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
   align-items: flex-start;
-  padding-bottom: 40px;
+  padding: 24px 40px 40px;
   gap: 24px;
 }
 
@@ -181,7 +197,7 @@
 
 /* Form */
 
-.Form {
+.LabelsForm {
   /*position: absolute;
   right: 0;
   top: 0;*/

@@ -4,7 +4,8 @@ import './components.css';
 import { labels_data } from "./labels_data.js";
 import { useState , useEffect } from 'react';
 
-/* Label
+/**
+ * Label
  *
  * states:
  *  - value: string
@@ -43,7 +44,8 @@ class Label extends React.Component {
   }
 }
 
-/* CheckLabel
+/**
+ * CheckLabel
  *
  * A checkbox input field, but in label format. Check to highlight the current label.
  *
@@ -71,10 +73,12 @@ function CheckLabel(props) {
     >
       <input
         type="checkbox"
+        value={props.value}
         checked={checked}
         onChange={(e) => {
           setChecked(prev => !prev);
-          props.form_change_handler(e);
+          //console.log("checked state in CheckLabel: " + checked); //DEBUG
+          props.form_change_handler(e, !checked, props.category, props.subcategory);  // note: use "!checked" instead of "checked" because check state has not changed yet here
         }}
       />
       <div
@@ -89,7 +93,8 @@ function CheckLabel(props) {
   )
 }
 
-/* CheckLabelList
+/**
+ * CheckLabelList
  *
  * Display all labels in the given list, each label is checkable.
  *
@@ -111,7 +116,8 @@ function CheckLabelList(props) {
   )
 }*/
 
-/* Filter
+/**
+ * Filter
  *
  * parent props:
  *  - value: string
@@ -127,7 +133,7 @@ function Filter(props) {
       </div>
       <button
         className="Label_CloseBtn"
-        onClick={() => props.onClick()}
+        onClick={() => props.remove_filter()}
       >
         x
       </button>
@@ -135,7 +141,8 @@ function Filter(props) {
   );
 }
 
-/* FilterList
+/**
+ * FilterList
  *
  * functions:
  *  - add_filter()
@@ -157,7 +164,8 @@ class FilterList extends React.Component {
     };
   }
 
-  /* add_filter
+  /**
+   * add_filter
    *
    * references:
    *  https://stackoverflow.com/questions/43784554/how-to-add-input-data-to-list-in-react-js
@@ -200,7 +208,8 @@ class FilterList extends React.Component {
     console.log("added filter: " + newVal);
   }
 
-  /* remove_filter
+  /**
+   * remove_filter
    *
    * @param index: Index of the element to remove.
    *
@@ -234,7 +243,7 @@ class FilterList extends React.Component {
               <Filter
                 value={item.value}
                 category={item.category}
-                onClick={() => this.remove_filter(item.value)}
+                remove_filter={() => this.remove_filter(item.value)}
               />
             </div>
           )}
@@ -257,7 +266,8 @@ class FilterList extends React.Component {
   }
 }
 
-/* FilterRearrange
+/**
+ * FilterRearrange
  */
 class FilterRearrange extends React.Component {
 
@@ -270,11 +280,57 @@ class FilterRearrange extends React.Component {
   }
 }
 
-/* Navbar */
+/**
+ * LabelStructure
+ *
+ * The template of label structure to help display and upload.
+ * (updated from the old "initialFormData")
+ *
+ * references:
+ *  https://medium.com/@alifabdullah/never-confuse-json-and-javascript-object-ever-again-7c32f4c071ad
+ */
+const LabelStructure = Object.freeze({
+  url: "",
+  location: {
+    in_outdoor: "",
+    purpose: [],
+    architecture_component: [],
+  },
+  spectators: {
+    quantity: "",
+    density: "",
+    attentive: "",
+  },
+  demographic: {
+    age: "",
+    sex: "",
+    social_role: [],
+  },
+  modality: {
+    head: true,
+    eyes: true,
+    voice: true,
+    facial_expression: true,
+    r_arm: true,
+    l_arm: true,
+    r_hand: true,
+    l_hand: true,
+    legs: true,
+    feet: true,
+  },
+  posture: [],
+})
 
-/* WaitingRoom
+/**
+ * Navbar */
+
+/**
+ * WaitingRoom
  *
  * Waiting room for pictures to be labeled before being uploaded to filebase.
+ *
+ * parent props:
+ *  - setImageUpload()
  *
  * hooks:
  *  - addedPic (same as the old "imageUpload")
@@ -294,26 +350,44 @@ function WaitingRoom(props) {
   return (
     <div style={{/* as an item */ flexGrow: 1}}>
       <div className="WaitingRoomControl">
-        <label for="add-pic" className="Btn_primary">
-          {addedPic == null ? // TODO: change after supporting adding multiple pictures.
-            <span>+ Add picture</span>
-          :
-            <span>&#8634; Change picture</span>
-          }
-        </label>
-        <input
-          id="add-pic"
-          type="file"
-          onChange={(event) => {
-            // On picture change, check for validity, then accept and display the new picture.
-            if (event.target.files && event.target.files[0]) {
-              console.log("Valid new picture, refresh waiting room."); //DUBUG
-              setAddedPic(event.target.files[0]);
-              setAddedPicUrl(URL.createObjectURL(event.target.files[0]));
-            }
-          }}
-          style={{display:"none"}}
-        />
+        <div className="WaitingRoomControl_addpic">
+          <div id="add-pic-btn-div">
+            <label htmlFor="add-pic-btn" className="Btn_primary">
+              {addedPic == null ? // TODO: change after supporting adding multiple pictures.
+                <span>+ Add picture</span>
+              :
+                <span>&#8634; Change picture</span>
+              }
+            </label>
+            <input
+              id="add-pic-btn"
+              type="file"
+              onChange={(event) => {
+                // On picture change, check for validity, then accept and display the new picture.
+                if (event.target.files && event.target.files[0]) {
+                  console.log("Valid new picture, refresh waiting room."); //DUBUG
+                  setAddedPic(event.target.files[0]);
+                  let newUrl = URL.createObjectURL(event.target.files[0]);
+                  setAddedPicUrl(newUrl);
+                  props.setImageUpload(newUrl);
+                }
+              }}
+              style={{display:"none"}}
+            />
+          </div>
+          <div id="upload-btn-div">
+            <button
+              className="Btn_primary"
+              type="submit"
+              onClick={props.uploadImage}
+              variant="primary"
+              //disabled={btnDisabled}
+            >
+                Upload
+            </button>
+          </div>
+        </div>
+        <div className="WaitingRoomControl_selectpic"></div>
       </div>
       <div className="WaitingRoom">
         {addedPic != null ?
@@ -332,117 +406,8 @@ function WaitingRoom(props) {
   );
 }
 
-/* Form
- *
- * The form to guide labeling.
- * TODO: Currently implemented with a fixed dummy list, will replace with fetching data from database.
- */
-class Form extends React.Component {
-
-  form_change_handler(e) {
-    e.preventDefault();
-    console.log(this.props.formData); //DEBUG
-    this.props.passData(this.props.formData); // function from parent props
-  }
-
-  render_category(category) {
-
-    // Determine color according to category.
-    var color = category.color;
-
-    // Render subcategories.
-    return (
-      <div className="FormCategory">
-        <div className="CategoryHeader">
-          <div
-            className="CategoryName"
-            style={{color:color}}
-          >
-            {category.category}
-          </div>
-        </div>
-        {category.subcategories.map(
-          (subcategory) => this.render_subcategory(subcategory, color)
-        )}
-      </div>
-    );
-  }
-
-  /*
-   * @param color: Inherit color from category.
-   *
-   * references:
-   *  https://stackoverflow.com/questions/8605516/default-select-option-as-blank
-   */
-  render_subcategory(subcategory, color) {
-
-    // Check subcategory type, determine style accordingly.
-    if (subcategory.type == 1) {
-
-      // Type 1 → dropdown (each picture should strictly have =1 label under this category.)
-      return (
-        <div className="FormSubcategory">
-          <div className="SubcategoryHeader">
-            <div className="SubcategoryName">
-              {subcategory.subcategory}
-            </div>
-          </div>
-          <select
-            className="Dropdown"
-            id={subcategory.subcategory}
-            onChange = {(e) => this.form_change_handler(e)}
-          >
-              <option disabled selected value>
-                ---
-              </option>
-            {subcategory.labels.map((label) =>
-              <option
-                value={label.label}
-                key={label.label_id}
-              >
-                {label.label}
-              </option>
-            )}
-          </select>
-        </div>
-      );
-    } else {
-
-      // Type 2 → checklabel list (accepts a list of labels, any number from 0 to all possible.)
-      // TODO: make searchable
-      return (
-        <div className="FormSubcategory">
-          <div className="SubcategoryHeader">
-            <div className="SubcategoryName">
-              {subcategory.subcategory}
-            </div>
-          </div>
-          <div className="LabelList" id={subcategory.subcategory}>
-            {subcategory.labels.map((label) =>
-              <CheckLabel
-                value={label.label}
-                color={color}
-                key={label.label_id}
-              />
-            )}
-          </div>
-        </div>
-      );
-    }
-  }
-
-  render() {
-    return (
-      <div className="Form">
-        {labels_data.map(
-          (category) => this.render_category(category)
-        )}
-      </div>
-    );
-  }
-}
-
-/* Menu (TODO: replace with "Facet" and add more)
+/**
+ * Menu (TODO: replace with "Facet" and add more)
  */
 class Menu extends React.Component {
 
@@ -457,21 +422,37 @@ class Menu extends React.Component {
 
 
 
-/* Applied filters */
-/* Search bar */
-/* Dots */
-/* Search */
-/* Human figure */
-/* Modality */
-/* Rearrange filters */
-/* Img */
-/* Category */
-/* Statistics */
-/* Info */
-/* Imgs */
-/* Btn */
-/* Checkbox */
-/* CheckboxList */
-/* Dropdown */
+/**
+ * Applied filters */
+/**
+ * Search bar */
+/**
+ * Dots */
+/**
+ * Search */
+/**
+ * Human figure */
+/**
+ * Modality */
+/**
+ * Rearrange filters */
+/**
+ * Img */
+/**
+ * Category */
+/**
+ * Statistics */
+/**
+ * Info */
+/**
+ * Imgs */
+/**
+ * Btn */
+/**
+ * Checkbox */
+/**
+ * CheckboxList */
+/**
+ * Dropdown */
 
-export { Label, CheckLabel, Filter, FilterList, WaitingRoom, Form, Menu };
+export { CheckLabel, LabelStructure, WaitingRoom };

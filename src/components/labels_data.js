@@ -5,10 +5,12 @@
  */
 
 export const labels_data = [
-  { category: "Location",
+  { category: "location",
+    category_displaytext: "Location",
     color: "#A0D568",
     subcategories: [
-      { subcategory: "In/outdoor",
+      { subcategory: "in_outdoor",
+        subcategory_displaytext: "In/outdoor",
         type: 1,
         labels: [
           { label: "indoor",
@@ -21,7 +23,8 @@ export const labels_data = [
           },
         ],
       },
-      { subcategory: "Purpose of the place",
+      { subcategory: "purpose",
+        subcategory_displaytext: "Purpose of the place",
         type: 2,
         labels: [
           { label: "library",
@@ -42,7 +45,8 @@ export const labels_data = [
           },
         ],
       },
-      { subcategory: "Architecture component",
+      { subcategory: "architecture_component",
+        subcategory_displaytext: "Architecture component",
         type: 2,
         labels: [
           { label: "entrance",
@@ -65,10 +69,12 @@ export const labels_data = [
       },
     ],
   },
-  { category: "Spectators",
+  { category: "spectators",
+    category_displaytext: "Spectators",
     color: "#FFCE54",
     subcategories: [
-      { subcategory: "Quantity",
+      { subcategory: "quantity",
+        subcategory_displaytext: "Quantity",
         type: 1,
         labels: [
           { label: "none",
@@ -85,7 +91,8 @@ export const labels_data = [
           },
         ],
       },
-      { subcategory: "Density",
+      { subcategory: "density",
+        subcategory_displaytext: "Density",
         type: 1,
         labels: [
           { label: "none",
@@ -102,7 +109,8 @@ export const labels_data = [
           },
         ],
       },
-      { subcategory: "Attentive",
+      { subcategory: "attentive",
+        subcategory_displaytext: "Attentive",
         type: 1,
         labels: [
           { label: "0",
@@ -149,10 +157,12 @@ export const labels_data = [
       },
     ],
   },
-  { category: "Modality",
+  { category: "modality",
+    category_displaytext: "Modality",
     color: "#4FC1E8",
     subcategories: [
-      { subcategory: "Head",
+      { subcategory: "head",
+        subcategory_displaytext: "Head",
         type: 1,
         labels: [
           { label: "available",
@@ -165,7 +175,8 @@ export const labels_data = [
           },
         ],
       },
-      { subcategory: "Eyes",
+      { subcategory: "eyes",
+        subcategory_displaytext: "Eyes",
         type: 1,
         labels: [
           { label: "available",
@@ -178,7 +189,8 @@ export const labels_data = [
           },
         ],
       },
-      { subcategory: "Voice",
+      { subcategory: "voice",
+        subcategory_displaytext: "Voice",
         type: 1,
         labels: [
           { label: "available",
@@ -191,7 +203,8 @@ export const labels_data = [
           },
         ],
       },
-      { subcategory: "Facial expression",
+      { subcategory: "facial_expression",
+        subcategory_displaytext: "Facial expression",
         type: 1,
         labels: [
           { label: "available",
@@ -204,7 +217,8 @@ export const labels_data = [
           },
         ],
       },
-      { subcategory: "R arm",
+      { subcategory: "r_arm",
+        subcategory_displaytext: "Right arm",
         type: 1,
         labels: [
           { label: "available",
@@ -217,7 +231,8 @@ export const labels_data = [
           },
         ],
       },
-      { subcategory: "L arm",
+      { subcategory: "l_arm",
+        subcategory_displaytext: "Left arm",
         type: 1,
         labels: [
           { label: "available",
@@ -230,7 +245,8 @@ export const labels_data = [
           },
         ],
       },
-      { subcategory: "R hand",
+      { subcategory: "r_hand",
+        subcategory_displaytext: "Right hand",
         type: 1,
         labels: [
           { label: "available",
@@ -243,7 +259,8 @@ export const labels_data = [
           },
         ],
       },
-      { subcategory: "L hand",
+      { subcategory: "l_hand",
+        subcategory_displaytext: "Left hand",
         type: 1,
         labels: [
           { label: "available",
@@ -256,7 +273,8 @@ export const labels_data = [
           },
         ],
       },
-      { subcategory: "Legs",
+      { subcategory: "legs",
+        subcategory_displaytext: "Legs",
         type: 1,
         labels: [
           { label: "available",
@@ -269,7 +287,8 @@ export const labels_data = [
           },
         ],
       },
-      { subcategory: "Feet",
+      { subcategory: "feet",
+        subcategory_displaytext: "Feet",
         type: 1,
         labels: [
           { label: "available",
@@ -284,10 +303,12 @@ export const labels_data = [
       },
     ],
   },
-  { category: "Demographic",
+  { category: "demographic",
+    category_displaytext: "Demographic",
     color: "#ED5564",
     subcategories: [
-      { subcategory: "Age",
+      { subcategory: "age",
+        subcategory_displaytext: "Age",
         type: 1,
         labels: [
           { label: "baby",
@@ -316,7 +337,8 @@ export const labels_data = [
           },
         ],
       },
-      { subcategory: "Biological sex",
+      { subcategory: "sex",
+        subcategory_displaytext: "Biological sex",
         type: 1,
         labels: [
           { label: "female",
@@ -329,7 +351,8 @@ export const labels_data = [
           },
         ],
       },
-      { subcategory: "Social role",
+      { subcategory: "social_role",
+        subcategory_displaytext: "Social role",
         type: 2,
         labels: [
           { label: "staff",
@@ -352,10 +375,12 @@ export const labels_data = [
       },
     ],
   },
-  { category: "Posture",
+  { category: "posture",
+    category_displaytext: "Posture",
     color: "#AC92EB",
     subcategories: [
-      { subcategory: "",
+      { subcategory: "posture",
+        subcategory_displaytext: "",
         type: 2,
         labels: [
           { label: "sitting",
