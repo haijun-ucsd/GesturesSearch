@@ -1,3 +1,14 @@
+/**------------ TEMPORARY ------------**/
+
+.dummy_flex {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+
+
 /**------------ ExplorePage ------------**/
 
 .explore_img {
@@ -13,16 +24,7 @@
 
 p {
   text-align: center;
-}
-
-/**------------ TEMPORARY ------------**/
-
-.dummy_flex {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-}
+} /* TODO: make this a class instead of apply to all p elements */
 
 
 
@@ -161,7 +163,7 @@ p {
 
 .ModalityDisplay_statelist {
   /* as an item */
-  width: 160px;
+  width: 200px;
   /* as a container */
   display: flex;
   flex-direction: column;
@@ -386,6 +388,7 @@ p {
   font-size: 18px;
   line-height: 120%;
   letter-spacing: 0.01em;
+  filter: brightness(80%); /* darkern the colors a bit for readability */
 }
 
 .FormSubcategories {  /* container for all subcategories */
