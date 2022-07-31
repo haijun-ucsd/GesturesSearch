@@ -10,10 +10,6 @@ import LabelsForm from './LabelsForm';
 import { LabelStructure, WaitingRoom } from './components';
 
 export default function UploadPage() {
-  const [uploadDisabled, setUploadDisabled] = useState(true);  // modified based on the old "btnDisabled"
-  const [imageUpload, setImageUpload] = useState(null);
-  // const [currImg, setCurrImg] = useState(null);
-
 
 /* To collect data from LabelsForm (labels) */
 
@@ -137,9 +133,15 @@ export default function UploadPage() {
     // Update formData by toggling the value of the current subcategory.
     setFormData((prev) => {
       console.log("before change: " + categoryname + " >> " + subcategoryname + " >> " + prev[categoryname][subcategoryname]); //DEBUG
-      prev[categoryname][subcategoryname] = !prev[categoryname][subcategoryname];
-      console.log("after change: " + categoryname + " >> " + subcategoryname + " >> " + prev[categoryname][subcategoryname]); //DEBUG
-      return prev;
+      let newFormData = {
+        ...prev,
+        [categoryname]: {
+          ...prev[categoryname],
+          [subcategoryname]: !prev[categoryname][subcategoryname],
+        },
+      };
+      console.log("after change: " + categoryname + " >> " + subcategoryname + " >> " + newFormData[categoryname][subcategoryname]); //DEBUG
+      return newFormData;
     });
     console.log("updated formData ↓"); console.log(formData); //DEBUG
   };
@@ -147,13 +149,17 @@ export default function UploadPage() {
   // DEBUG
   useEffect(() => {
     console.log("updated formData ↓"); console.log(formData);
-  })
+  }, [formData])
 
 
 /* To collect data from WaitingRoom (pictures) */
 
+  const [imageUpload, setImageUpload] = useState(null);
+
 
 /* To handle upload */
+
+  const [uploadDisabled, setUploadDisabled] = useState(true);
 
   /**
    * uploadImage
@@ -239,7 +245,8 @@ export default function UploadPage() {
   //   setCurrImg(currImg)
   // }
 
-/* Regular check effects */
+
+/* Regular check effects & Validation */
 
 //  useEffect(() => {
 //    // listAll(imageListRef).then((response) => {
@@ -261,7 +268,6 @@ export default function UploadPage() {
 //      setImageList(append);
 //    })
 //  }, [])
-
 
   /**
    * Validation
@@ -291,8 +297,9 @@ export default function UploadPage() {
     }
   }, [formData])
 
+  // DEBUG
   useEffect(() => {
-    console.log(imageUpload);
+    console.log("imageUpload ↓"); console.log(imageUpload);
   }, [imageUpload])
 
 

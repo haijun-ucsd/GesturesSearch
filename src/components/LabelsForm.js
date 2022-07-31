@@ -181,9 +181,9 @@ export default function LabelsForm(props) {
           <div className="SubcategoryName ModalityDisplay_state">
             {subcategory.subcategory_displaytext} : <span>
               { props.formData[categoryname][subcategory.subcategory] ?
-                <span style={{color:"green"}}>√</span>
+                <span style={{color:"green"}}>available</span>
               :
-                <span style={{color:"red"}}>×</span>
+                <span style={{color:"red"}}>occupied</span>
               }
             </span>
           </div>
