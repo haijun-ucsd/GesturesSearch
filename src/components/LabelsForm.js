@@ -176,7 +176,7 @@ export default function LabelsForm(props) {
 
       // Type 3 → human figure
       case 3:
-        console.log("is formData updated? ↓"); console.log(props.formData); //DEBUG
+        //console.log("is formData updated? ↓"); console.log(props.formData); //DEBUG
         return (
           <div className="SubcategoryName ModalityDisplay_state">
             {subcategory.subcategory_displaytext} : <span>
