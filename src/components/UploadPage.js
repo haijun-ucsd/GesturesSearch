@@ -50,30 +50,63 @@ export default function UploadPage() {
 
     // Update formData by modifying the list of the current subcategory.
     // Toggle: when exists, remove; when doesn't exist, add.
-    if (checked) {
 
-      // Add label.
-      setFormData((prev) => {
-        console.log("before change: " + categoryname + " >> " + subcategoryname + " >> ↓"); console.log(prev[categoryname][subcategoryname]); //DEBUG
-        let newArr = [...prev[categoryname][subcategoryname], e.target.value];
-        prev[categoryname][subcategoryname] = newArr;
-        console.log("after change: " + categoryname + " >> " + subcategoryname + " >> ↓"); console.log(prev[categoryname][subcategoryname]); //DEBUG
-        return prev;
-      });
-    } else {
+    // Special case: posture. No subcatrgory layer when storing.
+    if (categoryname === 'posture') {
+      if (checked) {
 
-      // Remove label.
-      setFormData((prev) => {
-        console.log("before change: " + categoryname + " >> " + subcategoryname + " >> ↓"); console.log(prev[categoryname][subcategoryname]); //DEBUG
-        let newArr =
-          prev[categoryname][subcategoryname].filter(
-            (item) => item!=e.target.value
-          );
-        prev[categoryname][subcategoryname] = newArr;
-        console.log("after change: " + categoryname + " >> " + subcategoryname + " >> ↓"); console.log(prev[categoryname][subcategoryname]); //DEBUG
-        return prev;
-      });
+        // Add label.
+        setFormData((prev) => {
+          console.log("before change: posture >> ↓"); console.log(prev['posture']); //DEBUG
+          let newArr = [...prev['posture'], e.target.value];
+          prev['posture'] = newArr;
+          console.log("after change: posture >> ↓"); console.log(prev['posture']); //DEBUG
+          return prev;
+        });
+      } else {
+
+        // Remove label.
+        setFormData((prev) => {
+          console.log("before change: posture >> ↓"); console.log(prev['posture']); //DEBUG
+          let newArr =
+            prev['posture'].filter(
+              (item) => item!==e.target.value
+            );
+          prev[categoryname] = newArr;
+          console.log("after change: posture >> ↓"); console.log(prev['posture']); //DEBUG
+          return prev;
+        });
+      }
     }
+
+    // Default case.
+    else {
+      if (checked) {
+
+        // Add label.
+        setFormData((prev) => {
+          console.log("before change: " + categoryname + " >> " + subcategoryname + " >> ↓"); console.log(prev[categoryname][subcategoryname]); //DEBUG
+          let newArr = [...prev[categoryname][subcategoryname], e.target.value];
+          prev[categoryname][subcategoryname] = newArr;
+          console.log("after change: " + categoryname + " >> " + subcategoryname + " >> ↓"); console.log(prev[categoryname][subcategoryname]); //DEBUG
+          return prev;
+        });
+      } else {
+
+        // Remove label.
+        setFormData((prev) => {
+          console.log("before change: " + categoryname + " >> " + subcategoryname + " >> ↓"); console.log(prev[categoryname][subcategoryname]); //DEBUG
+          let newArr =
+            prev[categoryname][subcategoryname].filter(
+              (item) => item!==e.target.value
+            );
+          prev[categoryname][subcategoryname] = newArr;
+          console.log("after change: " + categoryname + " >> " + subcategoryname + " >> ↓"); console.log(prev[categoryname][subcategoryname]); //DEBUG
+          return prev;
+        });
+      }
+    }
+
     console.log("updated formData ↓"); console.log(formData); //DEBUG
   };
 
@@ -245,6 +278,7 @@ export default function UploadPage() {
         form_change_handler_type1={form_change_handler_type1}
         form_change_handler_type2={form_change_handler_type2}
         form_change_handler_type3={form_change_handler_type3}
+        formData={formData}
       />
     </div>
   );
