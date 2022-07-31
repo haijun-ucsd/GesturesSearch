@@ -13,9 +13,10 @@ export default function Navbar() {
   return (
     <div>
       <nav className="Navbar">
+        <NavLink to="/about" className="Navtab">About</NavLink>
+        <NavLink to="/login" className="Navtab">Login</NavLink>
         <NavLink to="/upload" className="Navtab">Upload</NavLink>
         <NavLink to="/explore" className="Navtab">Explore</NavLink>
-        {/*<NavLink to="/login">Login</NavLink>*/}
       </nav>
     </div>
   );
