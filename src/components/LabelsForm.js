@@ -74,14 +74,6 @@ export default function LabelsForm(props) {
             );
           }
 
-//          // Special case: posture.
-//          // Disabling posture category from rendering for now // TODO
-//          else if (category.category === 'posture') {
-//            return (
-//              <div></div>
-//            ); 
-//          }
-
           // Default case.
           else {
             return (
@@ -105,6 +97,7 @@ export default function LabelsForm(props) {
    *
    * references:
    *  https://stackoverflow.com/questions/8605516/default-select-option-as-blank
+   *  https://stackoverflow.com/questions/39523040/concatenating-variables-and-strings-in-react
    */
   const render_subcategory = (subcategory, categoryname, color) => {
 
