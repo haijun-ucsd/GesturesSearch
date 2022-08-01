@@ -10,10 +10,6 @@ import LabelsForm from './LabelsForm';
 import { LabelStructure, WaitingRoom } from './components';
 
 export default function UploadPage() {
-  const [uploadDisabled, setUploadDisabled] = useState(true);  // modified based on the old "btnDisabled"
-  const [imageUpload, setImageUpload] = useState(null);
-  // const [currImg, setCurrImg] = useState(null);
-
 
 /* To collect data from LabelsForm (labels) */
 
@@ -41,6 +37,7 @@ export default function UploadPage() {
    * 
    * references:
    *  https://www.robinwieruch.de/react-add-item-to-list/
+   *  https://stackoverflow.com/questions/58478289/react-hooks-cannot-assign-to-read-only-property
    */
   const form_change_handler_type2 = (e, checked, categoryname, subcategoryname) => {
     //e.preventDefault();
@@ -50,31 +47,80 @@ export default function UploadPage() {
 
     // Update formData by modifying the list of the current subcategory.
     // Toggle: when exists, remove; when doesn't exist, add.
-    if (checked) {
 
-      // Add label.
-      setFormData((prev) => {
-        console.log("before change: " + categoryname + " >> " + subcategoryname + " >> ↓"); console.log(prev[categoryname][subcategoryname]); //DEBUG
-        let newArr = [...prev[categoryname][subcategoryname], e.target.value];
-        prev[categoryname][subcategoryname] = newArr;
-        console.log("after change: " + categoryname + " >> " + subcategoryname + " >> ↓"); console.log(prev[categoryname][subcategoryname]); //DEBUG
-        return prev;
-      });
-    } else {
+    // Special case: posture. No subcatrgory layer when storing.
+    if (categoryname === 'posture') {
+      if (checked) {
 
-      // Remove label.
-      setFormData((prev) => {
-        console.log("before change: " + categoryname + " >> " + subcategoryname + " >> ↓"); console.log(prev[categoryname][subcategoryname]); //DEBUG
-        let newArr =
-          prev[categoryname][subcategoryname].filter(
-            (item) => item!=e.target.value
-          );
-        prev[categoryname][subcategoryname] = newArr;
-        console.log("after change: " + categoryname + " >> " + subcategoryname + " >> ↓"); console.log(prev[categoryname][subcategoryname]); //DEBUG
-        return prev;
-      });
+        // Add label.
+        setFormData((prev) => {
+          console.log("before change: posture >> ↓"); console.log(prev['posture']); //DEBUG
+          let newArr = [...prev['posture'], e.target.value];
+          let newFormData = {
+            ...prev,
+            ['posture']: newArr,
+          };
+          console.log("after change: posture >> ↓"); console.log(newFormData['posture']); //DEBUG
+          return newFormData;
+        });
+      } else {
+
+        // Remove label.
+        setFormData((prev) => {
+          console.log("before change: posture >> ↓"); console.log(prev['posture']); //DEBUG
+          let newArr =
+            prev['posture'].filter(
+              (item) => item!==e.target.value
+            );
+          let newFormData = {
+            ...prev,
+            ['posture']: newArr,
+          };
+          console.log("after change: posture >> ↓"); console.log(newFormData['posture']); //DEBUG
+          return newFormData;
+        });
+      }
     }
-    console.log("updated formData ↓"); console.log(formData); //DEBUG
+
+    // Default case.
+    else {
+      if (checked) {
+
+        // Add label.
+        setFormData((prev) => {
+          console.log("before change: " + categoryname + " >> " + subcategoryname + " >> ↓"); console.log(prev[categoryname][subcategoryname]); //DEBUG
+          let newArr = [...prev[categoryname][subcategoryname], e.target.value];
+          let newFormData = {
+            ...prev,
+            [categoryname]: {
+              ...prev[categoryname],
+              [subcategoryname]: newArr,
+            },
+          };
+          console.log("after change: " + categoryname + " >> " + subcategoryname + " >> ↓"); console.log(newFormData[categoryname][subcategoryname]); //DEBUG
+          return newFormData;
+        });
+      } else {
+
+        // Remove label.
+        setFormData((prev) => {
+          console.log("before change: " + categoryname + " >> " + subcategoryname + " >> ↓"); console.log(prev[categoryname][subcategoryname]); //DEBUG
+          let newArr =
+            prev[categoryname][subcategoryname].filter(
+              (item) => item!==e.target.value
+            );
+          let newFormData = {
+            ...prev,
+            [categoryname]: {
+              ...prev[categoryname],
+              [subcategoryname]: newArr,
+            },
+          };
+          console.log("after change: " + categoryname + " >> " + subcategoryname + " >> ↓"); console.log(newFormData[categoryname][subcategoryname]); //DEBUG
+          return newFormData;
+        });
+      }
+    }
   };
 
   /**
@@ -87,18 +133,33 @@ export default function UploadPage() {
     // Update formData by toggling the value of the current subcategory.
     setFormData((prev) => {
       console.log("before change: " + categoryname + " >> " + subcategoryname + " >> " + prev[categoryname][subcategoryname]); //DEBUG
-      prev[categoryname][subcategoryname] = !prev[categoryname][subcategoryname];
-      console.log("after change: " + categoryname + " >> " + subcategoryname + " >> " + prev[categoryname][subcategoryname]); //DEBUG
-      return prev;
+      let newFormData = {
+        ...prev,
+        [categoryname]: {
+          ...prev[categoryname],
+          [subcategoryname]: !prev[categoryname][subcategoryname],
+        },
+      };
+      console.log("after change: " + categoryname + " >> " + subcategoryname + " >> " + newFormData[categoryname][subcategoryname]); //DEBUG
+      return newFormData;
     });
     console.log("updated formData ↓"); console.log(formData); //DEBUG
   };
 
+  // DEBUG
+  useEffect(() => {
+    console.log("updated formData ↓"); console.log(formData);
+  }, [formData])
+
 
 /* To collect data from WaitingRoom (pictures) */
 
+  const [imageUpload, setImageUpload] = useState(null);
+
 
 /* To handle upload */
+
+  const [uploadDisabled, setUploadDisabled] = useState(true);
 
   /**
    * uploadImage
@@ -184,7 +245,8 @@ export default function UploadPage() {
   //   setCurrImg(currImg)
   // }
 
-/* Regular check effects */
+
+/* Regular check effects & Validation */
 
 //  useEffect(() => {
 //    // listAll(imageListRef).then((response) => {
@@ -207,7 +269,6 @@ export default function UploadPage() {
 //    })
 //  }, [])
 
-
   /**
    * Validation
    * 
@@ -228,7 +289,7 @@ export default function UploadPage() {
     }
     // let validLabels = (formData !== LabelStructure);
 
-    console.log("validLabels: " + validLabels);
+    //console.log("validLabels: " + validLabels); //DEBUG
 
     // If all valid, enable upload button.
     if (validLabels && validImg) {
@@ -236,8 +297,9 @@ export default function UploadPage() {
     }
   }, [formData])
 
+  // DEBUG
   useEffect(() => {
-    console.log(imageUpload);
+    console.log("imageUpload ↓"); console.log(imageUpload);
   }, [imageUpload])
 
 
@@ -253,6 +315,7 @@ export default function UploadPage() {
         form_change_handler_type1={form_change_handler_type1}
         form_change_handler_type2={form_change_handler_type2}
         form_change_handler_type3={form_change_handler_type3}
+        formData={formData}
       />
     </div>
   );

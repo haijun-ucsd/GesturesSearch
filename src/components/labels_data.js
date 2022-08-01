@@ -131,7 +131,6 @@ export const labels_data = [
             label_id: 10,
             pictures: [],
           },
-
         ],
       },
     ],

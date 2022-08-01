@@ -280,9 +280,8 @@ export default function BodyComponent(props) {
         {Object.keys(svgElements)
           .map((part: string) => {
             let selected = true; // default: available
-//            console.log("HERERERE");
-//            console.log("part: " + part);
-//            console.log("parts[part]: " + parts[part]);
+            //console.log("part: " + part); // DEBUG
+            //console.log("parts[part]: " + parts[part]); // DEBUG
             selected = !parts[part]; // selected = unavailable
             return svgElements[part](selected);
           })

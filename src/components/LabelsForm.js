@@ -18,6 +18,7 @@ import DescriptionHover from "./DescriptionHover.js";
  *  - form_change_handler_type1 (e, categoryname, subcategoryname)
  *  - form_change_handler_type2 (e, checked, categoryname, subcategoryname)
  *  - form_change_handler_type3 (e, categoryname)
+ *  - formData: up-to-date form data for displaying preview (eg. modality states).
  *
  * references:
  *  https://stackoverflow.com/questions/35537229/how-can-i-update-the-parents-state-in-react
@@ -30,19 +31,15 @@ export default function LabelsForm(props) {
    * render_category
    * 
    * To render the entire module of one category, set color accordingly.
+   * 
+   * references:
+   *  https://stackoverflow.com/questions/44046037/if-else-statement-inside-jsx-reactjs
    */
   const render_category = (category) => {
 
     // Determine color according to category.
     var color = category.color;
 
-    // Disabling posture category from rendering for now
-    if (category.category === 'posture') {
-      console.log('hit')
-      return (
-        <div></div>
-      )    
-    }
     // Render subcategories.
     return (
       <div className="FormCategory">
@@ -55,31 +52,40 @@ export default function LabelsForm(props) {
           </div>
           <DescriptionHover text={category.description}/>
         </div>
-        {
+        {(() => {
+
           // Special case: modality.
-          category.category == "modality" ?
-            <div className="ModalityDisplay">
-              <div>
-                <BodyComponent
-                  partsInput={LabelStructure.modality}
-                  form_change_handler={props.form_change_handler_type3}
-                />
+          if (category.category === 'modality') {
+            return (
+              <div className="ModalityDisplay">
+                <div>
+                  <BodyComponent
+                    partsInput={LabelStructure.modality}
+                    form_change_handler={props.form_change_handler_type3}
+                  />
+                </div>
+                <div className="FormSubcategories ModalityDisplay_statelist">
+                  {category.subcategories.map(
+                    (subcategory) =>
+                    render_subcategory(subcategory, category.category, color)
+                  )}
+                </div>
               </div>
+            );
+          }
+
+          // Default case.
+          else {
+            return (
               <div className="FormSubcategories">
                 {category.subcategories.map(
                   (subcategory) =>
                   render_subcategory(subcategory, category.category, color)
                 )}
               </div>
-            </div>
-          :
-            <div className="FormSubcategories">
-              {category.subcategories.map(
-                (subcategory) =>
-                render_subcategory(subcategory, category.category, color)
-              )}
-            </div>
-        }
+            );
+          }
+        })()}
       </div>
     );
   };
@@ -91,6 +97,7 @@ export default function LabelsForm(props) {
    *
    * references:
    *  https://stackoverflow.com/questions/8605516/default-select-option-as-blank
+   *  https://stackoverflow.com/questions/39523040/concatenating-variables-and-strings-in-react
    */
   const render_subcategory = (subcategory, categoryname, color) => {
 
@@ -162,22 +169,16 @@ export default function LabelsForm(props) {
 
       // Type 3 → human figure
       case 3:
+        //console.log("is formData updated? ↓"); console.log(props.formData); //DEBUG
         return (
-          <div className="ModalityDisplay_statelist">
-            <div className="SubcategoryName">
-              {subcategory.subcategory_displaytext}
-            </div>
-            <input
-              type="checkbox"
-//              value={checked}
-//              checked={checked}
-//              onChange={(e) => {
-//                setChecked(prev => !prev);
-//                //console.log("checked state in CheckLabel: " + checked); //DEBUG
-//                props.form_change_handler(e, !checked, props.category, props.subcategory);  // note: use "!checked" instead of "checked" because check state has not changed yet here
-//              }}
-              style={{display:"none"}}
-            />
+          <div className="SubcategoryName ModalityDisplay_state">
+            {subcategory.subcategory_displaytext} : <span>
+              { props.formData[categoryname][subcategory.subcategory] ?
+                <span style={{color:"#668842"}}>√ available</span>
+              :
+                <span style={{color:"#983640"}}>× occupied</span>
+              }
+            </span>
           </div>
         );
         break;
