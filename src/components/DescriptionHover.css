@@ -63,5 +63,7 @@
   font-size: 14px;
   line-height: 120%;
   letter-spacing: 0.01em;
-  color:#3c4043d7
+  color:#3c4043d7;
+  white-space: pre-line;
 }
+

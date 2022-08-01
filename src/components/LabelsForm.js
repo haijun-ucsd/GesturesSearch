@@ -1,12 +1,13 @@
-import React, { useState } from 'react'
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-import 'bootstrap/dist/css/bootstrap.min.css'
-import { CheckLabel, LabelStructure } from './components';
-import './components.css';
+import React, { useState } from "react";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { CheckLabel, LabelStructure } from "./components";
+import "./components.css";
 import { labels_data } from "./labels_data.js";
-import BodyComponent from './BodyComponent.tsx';
+import BodyComponent from "./BodyComponent.tsx";
 import DescriptionHover from "./DescriptionHover.js";
+import ModalityHover from "./ModalityHover.js";
 
 /**
  * LabelsForm
@@ -26,17 +27,15 @@ import DescriptionHover from "./DescriptionHover.js";
  *  https://stackoverflow.com/questions/57798841/react-setting-state-for-deeply-nested-objects-w-hooks
  */
 export default function LabelsForm(props) {
-
   /**
    * render_category
-   * 
+   *
    * To render the entire module of one category, set color accordingly.
-   * 
+   *
    * references:
    *  https://stackoverflow.com/questions/44046037/if-else-statement-inside-jsx-reactjs
    */
   const render_category = (category) => {
-
     // Determine color according to category.
     var color = category.color;
 
@@ -44,18 +43,14 @@ export default function LabelsForm(props) {
     return (
       <div className="FormCategory">
         <div className="CategoryHeader">
-          <div
-            className="CategoryName"
-            style={{color:color}}
-          >
+          <div className="CategoryName" style={{ color: color }}>
             {category.category_displaytext}
           </div>
-          <DescriptionHover text={category.description}/>
+          <DescriptionHover text={category.description} />
         </div>
         {(() => {
-
           // Special case: modality.
-          if (category.category === 'modality') {
+          if (category.category === "modality") {
             return (
               <div className="ModalityDisplay">
                 <div>
@@ -65,8 +60,7 @@ export default function LabelsForm(props) {
                   />
                 </div>
                 <div className="FormSubcategories ModalityDisplay_statelist">
-                  {category.subcategories.map(
-                    (subcategory) =>
+                  {category.subcategories.map((subcategory) =>
                     render_subcategory(subcategory, category.category, color)
                   )}
                 </div>
@@ -74,20 +68,19 @@ export default function LabelsForm(props) {
             );
           }
 
-//          // Special case: posture.
-//          // Disabling posture category from rendering for now // TODO
-//          else if (category.category === 'posture') {
-//            return (
-//              <div></div>
-//            ); 
-//          }
+          //          // Special case: posture.
+          //          // Disabling posture category from rendering for now // TODO
+          //          else if (category.category === 'posture') {
+          //            return (
+          //              <div></div>
+          //            );
+          //          }
 
           // Default case.
           else {
             return (
               <div className="FormSubcategories">
-                {category.subcategories.map(
-                  (subcategory) =>
+                {category.subcategories.map((subcategory) =>
                   render_subcategory(subcategory, category.category, color)
                 )}
               </div>
@@ -100,17 +93,15 @@ export default function LabelsForm(props) {
 
   /**
    * render_subcategory
-   * 
+   *
    * To render everything in one subcategory depending on its type.
    *
    * references:
    *  https://stackoverflow.com/questions/8605516/default-select-option-as-blank
    */
   const render_subcategory = (subcategory, categoryname, color) => {
-
     // Check subcategory type, determine style accordingly.
     switch (subcategory.type) {
-
       // Type 1 → dropdown (each picture should strictly have =1 label under this category.)
       case 1:
         return (
@@ -119,24 +110,27 @@ export default function LabelsForm(props) {
               <div className="SubcategoryName">
                 {subcategory.subcategory_displaytext}
               </div>
-              <DescriptionHover text={subcategory.description}/>
+              <DescriptionHover text={subcategory.description} />
             </div>
             <select
               className="Dropdown"
               id={subcategory.subcategory}
-              onChange={(e) => props.form_change_handler_type1(e, categoryname, subcategory.subcategory)}
+              onChange={(e) =>
+                props.form_change_handler_type1(
+                  e,
+                  categoryname,
+                  subcategory.subcategory
+                )
+              }
             >
-                <option disabled selected value>
-                  ---
-                </option>
-              {subcategory.labels.map((label) =>
-                <option
-                  value={label.label}
-                  key={label.label_id}
-                >
+              <option disabled selected value>
+                ---
+              </option>
+              {subcategory.labels.map((label) => (
+                <option value={label.label} key={label.label_id}>
                   {label.label}
                 </option>
-              )}
+              ))}
             </select>
           </div>
         );
@@ -151,7 +145,7 @@ export default function LabelsForm(props) {
               <div className="SubcategoryName">
                 {subcategory.subcategory_displaytext}
               </div>
-              <DescriptionHover text={subcategory.description}/>
+              <DescriptionHover text={subcategory.description} />
             </div>
             <div
               className="LabelList"
@@ -159,7 +153,7 @@ export default function LabelsForm(props) {
               category={categoryname}
               subcategory={subcategory.subcategory}
             >
-              {subcategory.labels.map((label) =>
+              {subcategory.labels.map((label) => (
                 <CheckLabel
                   value={label.label}
                   color={color}
@@ -168,7 +162,7 @@ export default function LabelsForm(props) {
                   subcategory={subcategory.subcategory}
                   form_change_handler={props.form_change_handler_type2}
                 />
-              )}
+              ))}
             </div>
           </div>
         );
@@ -179,30 +173,32 @@ export default function LabelsForm(props) {
         //console.log("is formData updated? ↓"); console.log(props.formData); //DEBUG
         return (
           <div className="SubcategoryName ModalityDisplay_state">
-            {subcategory.subcategory_displaytext} : <span>
-              { props.formData[categoryname][subcategory.subcategory] ?
-                <span style={{color:"green"}}>available</span>
-              :
-                <span style={{color:"red"}}>occupied</span>
-              }
+            {subcategory.subcategory_displaytext}
+            {/* <ModalityHover
+              text={subcategory.subcategory_displaytext}
+              SVGbodypart={svgElement("head")}
+            /> */}
+            :{" "}
+            <span>
+              {props.formData[categoryname][subcategory.subcategory] ? (
+                <span style={{ color: "green" }}>available</span>
+              ) : (
+                <span style={{ color: "red" }}>occupied</span>
+              )}
             </span>
           </div>
         );
         break;
 
       default:
-        // TODO: when type number is invalid
+      // TODO: when type number is invalid
     }
   };
 
   /* render */
   return (
-    <Form
-      className="LabelsForm"
-    >
-      {labels_data.map(
-        (category) => render_category(category)
-      )}
+    <Form className="LabelsForm">
+      {labels_data.map((category) => render_category(category))}
     </Form>
   );
 }
