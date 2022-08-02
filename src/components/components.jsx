@@ -281,88 +281,26 @@ class FilterRearrange extends React.Component {
 }
 
 /**
- * Navbar */
-
-/**
- * WaitingRoom
- *
- * Waiting room for pictures to be labeled before being uploaded to filebase.
- *
- * parent props:
- *  - setImageUpload()
- *  - uploadImage()
- *
- * hooks:
- *  - addedPic (same as the old "imageUpload")
- *  - addedPicUrl: View-only display of the current added pic.
- *  - addedLabels: View-only list of added labels.
- *  TODO: will need to update when allowing adding multiple pictures.
- *
+ * DescriptionHover
+ * 
+ * Description to show upon hover the "?" help button
+ * 
  * references:
- *  https://stackoverflow.com/questions/43992427/how-to-display-a-image-selected-from-input-type-file-in-reactjs
- *  https://stackoverflow.com/questions/68491348/react-checking-if-an-image-source-url-is-empty-then-return-a-different-url
- *  https://stackoverflow.com/questions/15922344/hide-image-if-src-is-empty
+ *  https://usefulangle.com/post/131/css-select-siblings
  */
-function WaitingRoom(props) {
-  const [addedPic, setAddedPic] = useState(null);
-  const [addedPicUrl, setAddedPicUrl] = useState("");
-  const [addedLabels, setAddedLabels] = useState([]);
+function DescriptionHover(props) {
   return (
-    <div style={{/* as an item */ flexGrow: 1}}>
-      <div className="WaitingRoomControl">
-        <div className="WaitingRoomControl_addpic">
-          <div id="add-pic-btn-div">
-            <label htmlFor="add-pic-btn" className="Btn_primary">
-              {addedPic == null ? // TODO: change after supporting adding multiple pictures.
-                <span>+ Add picture</span>
-              :
-                <span>&#8634; Change picture</span>
-              }
-            </label>
-            <input
-              id="add-pic-btn"
-              type="file"
-              onChange={(event) => {
-                // On picture change, check for validity, then accept and display the new picture.
-                if (event.target.files && event.target.files[0]) {
-                  console.log("Valid new picture, refresh waiting room."); //DUBUG
-                  setAddedPic(event.target.files[0]);
-                  props.setImageUpload(event.target.files[0]);
-                  setAddedPicUrl(URL.createObjectURL(event.target.files[0]));
-                }
-              }}
-              style={{display:"none"}}
-            />
-          </div>
-          <div id="upload-btn-div">
-            <button
-              className="Btn_primary"
-              type="submit"
-              onClick={(e) => {
-                alert("Picture is being uploaded!")
-                props.uploadImage();
-              }}
-              variant="primary"
-              //disabled={btnDisabled}
-            >
-                Upload
-            </button>
-          </div>
-        </div>
-        <div className="WaitingRoomControl_selectpic"></div>
+    <div className="DescriptionHover">
+      <div
+        className="DescriptionBtn"
+        onClick={(e) => { e.preventDefault(); }} // prevent default refresh
+      >
+        ?
       </div>
-      <div className="WaitingRoom">
-        {addedPic != null ?
-          <div>
-            <img
-              className="WaitingPic"
-              src={addedPicUrl}
-            />
-            <div className="LabelList">
-              {addedLabels.map((label) => <div className="Label">{label}</div>)}
-            </div>
-          </div>
-        : null}
+      <div className="DescriptionTextBox_container">
+        <div className="DescriptionTextBox">
+          <div className="DescriptionText">{props.text}</div>
+        </div>
       </div>
     </div>
   );
@@ -510,4 +448,4 @@ const HumanfigureState = Object.freeze({
   },
 })*/
 
-export { CheckLabel, LabelStructure, WaitingRoom };
+export { CheckLabel, LabelStructure, DescriptionHover };

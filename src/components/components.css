@@ -48,7 +48,7 @@ p {
 .LabelText {
   display: inline-block;
   /* font */
-  font-family: 'Roboto';
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -139,10 +139,10 @@ p {
   background: #FFFFFF;
   border: 1px solid #CCCCCC;
   border-radius: 8px;
-  padding: 4px 4px 4px 8px;
+  padding: 4px 24px 4px 8px;
   min-width: 160px;
   /* font */
-  font-family: 'Roboto';
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -163,7 +163,7 @@ p {
 
 .ModalityDisplay_statelist {
   /* as an item */
-  width: 200px;
+  width: 240px;
   /* as a container */
   display: flex;
   flex-direction: column;
@@ -188,18 +188,14 @@ p {
   width: 250px;
 }
 
-.Humanfigure_outline_div {
+/* reference: https://stackoverflow.com/questions/6300635/how-to-make-an-element-transparent-to-clicks-but-still-visible */
+.Humanfigure_outline {
   position: absolute;
   margin-left: 58.5px;
   top: 36px;
   /*top: 278px;*/
-  /*z-index: 1;*/
-  /*height: 120%;
-  width: auto;*/
-}
-
-.Humanfigure_outline {
-  /*z-index: 1;*/
+  z-index: 1;
+  pointer-events: none;
   /*height: 120%;
   width: auto;*/
 }
@@ -273,6 +269,107 @@ p {
 }
 
 
+/* DescriptionHover */
+
+.DescriptionHover {
+  /* as a container */
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px; /* 4px gap + 8px arrow width */
+}
+
+.DescriptionBtn {
+  align-items: center;
+  appearance: none;
+  background-color: #fff;
+  border-radius: 24px;
+  border-style: none;
+  /* box-shadow: rgba(0, 0, 0, .2) 0 3px 5px -1px,rgba(0, 0, 0, .14) 0 6px 10px 0,rgba(0, 0, 0, .12) 0 1px 18px 0; */
+  box-shadow: rgb(70, 99, 162) 0 0px 2px 0;
+  box-sizing: border-box;
+  color: #3c4043;
+  cursor: help; /*cursor: pointer;*/
+  display: inline-flex;
+  fill: currentcolor;
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  height: 14px;
+  justify-content: center;
+  letter-spacing: .25px;
+  line-height: 100%;
+  max-width: 100%;
+  overflow: visible;
+  padding: 2px 4px;
+  position: relative;
+  text-align: center;
+  /*text-transform: none;
+  transition: box-shadow 280ms cubic-bezier(.4, 0, .2, 1),opacity 15ms linear 30ms,transform 270ms cubic-bezier(0, 0, .2, 1) 0ms;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: auto;
+  will-change: transform,opacity;*/
+}
+
+.DescriptionBtn:hover {
+  background: #F6F9FE;
+  color: #174ea6;
+}
+
+.DescriptionBtn:hover ~ .DescriptionTextBox_container {
+  display: inline-flex;
+}
+
+.DescriptionTextBox_container { /* position constrainer of DescriptionTextBox */
+  display: none; /* hidden by default */
+  /*display: inline-flex; /*DEBUG*/
+  z-index: 10; /* top layer */
+  /* as a container */
+  position: relative;
+  align-items: center;
+  max-width: 200px; /* TODO: better width */
+  height: 0px; /* constrain vertical position */
+}
+
+.DescriptionTextBox {
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 4px 8px;
+  background-color: #EEEEEE;
+  border-radius: 2px;
+}
+
+/* reference: https://blog.logrocket.com/creating-beautiful-tooltips-with-only-css/ */
+.DescriptionTextBox:after {  /* little triangle arrow */
+  content: "";
+  border: 8px solid;
+  border-color: transparent #EEEEEE transparent transparent; /* matches background color of the textbox */
+  position: absolute;  
+  left: -15px; 
+  transform: translateY(-50%);
+  top: 50%;
+}
+
+.DescriptionText {
+  pointer-events: none; /* make transparent for clicking */
+  /* as an item */
+  flex-grow: 1;
+  align-self: stretch;
+  /* font */
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 120%;
+  letter-spacing: 0.01em;
+  color:#3c4043d7
+}
+
+
 
 /**------------ BIG BLOCKS ------------**/
 
@@ -285,7 +382,15 @@ p {
   padding-top: 40px;
 }
 
+
 /* WaitingRoom */
+
+.WaitingRoom {
+  height: calc(100vh - 40px); /* minus height of Navbar */
+  overflow: scroll;
+  /* as an item */
+  flex-grow: 1;
+}
 
 .WaitingRoomControl {
   /*position: absolute;
@@ -317,26 +422,24 @@ p {
   gap: 24px;
 }
 
-.WaitingRoom {
+.WaitingRoomGallery {
   /* as a container */
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   flex-wrap: wrap;
   align-items: flex-start;
   padding: 24px 40px 40px;
-  gap: 24px;
+  gap: 24px 12px; /* TODO: ??? */
 }
 
 .WaitingPic {
-  width: 800px;
-  height: 600px;
-  /*width: 400px;
-  height: 300px;*/
-  object-fit: cover;
+  max-width: 300px;
+  max-height: 200px;
+  object-fit: contain;
 }
-/*.WaitingPic[src=""] {
+.WaitingPic[src=""] {
   display: none;
-}*/
+}
 
 
 /* Form */
@@ -345,11 +448,11 @@ p {
   /*position: absolute;
   right: 0;
   top: 0;*/
-  height: calc(100vh - 40px); /* Minus height of Navbar */
+  height: calc(100vh - 40px); /* minus height of Navbar */
   overflow: scroll;
   width: 40vw;
   max-width: 960px;
-  min-width: 480px;
+  min-width: 560px;
   border-left: 1px solid #CCCCCC; /* TODO: dropshadow */
   /* as an item */
   flex-grow: 0;
@@ -377,12 +480,12 @@ p {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
 }
 
 .CategoryName {
   /* font */
-  font-family: 'Roboto';
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
   font-style: normal;
   font-weight: 500;
   font-size: 18px;
@@ -404,7 +507,7 @@ p {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
+  gap: 8px;
 }
 
 .SubcategoryHeader {  /* right now same as CategoryHeader */
@@ -412,12 +515,12 @@ p {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
 }
 
 .SubcategoryName {
   /* font */
-  font-family: 'Roboto';
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -487,7 +590,7 @@ p {
   align-items: center;
   padding: 4px;
   /* font */
-  font-family: 'Roboto';
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
   font-style: normal;
   font-weight: 400;
   font-size: 18px;
