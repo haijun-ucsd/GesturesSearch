@@ -2,11 +2,10 @@ import React, { useState } from 'react'
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { CheckLabel, LabelStructure } from './components';
+import { CheckLabel, LabelStructure, DescriptionHover } from './components';
 import './components.css';
 import { labels_data } from "./labels_data.js";
 import BodyComponent from './BodyComponent.tsx';
-import DescriptionHover from "./DescriptionHover.js";
 
 /**
  * LabelsForm
@@ -50,7 +49,9 @@ export default function LabelsForm(props) {
           >
             {category.category_displaytext}
           </div>
-          <DescriptionHover text={category.description}/>
+          {(category.description && category.description!="") ?
+            <DescriptionHover text={category.description}/> : null
+          }
         </div>
         {(() => {
 
@@ -108,12 +109,17 @@ export default function LabelsForm(props) {
       case 1:
         return (
           <div className="FormSubcategory">
-            <div className="SubcategoryHeader">
-              <div className="SubcategoryName">
-                {subcategory.subcategory_displaytext}
+            {(subcategory.subcategory_displaytext && subcategory.subcategory_displaytext!="") ?
+              <div className="SubcategoryHeader">
+                <div className="SubcategoryName">
+                  {subcategory.subcategory_displaytext}
+                </div>
+                {(subcategory.description && subcategory.description!="") ?
+                  <DescriptionHover text={subcategory.description}/> : null
+                }
               </div>
-              <DescriptionHover text={subcategory.description}/>
-            </div>
+            : null
+            }
             <select
               className="Dropdown"
               id={subcategory.subcategory}
@@ -140,12 +146,17 @@ export default function LabelsForm(props) {
       case 2:
         return (
           <div className="FormSubcategory">
-            <div className="SubcategoryHeader">
-              <div className="SubcategoryName">
-                {subcategory.subcategory_displaytext}
+            {(subcategory.subcategory_displaytext && subcategory.subcategory_displaytext!="") ?
+              <div className="SubcategoryHeader">
+                <div className="SubcategoryName">
+                  {subcategory.subcategory_displaytext}
+                </div>
+                {(subcategory.description && subcategory.description!="") ?
+                  <DescriptionHover text={subcategory.description}/> : null
+                }
               </div>
-              <DescriptionHover text={subcategory.description}/>
-            </div>
+            : null
+            }
             <div
               className="LabelList"
               id={subcategory.subcategory}
@@ -159,7 +170,7 @@ export default function LabelsForm(props) {
                   key={label.label_id}
                   category={categoryname}
                   subcategory={subcategory.subcategory}
-                  form_change_handler={props.form_change_handler_type2}
+                  onchange_handler={props.form_change_handler_type2}
                 />
               )}
             </div>

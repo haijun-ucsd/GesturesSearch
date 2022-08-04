@@ -4,6 +4,14 @@ import './components.css';
 import { labels_data } from "./labels_data.js";
 import { useState , useEffect } from 'react';
 
+/* Assets: */
+import FilterRemoveBtn from "../assets/FilterRemoveBtn.png";
+import SearchBtn from "../assets/SearchBtn.png";
+import ArrowUp_primary from "../assets/ArrowUp_primary.png";
+import ArrowDown_primary from "../assets/ArrowDown_primary.png";
+
+
+
 /**
  * Label
  *
@@ -52,7 +60,10 @@ class Label extends React.Component {
  * parent props:
  *  - value: string
  *  - color: string
- *  - form_change_handler()
+ *  - defaultChecked: boolean
+ *  - onchange_handler()
+ *  - category: category name, to use in onchange_handler
+ *  - subcategory: subcategory name, to use in onchange_handler
  *
  * hooks:
  *  - checked: To help toggling the color of CheckLabels upon checking.
@@ -62,7 +73,13 @@ class Label extends React.Component {
  *  https://stackoverflow.com/questions/68715629/how-to-style-a-label-when-input-inside-it-is-checked
  */
 function CheckLabel(props) {
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked]  // whether the current label is checked or not.
+    = useState(() => {
+      if (props.defaultChecked!==undefined) { // use defaultChecked if exists
+        return props.defaultChecked;
+      }
+      return false; // otherwise default as false
+    });
   return (
     <label
       className="Label"
@@ -73,12 +90,14 @@ function CheckLabel(props) {
     >
       <input
         type="checkbox"
+        className="Checkbox_checklabel"
         value={props.value}
+        style={{"--checkbox-color":props.color}}
         checked={checked}
         onChange={(e) => {
           setChecked(prev => !prev);
           //console.log("checked state in CheckLabel: " + checked); //DEBUG
-          props.form_change_handler(e, !checked, props.category, props.subcategory);  // note: use "!checked" instead of "checked" because check state has not changed yet here
+          props.onchange_handler(e, !checked, props.category, props.subcategory);  // note: use "!checked" instead of "checked" because check state has not changed yet here
         }}
       />
       <div
@@ -94,304 +113,211 @@ function CheckLabel(props) {
 }
 
 /**
- * CheckLabelList
- *
- * Display all labels in the given list, each label is checkable.
- *
- * parent props:
- *  - list
- *
-function CheckLabelList(props) {
-  return (
-    <div className="LabelList">
-      {props.list.map(
-        (item) => <div key={item.key}>
-          <CheckLabel
-            value={item.value}
-            category={item.category}
-          />
-        </div>
-      )}
-    </div>
-  )
-}*/
-
-/**
  * Filter
  *
  * parent props:
- *  - value: string
- *  - id: int
+ *  - label: string
+ *  - color: string
  *  - category: string
+ *  - subcategory: string
  *  - remove_filter()
+ * 
+ * references:
+ *  https://stackoverflow.com/questions/37644265/correct-path-for-img-on-react-js
  */
 function Filter(props) {
   return (
-    <div className="Label">
+    <div
+      className="Label"
+      style={{
+        borderColor: props.color,
+        backgroundColor: props.color+14  // +14 = 8% opacity
+      }}
+    >
       <div className="LabelText">
-        {props.value}
+        {props.label}
       </div>
-      <button
-        className="Label_CloseBtn"
-        onClick={() => props.remove_filter()}
-      >
-        x
-      </button>
+      <input
+        type="image" src={FilterRemoveBtn} 
+        onClick={() => props.remove_filter(props.label)}
+      />
     </div>
   );
 }
 
 /**
- * FilterList
- *
- * functions:
- *  - add_filter()
- *  - remove_filter()
- *
+ * DescriptionHover
+ * 
+ * Description to show upon hover the "?" help button
+ * 
  * references:
- *  https://robinpokorny.medium.com/index-as-a-key-is-an-anti-pattern-e0349aece318
+ *  https://usefulangle.com/post/131/css-select-siblings
  */
-class FilterList extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      list: [
-        {value: "value1", id:1, category: "category1"},
-        {value: "value2", id:2, category: "category2"},
-      ],
-      id_counter: 2, // TODO: helper, will remove
-    };
-  }
-
-  /**
-   * add_filter
-   *
-   * references:
-   *  https://stackoverflow.com/questions/43784554/how-to-add-input-data-to-list-in-react-js
-   *  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some
-   */
-  add_filter() {
-
-    // DEBUG
-    console.log("try adding filter: " + this.newValue.value);
-
-    // Check for empty.
-    if (this.newValue.value == "") { return; }
-
-    // Store newValue, clear input box.
-    const newVal = this.newValue.value;
-    this.newValue.value = "";
-
-    // Check for existence.
-    if (this.state.list.some(
-      (item) => item.value === newVal
-    )) {
-
-      // DEBUG
-      console.log("repeated filter: " + newVal);
-
-      return;
-    }
-
-    // Add filter to filterlist.
-    this.state.id_counter++;  // TODO: helper, will remove
-    this.setState (prevState => (
-      {list: [...this.state.list,
-        {value: newVal, id:this.state.id_counter, category: "category1"}
-      ]}
-    ));    
-
-    // Update gallery.
-
-    // DEBUG
-    console.log("added filter: " + newVal);
-  }
-
-  /**
-   * remove_filter
-   *
-   * @param index: Index of the element to remove.
-   *
-   * references:
-   *  https://stackoverflow.com/questions/36326612/how-to-delete-an-item-from-state-array
-   *  https://stackoverflow.com/questions/35338961/how-to-remove-the-li-element-on-click-from-the-list-in-reactjs
-   */
-  remove_filter(val) {
-
-    // DEBUG
-    console.log("remove filter: " + val);
-
-    // Reset state.list to remove the current filter.
-    this.setState (prevState => (
-      {list:
-        this.state.list.filter(
-          (item) => item.value!==val
-        )
-      }
-    ));
-
-    // Update gallery.
-  }
-
-  render() {
-    return (
-      <div className="MenuModule">
-        <div className="FilterList">
-          {this.state.list.map(
-            (item) => <div key={item.id}>
-              <Filter
-                value={item.value}
-                category={item.category}
-                remove_filter={() => this.remove_filter(item.value)}
-              />
-            </div>
-          )}
-        </div>
-        <div className="dummy_flex">
-          <input
-            type="text"
-            placeholder="new filter"
-            ref={(el) => {this.newValue = el}}
-          />
-          <button
-            className="Btn"
-            onClick={() => this.add_filter()}
-          >
-            +
-          </button>
-        </div>
-      </div>
-    );
-  }
-}
-
-/**
- * FilterRearrange
- */
-class FilterRearrange extends React.Component {
-
-  render() {
-    return (
-      <div className="FilterRearrange">
-        <Filter />
-      </div>
-    );
-  }
-}
-
-/**
- * Navbar */
-
-/**
- * WaitingRoom
- *
- * Waiting room for pictures to be labeled before being uploaded to filebase.
- *
- * parent props:
- *  - setImageUpload()
- *  - uploadImage()
- *
- * hooks:
- *  - addedPic (same as the old "imageUpload")
- *  - addedPicUrl: View-only display of the current added pic.
- *  - addedLabels: View-only list of added labels.
- *  TODO: will need to update when allowing adding multiple pictures.
- *
- * references:
- *  https://stackoverflow.com/questions/43992427/how-to-display-a-image-selected-from-input-type-file-in-reactjs
- *  https://stackoverflow.com/questions/68491348/react-checking-if-an-image-source-url-is-empty-then-return-a-different-url
- *  https://stackoverflow.com/questions/15922344/hide-image-if-src-is-empty
- */
-function WaitingRoom(props) {
-  const [addedPic, setAddedPic] = useState(null);
-  const [addedPicUrl, setAddedPicUrl] = useState("");
-  const [addedLabels, setAddedLabels] = useState([]);
+function DescriptionHover(props) {
   return (
-    <div style={{/* as an item */ flexGrow: 1}}>
-      <div className="WaitingRoomControl">
-        <div className="WaitingRoomControl_addpic">
-          <div id="add-pic-btn-div">
-            <label htmlFor="add-pic-btn" className="Btn_primary">
-              {addedPic == null ? // TODO: change after supporting adding multiple pictures.
-                <span>+ Add picture</span>
-              :
-                <span>&#8634; Change picture</span>
-              }
-            </label>
-            <input
-              id="add-pic-btn"
-              type="file"
-              onChange={(event) => {
-                // On picture change, check for validity, then accept and display the new picture.
-                if (event.target.files && event.target.files[0]) {
-                  console.log("Valid new picture, refresh waiting room."); //DUBUG
-                  setAddedPic(event.target.files[0]);
-                  props.setImageUpload(event.target.files[0]);
-                  setAddedPicUrl(URL.createObjectURL(event.target.files[0]));
-                }
-              }}
-              style={{display:"none"}}
-            />
-          </div>
-          <div id="upload-btn-div">
-            <button
-              className="Btn_primary"
-              type="submit"
-              onClick={(e) => {
-                alert("Picture is being uploaded!")
-                props.uploadImage();
-              }}
-              variant="primary"
-              //disabled={btnDisabled}
-            >
-                Upload
-            </button>
-          </div>
-        </div>
-        <div className="WaitingRoomControl_selectpic"></div>
+    <div className="DescriptionHover">
+      <div
+        className="DescriptionBtn"
+        onClick={(e) => { e.preventDefault(); }} // prevent default refresh
+      >
+        ?
       </div>
-      <div className="WaitingRoom">
-        {addedPic != null ?
-          <div>
-            <img
-              className="WaitingPic"
-              src={addedPicUrl}
-            />
-            <div className="LabelList">
-              {addedLabels.map((label) => <div className="Label">{label}</div>)}
-            </div>
-          </div>
-        : null}
+      <div className="DescriptionTextBox_container">
+        <div className="DescriptionTextBox">
+          <div className="DescriptionText">{props.text}</div>
+        </div>
       </div>
     </div>
   );
 }
 
 /**
- * Menu (TODO: replace with "Facet" and add more)
+ * SearchBar
+ * 
+ * parent props:
+ *  - search_handler(searText, ...): whatever function to perform at the current search bar
+ *  - id: id for this search bar
+ * 
+ * hooks:
+ *  - [searchText, setSearchText]: to record current input in the search bar
+ * 
+ * references:
+ *  https://stackoverflow.com/questions/12875911/how-can-i-make-my-input-type-submit-an-image
+ *  https://bobbyhadz.com/blog/react-get-input-value-on-button-click
  */
-class Menu extends React.Component {
+function SearchBar(props) {
+  const [searchText, setSearchText] = useState('');
+  return (
+    <div className="SearchBar">
+      <input
+        type="text"
+        className="SearchBarInput"
+        //id={props.id} name={props.id}
+        placeholder=""
+        value={searchText}
+        onChange={(e) => {
+          setSearchText(e.target.value);
+          console.log('searchText is:', e.target.value); //DEBUG
+        }}
+      />
+      <input
+        type="image" src={SearchBtn}  // <input type="image"> defines an image as a submit button
+        onClick={(e) => {
+          e.preventDefault();
+          //props.search_handler(searchText, ...);
+        }}
+      />
+    </div>
+  );
+}
 
-  render() {
-    return (
-      <div className="Menu">
-        <FilterList />
+/**
+ * Checkbox
+ * 
+ * parent props:
+ *  - value: string
+ *  - value_displaytext: string
+ *  - color: string
+ *  - defaultChecked: boolean
+ *  - onchange_handler()
+ * 
+ * references:
+ *  https://stackoverflow.com/questions/4148499/how-to-style-a-checkbox-using-css
+ *  https://stackoverflow.com/questions/13367868/how-to-modify-the-fill-color-of-an-svg-image-when-being-served-as-background-ima
+ *  https://stackoverflow.com/questions/19415641/how-to-position-before-after-pseudo-elements-on-top-of-each-other
+ *  https://developer.mozilla.org/en-US/docs/Web/CSS/var
+ *  https://stackoverflow.com/questions/52005083/how-to-define-css-variables-in-style-attribute-in-react-and-typescript
+ */
+function Checkbox(props) {
+  const [checked, setChecked]  // whether the current checkbox is checked or not.
+    = useState(() => {
+      if (props.defaultChecked!==undefined) { // use defaultChecked if exists
+        return props.defaultChecked;
+      }
+      return false; // otherwise default as false
+    });
+  return (
+    <label
+      className="Checkbox"
+    >
+      <input
+        type="checkbox"
+        className="Checkbox_default"
+        value={props.value}
+        style={{"--checkbox-color":props.color}}
+        checked={checked}
+        onChange={(e) => {
+          //e.preventDefault(); // seems not needing preventDefault here
+          setChecked((prev) => !prev);
+          props.onchange_handler(e, !checked);  // note: use "!checked" instead of "checked" because check state has not changed yet here
+        }}
+      />
+      <div className="CheckboxText">
+        {props.value_displaytext}
       </div>
-    );
-  }
+    </label>
+  )
+}
+
+/**
+ * AccordionSection
+ * 
+ * parent props:
+ *  - title: name of the the current section
+ *  - color: color of title if not black
+ *  - description: a description for the current section to show upon hovering
+ * 
+ * references:
+ *  https://reactjs.org/docs/composition-vs-inheritance.html
+ */
+function AccordionSection(props) {
+  const [expanded, setExpanded] = useState(true);  // whether the current AccordionSection is expanded, default as true.
+  return (
+    <div className="AccordionSection">
+      <div className="AccordionSectionHeaderBar">
+        <div className="SectionHeader">
+          <div
+            className="SectionName"
+            style={
+              (props.color && props.color!="") ?
+              {color:props.color} : null
+            }
+          >
+            {props.title}
+          </div>
+          {(props.description && props.description!="") ?
+            <DescriptionHover text={props.description}/> : null
+          }
+        </div>
+        {expanded ?
+          <input
+            type="image" src={ArrowUp_primary} 
+            onClick={(e) => {
+              e.preventDefault();
+              setExpanded(false);
+            }}
+          />
+        :
+          <input
+            type="image" src={ArrowDown_primary} 
+            onClick={(e) => {
+              e.preventDefault();
+              setExpanded(true);
+            }}
+          />
+        }
+      </div>
+      {expanded ?
+        <>{props.children}</>
+      : null }
+    </div>
+  );
 }
 
 
 
-/**
- * Applied filters */
-/**
- * Search bar */
 /**
  * Dots */
-/**
- * Search */
 /**
  * Human figure */
 /**
@@ -410,8 +336,6 @@ class Menu extends React.Component {
  * Imgs */
 /**
  * Btn */
-/**
- * Checkbox */
 /**
  * CheckboxList */
 /**
@@ -462,52 +386,4 @@ const LabelStructure = Object.freeze({
   posture: [],
 })
 
- /**
- * HumanfigureState
- *
- * The template of human figure states to listen to update on the human figure.
- *
-const HumanfigureState = Object.freeze({
-  head: {
-    show: true,
-    selected: false
-  },
-  left_arm: {
-    show: true,
-    selected: false
-  },
-  right_arm: {
-    show: true,
-    selected: false
-  },
-  left_hand: {
-    show: true,
-    selected: false
-  },
-  right_hand: {
-    show: true,
-    selected: false
-  },
-  facial_expression: {
-    show: true,
-    selected: false
-  },
-  eyes: {
-    show: true,
-    selected: false
-  },
-  voice: {
-    show: true,
-    selected: false
-  },
-  legs: {
-    show: true,
-    selected: false
-  },
-  feet: {
-    show: true,
-    selected: false
-  },
-})*/
-
-export { CheckLabel, LabelStructure, WaitingRoom };
+export { LabelStructure, CheckLabel, Filter, Checkbox, DescriptionHover, SearchBar, AccordionSection };

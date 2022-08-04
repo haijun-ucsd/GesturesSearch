@@ -6,8 +6,9 @@ import { getDatabase, onValue, ref as ref_db, set } from 'firebase/database';
 import { ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage';
 import { v4 } from 'uuid';
 import './components.css';
+import WaitingRoom from './WaitingRoom';
 import LabelsForm from './LabelsForm';
-import { LabelStructure, WaitingRoom } from './components';
+import { LabelStructure } from './components';
 
 export default function UploadPage() {
 
@@ -154,7 +155,13 @@ export default function UploadPage() {
 
 /* To collect data from WaitingRoom (pictures) */
 
-  const [imageUpload, setImageUpload] = useState(null);
+  const [addedPic, setAddedPic] = useState([]);
+  const [addedPicUrl, setAddedPicUrl] = useState([]);
+
+  // DEBUG
+  useEffect(() => {
+    console.log("current addedPic list ↓"); console.log (addedPic); //DEBUG
+  }, [addedPic])
 
 
 /* To handle upload */
@@ -169,7 +176,7 @@ export default function UploadPage() {
   const uploadImage = () => {
 
     // Check for validity.
-    if (imageUpload == null) return;
+    if (addedPic == null) return;
 
     // Generate random key and open up a space (?) in firebase.
     let key = v4(); // generate random key
@@ -177,7 +184,7 @@ export default function UploadPage() {
     console.log("new key: " + key); //DEBUG
 
     // Store picture to firebase.
-    uploadBytes(imageRef, imageUpload).then((snapshot) => {
+    uploadBytes(imageRef, addedPic).then((snapshot) => {
       getDownloadURL(snapshot.ref).then((url) => {
 
         // Store url and labels to firebase realtime database.
@@ -189,9 +196,9 @@ export default function UploadPage() {
       });
     });
 
-    // Clear imageUpload. TODO???
-    setImageUpload(null);
-    console.log("imageUpload should be cleared: " + imageUpload); //DEBUG
+    // Clear addedPic. TODO???
+    setAddedPic(null);
+    console.log("addedPic should be cleared: " + addedPic); //DEBUG
   };
 
   // Implement Firebase Realtime Database Storage:
@@ -278,7 +285,7 @@ export default function UploadPage() {
   useEffect(() => {
 
     // Check: image exists.
-    let validImg = (imageUpload !== null);
+    let validImg = (addedPic !== null);
     let validLabels = true;
 
     // Check: all required fields are filled. TODO
@@ -297,19 +304,17 @@ export default function UploadPage() {
     }
   }, [formData])
 
-  // DEBUG
-  useEffect(() => {
-    console.log("imageUpload ↓"); console.log(imageUpload);
-  }, [imageUpload])
-
 
 /* Render */
 
   return (
     <div className="PageBox">
       <WaitingRoom
-        setImageUpload={setImageUpload}
         uploadImage={uploadImage}
+        setAddedPic={setAddedPic}
+        addedPic={addedPic}
+        setAddedPicUrl={setAddedPicUrl}
+        addedPicUrl={addedPicUrl}
       />
       <LabelsForm
         form_change_handler_type1={form_change_handler_type1}
@@ -319,61 +324,4 @@ export default function UploadPage() {
       />
     </div>
   );
-
-  //  return (
-  //    <div className="App">
-  //      <div className='img-upload textCenter'>
-  //        <input
-  //          id='input-file'
-  //          type='file'
-  //          onChange={(event) =>
-  //            {
-  //              if (event.target.files && event.target.files[0]) {
-  //                setImageUpload(URL.createObjectURL(event.target.files[0]));
-  //              }
-  //            }}
-  //        />
-  //      </div>
-  //      <img src={imageUpload} />
-  //      <Labels passData={passData}/>
-  //      <div className='text-center'>
-  //        <Button onClick={uploadImage} variant="primary" disabled={uploadDisabled} type="submit">
-  //            Upload
-  //        </Button>
-  //      </div>
-  //      <div className='textCenter'>
-  //        <div className='images'>
-  //          { 
-  //            imageList.map((data) => {
-  //              let available_modalities = [];
-  //              for (let modality in data[1].modality) {
-  //                //console.log(modality)
-  //                if (data[1].modality[modality]) {
-  //                  available_modalities.push(modality)
-  //                }
-  //              }
-  //              const modalities = available_modalities.join(', ');
-  //              //console.log(modalities)
-  //              return (<div key={data[0]} className='textLeft'>
-  //                        <img key={data[0]} src={data[1].url}/> 
-  //                        <p>Age: {data[1].demographic.age}</p>
-  //                        <p>Occupation: {data[1].demographic.occupation}</p>
-  //                        <p>Sex: {data[1].demographic.sex}</p>
-  //                        <p>Location: {data[1].location}</p>
-  //                        <p>Available modalities: {modalities}</p>
-  //                        /*{ {
-  //                          available_modalities.map((modality) => {
-  //                            return <p> modality </p>
-  //                          })
-  //                        } }*/
-  //                        <p>All: {data[1].spectators.all}</p>
-  //                        <p>Attentive: {data[1].spectators.attentive}</p>
-  //                        <p>Density: {data[1].spectators.density}</p>
-  //                      </div>)
-  //            })
-  //          }
-  //        </div>
-  //      </div>
-  //    </div>
-  //  );
 }

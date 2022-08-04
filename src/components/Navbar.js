@@ -14,9 +14,8 @@ export default function Navbar() {
     <div>
       <nav className="Navbar">
         <NavLink to="/about" className="Navtab">About</NavLink>
-        <NavLink to="/login" className="Navtab">Login</NavLink>
-        <NavLink to="/upload" className="Navtab">Upload</NavLink>
         <NavLink to="/explore" className="Navtab">Explore</NavLink>
+        <NavLink to="/upload" className="Navtab">Upload</NavLink>
       </nav>
     </div>
   );

@@ -20,9 +20,8 @@ export default function App() {
       <Navbar />
       <Routes>
         {/*<Route path='/about' element={<AboutPage />} />*/}
-        {/*<Route path='/login' exact element={<LoginPage />} />*/}
-        <Route path='/upload' exact element={<UploadPage />} />
         <Route path='/explore' element={<ExplorePage />} />
+        <Route path='/upload' exact element={<UploadPage />} />
       </Routes>
     </Router>
   );

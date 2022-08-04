@@ -1,11 +1,6 @@
 /**------------ TEMPORARY ------------**/
 
-.dummy_flex {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-}
+/*.some_temp_class {...}*/
 
 
 
@@ -48,18 +43,12 @@ p {
 .LabelText {
   display: inline-block;
   /* font */
-  font-family: 'Roboto';
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
   line-height: 120%;
   letter-spacing: 0.01em;
-}
-
-.Label_CloseBtn {
-  display: inline-block;
-  border: none;
-  background-color: transparent;
 }
 
 .LabelList {
@@ -133,22 +122,192 @@ p {
 }
 
 
-/* Dropdown */
+/* Checkbox */
 
-.Dropdown {
-  background: #FFFFFF;
-  border: 1px solid #CCCCCC;
-  border-radius: 8px;
-  padding: 4px 4px 4px 8px;
-  min-width: 160px;
+.Checkbox {
+  /* as a container */
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  height: 24px;
+  gap: 8px;
+}
+
+.CheckboxText {
+  display: inline-block;
   /* font */
-  font-family: 'Roboto';
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
   line-height: 120%;
   letter-spacing: 0.01em;
   color: #333333;
+}
+
+.Checkbox_default {
+  visibility: hidden;
+  position: relative;
+  height: 24px;
+  width: 24px;
+  cursor: pointer;
+}
+.Checkbox_default:before {
+  visibility: visible;
+  content: "";
+  position: absolute;
+  display: inline-block;
+  height: 24px;
+  width: 24px;
+  border: none;
+  background-image: url("../assets/Checkbox_bg.svg");
+}
+.Checkbox_default:after {  /* :after naturally covers :before */
+  visibility: visible;
+  content: "";
+  position: absolute;
+  display: inline-block;
+  height: 24px;
+  width: 24px;
+  mask-image: url("../assets/Checkbox_blank.svg");
+  -webkit-mask-image: url("../assets/Checkbox_blank.svg");
+  background-color: var(--checkbox-color, #000000);  /* default color: black */
+}
+.Checkbox_default:checked:after {
+  mask-image: url("../assets/Checkbox_checked.svg");
+  -webkit-mask-image: url("../assets/Checkbox_checked.svg");
+}
+.Checkbox_default:disabled:after {
+  background-color: #CCCCCC;
+}
+.Checkbox_default:not(:disabled):hover:after {
+  filter: brightness(120%);
+}
+
+.Checkbox_checklabel {
+  display: none;
+  position: relative;
+}
+.Checkbox_checklabel:checked {
+  visibility: hidden;
+  display: inline-block;
+  /*cursor: pointer;*/
+}
+.Checkbox_checklabel:checked:after {
+  visibility: visible;
+  display: inline-block;
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%); /* vertically center-align for absolute-position element */
+  height: 20px;
+  width: 14px; /* height and width according to size of CheckLabel_checkmark.svg */
+  mask-image: url("../assets/CheckLabel_checkmark.svg");
+  -webkit-mask-image: url("../assets/CheckLabel_checkmark.svg");
+  background-color: var(--checkbox-color, #000000);  /* default color: black */
+}
+
+
+/* Dropdown */
+
+.Dropdown {
+  background: #FFFFFF;
+  border: 1px solid #CCCCCC;
+  border-radius: 8px;
+  padding: 4px 24px 4px 8px;
+  min-width: 160px;
+  /* font */
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 120%;
+  letter-spacing: 0.01em;
+  color: #333333;
+}
+
+
+/* Search */
+
+.SearchBar {
+  /* as an item */
+  align-self: stretch;
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px 8px 16px;
+  gap: 8px;
+  background: #FFFFFF;
+  border: 1px solid #CCCCCC;
+  border-radius: 8px;
+}
+
+.SearchBarInput {
+  border: none;
+  outline: none;
+  background-color: transparent;
+  flex: 1;
+}
+
+.SearchRange_expanded {
+  /* as an item */
+  align-self: stretch;
+  /* as a container */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.SearchRange_collapsed {
+  /* as an container */
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  /*align-items: center;*/
+  gap: 16px;
+}
+
+.SearchRangeHeader {
+  /* as an item */
+  align-self: stretch;
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.SearchRangeCheckboxes {
+  /* as an item */
+  align-self: stretch;
+  /* as a container */
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 0;
+}
+
+.SearchRangeCheckbox {
+  /* as an item */
+  grid-column: span 1;
+}
+
+.SearchRangeDots { /* array of dots */
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.SearchRangeDot { /* a single dot */
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 100%;
 }
 
 
@@ -163,7 +322,7 @@ p {
 
 .ModalityDisplay_statelist {
   /* as an item */
-  width: 200px;
+  width: 240px;
   /* as a container */
   display: flex;
   flex-direction: column;
@@ -188,18 +347,14 @@ p {
   width: 250px;
 }
 
-.Humanfigure_outline_div {
+/* reference: https://stackoverflow.com/questions/6300635/how-to-make-an-element-transparent-to-clicks-but-still-visible */
+.Humanfigure_outline {
   position: absolute;
   margin-left: 58.5px;
   top: 36px;
   /*top: 278px;*/
-  /*z-index: 1;*/
-  /*height: 120%;
-  width: auto;*/
-}
-
-.Humanfigure_outline {
-  /*z-index: 1;*/
+  z-index: 1;
+  pointer-events: none;
   /*height: 120%;
   width: auto;*/
 }
@@ -273,6 +428,204 @@ p {
 }
 
 
+/* DescriptionHover */
+
+.DescriptionHover {
+  /* as a container */
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px; /* 4px gap + 8px arrow width */
+}
+
+.DescriptionBtn {
+  align-items: center;
+  appearance: none;
+  background-color: #fff;
+  border-radius: 24px;
+  border-style: none;
+  /* box-shadow: rgba(0, 0, 0, .2) 0 3px 5px -1px,rgba(0, 0, 0, .14) 0 6px 10px 0,rgba(0, 0, 0, .12) 0 1px 18px 0; */
+  box-shadow: rgb(70, 99, 162) 0 0px 2px 0;
+  box-sizing: border-box;
+  color: #3c4043;
+  cursor: help; /*cursor: pointer;*/
+  display: inline-flex;
+  fill: currentcolor;
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  height: 14px;
+  justify-content: center;
+  letter-spacing: .25px;
+  line-height: 100%;
+  max-width: 100%;
+  overflow: visible;
+  padding: 2px 4px;
+  position: relative;
+  text-align: center;
+  /*text-transform: none;
+  transition: box-shadow 280ms cubic-bezier(.4, 0, .2, 1),opacity 15ms linear 30ms,transform 270ms cubic-bezier(0, 0, .2, 1) 0ms;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: auto;
+  will-change: transform,opacity;*/
+}
+
+.DescriptionBtn:hover {
+  background: #F6F9FE;
+  color: #174ea6;
+}
+
+.DescriptionBtn:hover ~ .DescriptionTextBox_container {
+  display: inline-flex;
+}
+
+.DescriptionTextBox_container { /* position constrainer of DescriptionTextBox */
+  display: none; /* hidden by default */
+  /*display: inline-flex; /*DEBUG*/
+  z-index: 10; /* top layer */
+  /* as a container */
+  position: relative;
+  align-items: center;
+  max-width: 200px; /* TODO: better width */
+  height: 0px; /* constrain vertical position */
+}
+
+.DescriptionTextBox {
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 4px 8px;
+  background-color: #EEEEEE;
+  border-radius: 2px;
+}
+
+/* reference: https://blog.logrocket.com/creating-beautiful-tooltips-with-only-css/ */
+.DescriptionTextBox:after {  /* little triangle arrow */
+  content: "";
+  border: 8px solid;
+  border-color: transparent #EEEEEE transparent transparent; /* matches background color of the textbox */
+  position: absolute;  
+  left: -15px; 
+  transform: translateY(-50%);
+  top: 50%;
+}
+
+.DescriptionText {
+  pointer-events: none; /* make transparent for clicking */
+  /* as an item */
+  flex-grow: 1;
+  align-self: stretch;
+  /* font */
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 120%;
+  letter-spacing: 0.01em;
+  color:#3c4043d7
+}
+
+
+/* Accordion: Module & AccordionSection */
+
+.Module {  /* non-collapsable */
+  /* as an item */
+  align-self: stretch;
+  /* as a container */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px;
+  gap: 24px;
+  border-bottom: 1px solid #CCCCCC;
+}
+
+.ModuleHeaderBar {
+  /* as an item */
+  align-self: stretch;
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.AccordionSection {  /* collapsable, right now the same as Module */
+  /* as an item */
+  align-self: stretch;
+  /* as a container */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px;
+  gap: 16px;
+  border-bottom: 1px solid #CCCCCC;
+}
+
+.AccordionSectionHeaderBar {  /* right now the same as ModuleHeaderBar */
+  /* as an item */
+  align-self: stretch;
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.SectionHeader {  /* section name + description. right now same as CategoryHeader */
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.SectionName {  /* right now same as CategoryName */
+  /* font */
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 120%;
+  letter-spacing: 0.01em;
+  color: #000000; /* default color: black */
+  filter: brightness(80%); /* darkern the colors a bit for readability */
+}
+
+.Subsections {  /* container for all subsections, right now same as FormSubcategories */
+  /* as a container */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.Subsection {  /* right now same as FormSubcategories */
+  /* as a container */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.SubsectionName {  /* right now font is same as SubcategoryName */
+  display: inline-block;
+  /* font */
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 120%;
+  letter-spacing: 0.01em;
+  color: #AAAAAA;
+}
+
+
 
 /**------------ BIG BLOCKS ------------**/
 
@@ -285,7 +638,15 @@ p {
   padding-top: 40px;
 }
 
+
 /* WaitingRoom */
+
+.WaitingRoom {
+  height: calc(100vh - 40px); /* minus height of Navbar */
+  overflow: scroll;
+  /* as an item */
+  flex-grow: 1;
+}
 
 .WaitingRoomControl {
   /*position: absolute;
@@ -317,39 +678,37 @@ p {
   gap: 24px;
 }
 
-.WaitingRoom {
+.WaitingRoomGallery {
   /* as a container */
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   flex-wrap: wrap;
   align-items: flex-start;
   padding: 24px 40px 40px;
-  gap: 24px;
+  gap: 24px 12px; /* TODO: ??? */
 }
 
 .WaitingPic {
-  width: 800px;
-  height: 600px;
-  /*width: 400px;
-  height: 300px;*/
-  object-fit: cover;
+  max-width: 300px;
+  max-height: 200px;
+  object-fit: contain;
 }
-/*.WaitingPic[src=""] {
+.WaitingPic[src=""] {
   display: none;
-}*/
+}
 
 
-/* Form */
+/* LabelsForm */
 
 .LabelsForm {
   /*position: absolute;
   right: 0;
   top: 0;*/
-  height: calc(100vh - 40px); /* Minus height of Navbar */
+  height: calc(100vh - 40px); /* minus height of Navbar */
   overflow: scroll;
   width: 40vw;
   max-width: 960px;
-  min-width: 480px;
+  min-width: 560px;
   border-left: 1px solid #CCCCCC; /* TODO: dropshadow */
   /* as an item */
   flex-grow: 0;
@@ -377,12 +736,12 @@ p {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
 }
 
 .CategoryName {
   /* font */
-  font-family: 'Roboto';
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
   font-style: normal;
   font-weight: 500;
   font-size: 18px;
@@ -404,7 +763,7 @@ p {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
+  gap: 8px;
 }
 
 .SubcategoryHeader {  /* right now same as CategoryHeader */
@@ -412,12 +771,12 @@ p {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
 }
 
 .SubcategoryName {
   /* font */
-  font-family: 'Roboto';
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -427,37 +786,41 @@ p {
 }
 
 
-/* Menu? Facet? */
+/* Facet */
 
-.Menu {
-  position: absolute;
+.Facet {
+  /*position: absolute;
   left: 0px;
-  top: 0px;
+  top: 0px;*/
+  height: calc(100vh - 40px); /* minus height of Navbar */
+  overflow: scroll;
   width: 25vw;
-  max-width: 400px;
-  min-width: 240px;
-  /*height: 100vh;*/
-  background-color: #FFFFFF; /* default white background */
-  box-shadow:
+  max-width: 640px;
+  min-width: 400px;
+  border-right: 1px solid #CCCCCC; /* TODO: dropshadow */
+  /*box-shadow:
     8px 0px 16px rgba(170, 170, 170, 0.16),
-    0px 0px 40px 8px rgba(204, 204, 204, 0.25);
+    0px 0px 40px 8px rgba(204, 204, 204, 0.25);*/
+  /* as an item */
+  flex-grow: 0;
   /* as a container (module layout) */
+  background-color: #FFFFFF;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
 
-.MenuModule {
-  /* as an item */
-  border-bottom: 1px solid #CCCCCC;
-  align-self: stretch;
-  /* as a container */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 24px;
-  gap: 24px;
+.AppliedFiltersCount {
+  /* font */
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 120%;
+  letter-spacing: 0.01em;
+  color: #000000;
 }
+
 
 /* Navbar */
 
@@ -487,7 +850,7 @@ p {
   align-items: center;
   padding: 4px;
   /* font */
-  font-family: 'Roboto';
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
   font-style: normal;
   font-weight: 400;
   font-size: 18px;
