@@ -34,35 +34,6 @@ export default function ExplorePage() {
     console.log("updated filterList ↓"); console.log(filterList);
   }, [filterList])
 
-  /**
-   * Handle update in search range.
-   */
-  const range_change_handler = (e, checked) => {
-    console.log("range_change_handler"); //DEBUG
-
-    // Default case.
-    if (checked) {
-
-      // Add category to range.
-      setRange((prev) => {
-        console.log("add category to search range. category added: " + e.target.value); //DEBUG
-        return [
-        	...prev,
-        	e.target.value,
-        ];
-      });
-    } else {
-
-      // Remove category from range.
-      setRange((prev) => {
-        console.log("remove category from search range. category removed: " + e.target.value); //DEBUG
-        return prev.filter(
-        	(item => item!==e.target.value)
-        );
-      });
-    }
-  };
-
 
 /* Gallery (pictures) */
 
@@ -99,7 +70,6 @@ export default function ExplorePage() {
 			<Facet
 				setRange={setRange}
 				range={range}
-				range_change_handler={range_change_handler}
 				setFilterList={setFilterList}
 				filterList={filterList}
 			/>

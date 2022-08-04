@@ -7,6 +7,8 @@ import { useState , useEffect } from 'react';
 /* Assets: */
 import FilterRemoveBtn from "../assets/FilterRemoveBtn.png";
 import SearchBtn from "../assets/SearchBtn.png";
+import ArrowUp_primary from "../assets/ArrowUp_primary.png";
+import ArrowDown_primary from "../assets/ArrowDown_primary.png";
 
 
 
@@ -137,7 +139,7 @@ function Filter(props) {
       </div>
       <input
         type="image" src={FilterRemoveBtn} 
-        onClick={(e) => props.remove_filter(e, props.label)}
+        onClick={() => props.remove_filter(props.label)}
       />
     </div>
   );
@@ -257,6 +259,62 @@ function Checkbox(props) {
   )
 }
 
+/**
+ * AccordionSection
+ * 
+ * parent props:
+ *  - title: name of the the current section
+ *  - color: color of title if not black
+ *  - description: a description for the current section to show upon hovering
+ * 
+ * references:
+ *  https://reactjs.org/docs/composition-vs-inheritance.html
+ */
+function AccordionSection(props) {
+  const [expanded, setExpanded] = useState(true);  // whether the current AccordionSection is expanded, default as true.
+  return (
+    <div className="AccordionSection">
+      <div className="AccordionSectionHeaderBar">
+        <div className="SectionHeader">
+          <div
+            className="SectionName"
+            style={
+              (props.color && props.color!="") ?
+              {color:props.color} : null
+            }
+          >
+            {props.title}
+          </div>
+          {(props.description && props.description!="") ?
+            <DescriptionHover text={props.description}/> : null
+          }
+        </div>
+        {expanded ?
+          <input
+            type="image" src={ArrowUp_primary} 
+            onClick={(e) => {
+              e.preventDefault();
+              setExpanded(false);
+            }}
+          />
+        :
+          <input
+            type="image" src={ArrowDown_primary} 
+            onClick={(e) => {
+              e.preventDefault();
+              setExpanded(true);
+            }}
+          />
+        }
+      </div>
+      {expanded ?
+        <>{props.children}</>
+      : null }
+    </div>
+  );
+}
+
+
 
 /**
  * Dots */
@@ -328,4 +386,4 @@ const LabelStructure = Object.freeze({
   posture: [],
 })
 
-export { LabelStructure, CheckLabel, Filter, Checkbox, DescriptionHover, SearchBar };
+export { LabelStructure, CheckLabel, Filter, Checkbox, DescriptionHover, SearchBar, AccordionSection };

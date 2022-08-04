@@ -529,6 +529,103 @@ p {
 }
 
 
+/* Accordion: Module & AccordionSection */
+
+.Module {  /* non-collapsable */
+  /* as an item */
+  align-self: stretch;
+  /* as a container */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px;
+  gap: 24px;
+  border-bottom: 1px solid #CCCCCC;
+}
+
+.ModuleHeaderBar {
+  /* as an item */
+  align-self: stretch;
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.AccordionSection {  /* collapsable, right now the same as Module */
+  /* as an item */
+  align-self: stretch;
+  /* as a container */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px;
+  gap: 16px;
+  border-bottom: 1px solid #CCCCCC;
+}
+
+.AccordionSectionHeaderBar {  /* right now the same as ModuleHeaderBar */
+  /* as an item */
+  align-self: stretch;
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.SectionHeader {  /* section name + description. right now same as CategoryHeader */
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.SectionName {  /* right now same as CategoryName */
+  /* font */
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 120%;
+  letter-spacing: 0.01em;
+  color: #000000; /* default color: black */
+  filter: brightness(80%); /* darkern the colors a bit for readability */
+}
+
+.Subsections {  /* container for all subsections, right now same as FormSubcategories */
+  /* as a container */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.Subsection {  /* right now same as FormSubcategories */
+  /* as a container */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.SubsectionName {  /* right now font is same as SubcategoryName */
+  display: inline-block;
+  /* font */
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 120%;
+  letter-spacing: 0.01em;
+  color: #AAAAAA;
+}
+
+
 
 /**------------ BIG BLOCKS ------------**/
 
@@ -711,65 +808,6 @@ p {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-}
-
-.FacetModule {  /* right now same as FormCategory */
-  /* as an item */
-  border-bottom: 1px solid #CCCCCC;
-  align-self: stretch;
-  /* as a container */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 24px;
-  gap: 24px;
-}
-
-.FacetSubsections {  /* container for all subsections, right now same as FormSubcategories */
-  /* as a container */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
-}
-
-.FacetSubsection {  /* right now same as FormSubcategories */
-  /* as a container */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-}
-
-.FacetSubsectionName {  /* right now font is same as SubcategoryName */
-  display: inline-block;
-  /* font */
-  font-family: "Google Sans",Roboto,Arial,sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 120%;
-  letter-spacing: 0.01em;
-  color: #AAAAAA;
-}
-
-.AppliedFiltersHeader {  /* right now same as CategoryHeader. TODO: add btns: rearrange, clear all */
-  /* as a container */
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-}
-
-.AppliedFiltersTitle {
-  /* font */
-  font-family: "Google Sans",Roboto,Arial,sans-serif;
-  font-style: normal;
-  font-weight: 500;
-  font-size: 18px;
-  line-height: 120%;
-  letter-spacing: 0.01em;
-  color: #000000;
 }
 
 .AppliedFiltersCount {
