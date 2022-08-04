@@ -2,12 +2,73 @@ import React, { useState , useEffect } from 'react';
 import { getDatabase, onValue, ref as ref_db, set } from 'firebase/database';
 import './components.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Facet from './Facet';
 //import { ... } from './components';
 
 export default function ExplorePage() {
 
-	const[imageList, setImageList] = useState([]);
+/* Filters from Facet (search & filters) */
 
+	/**
+	 * range
+	 * Search range.
+	 * Default SearchRange: { Location, Demographic, Modality, Posture }
+	 * TODO: combine SearchRange and SearchRange_color variables into labels_list?
+	 */
+	const SearchRange = ["location", "demographic", "modality", "posture"];
+  const [range, setRange] = useState(SearchRange);  // range of categories to search within. //TODO: what if all categories are unchecked and range is none?
+  // DEBUG
+  useEffect(() => {
+    console.log("updated search range ↓"); console.log(range);
+  }, [range])
+
+	/**
+	 * filterList
+	 * List of currently applied filters.
+	 * Structure of each filter item: { label, label_id, category, subcategory, color }
+	 */
+	//const [filterList, setFilterList] = useState([]);
+	const [filterList, setFilterList] = useState([ { label: "library", label_id: 0, category: "location", subcategory: "purpose", color: "#A0D568" }, { label: "hospital", label_id: 1, category: "location", subcategory: "purpose", color: "#A0D568" }, ]); //DEBUG
+  // DEBUG
+  useEffect(() => {
+    console.log("updated filterList ↓"); console.log(filterList);
+  }, [filterList])
+
+  /**
+   * Handle update in search range.
+   */
+  const range_change_handler = (e, checked) => {
+    console.log("range_change_handler"); //DEBUG
+
+    // Default case.
+    if (checked) {
+
+      // Add category to range.
+      setRange((prev) => {
+        console.log("add category to search range. category added: " + e.target.value); //DEBUG
+        return [
+        	...prev,
+        	e.target.value,
+        ];
+      });
+    } else {
+
+      // Remove category from range.
+      setRange((prev) => {
+        console.log("remove category from search range. category removed: " + e.target.value); //DEBUG
+        return prev.filter(
+        	(item => item!==e.target.value)
+        );
+      });
+    }
+  };
+
+
+/* Gallery (pictures) */
+
+	const [imageList, setImageList] = useState([]); // list of currently shown pictures
+
+	/* Update the gallery upon any change. */
 	useEffect(() => {
 		// listAll(imageListRef).then((response) => {
 		//   response.items.forEach((item) => {
@@ -26,12 +87,22 @@ export default function ExplorePage() {
 		  }
 		  setImageList(append);
 		})
-	  }, [])
+	}, [])
 
-	//   console.log(imageList);
+	//console.log(imageList); //DEBUG
+
+
+/* Render */
 
 	return (
 		<div className="PageBox">
+			<Facet
+				setRange={setRange}
+				range={range}
+				range_change_handler={range_change_handler}
+				setFilterList={setFilterList}
+				filterList={filterList}
+			/>
 			<div className='textCenter'>
 				<div className='images d-flex justify-content-start flex-wrap w-400px'>
 				{ 
@@ -82,7 +153,7 @@ export default function ExplorePage() {
 					})
 				}
 				</div>
-      		</div>
+      </div>
 		</div>
 	);
 }

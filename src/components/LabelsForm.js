@@ -170,7 +170,7 @@ export default function LabelsForm(props) {
                   key={label.label_id}
                   category={categoryname}
                   subcategory={subcategory.subcategory}
-                  form_change_handler={props.form_change_handler_type2}
+                  onchange_handler={props.form_change_handler_type2}
                 />
               )}
             </div>

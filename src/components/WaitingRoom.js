@@ -10,14 +10,14 @@ import { useState } from 'react';
  * Waiting room for pictures to be labeled before being uploaded to filebase.
  *
  * parent props:
- *  - setImageUpload()
  *  - uploadImage()
+ *  - setAddedPic(): To update addedPic.
+ *  - addedPic: All added pictures in the waitingroom gallery.
+ *  - setAddedPicUrl(): To update addedPicUrl.
+ *  - addedPicUrl: URLs of all added pictures in the waitingroom gallery.
  *
  * hooks:
- *  - addedPic (same as the old "imageUpload")
- *  - addedPicUrl: View-only display of the current added pic.
  *  - addedLabels: View-only list of added labels.
- *  TODO: will need to update when allowing adding multiple pictures.
  *
  * references:
  *  https://stackoverflow.com/questions/33766085/how-to-avoid-extra-wrapping-div-in-react
