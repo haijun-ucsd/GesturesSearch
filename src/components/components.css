@@ -887,10 +887,9 @@ p {
   left: 15%;
   width: 70%;
   height:80%;
-  padding-right: 10px;
   float:right;
-  border-radius: 5px;
-  border: 2px solid rgb(205, 60, 221);
+  border-radius: 10px;
+  border: 2px solid rgb(234, 197, 197);
 }
 
 .close {
@@ -920,6 +919,6 @@ p {
   background-color: rgb(234, 197, 197);
   position: absolute;
   width: 50%;
-  height:100%;
+  height:100.05%;
   padding-right: 10px;
 }
