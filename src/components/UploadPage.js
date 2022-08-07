@@ -7,9 +7,9 @@ import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
 import { v4 } from "uuid";
 import "./components.css";
 import WaitingRoom from "./WaitingRoom";
+import PopUp from "./PopUp";
 import LabelsForm from "./LabelsForm";
 import { LabelStructure } from "./components";
-import PopUp from "./PopUp";
 
 export default function UploadPage() {
   /* To collect data from LabelsForm (labels) */

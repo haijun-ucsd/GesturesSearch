@@ -29,11 +29,12 @@ import PopUp from "./PopUp";
  *  https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept
  */
 export default function WaitingRoom(props) {
-  const [addedLabels, setAddedLabels] = useState([]);
+
+
+/* Adding and removing pictures in WaitingRoomGallery */
 
   /**
    * handle_add_pic
-   *
    * To help store the pictures and initialize URLs for them while using add-pic-btn.
    */
   const handle_add_pic = (e) => {
@@ -57,16 +58,27 @@ export default function WaitingRoom(props) {
     props.setAddedPicUrl(urls_to_store);
   };
 
-  const [seen, setSeen] = useState(false);
-
-  const togglePop = () => {
-    setSeen(!seen);
-  };
-
   // TODO: handle_remove_pic
 
-  /* Render */
 
+/* Viewing and labeling individual picture */
+
+  /**
+   * clickedUrl
+   * Hook for which picture has been clicked on to be individually seen and labeled.
+   */
+  const [clickedUrl, setClickedUrl] = useState("");
+  const closePop = () => { setClickedUrl(""); }
+
+  /**
+   * addedLabels
+   * To record updates in labeling.
+   */
+  const [addedLabels, setAddedLabels] = useState([]);
+  //const clearLabels = () => { setAddedLabels([]); }  // TODO: add "clear labels" button?
+
+
+/* Render */
   return (
     <div className="WaitingRoom">
       <div className="WaitingRoomControl">
@@ -84,6 +96,9 @@ export default function WaitingRoom(props) {
               style={{ display: "none" }}
             />
           </div>
+        </div>
+        <div className="WaitingRoomControl_selectpic"></div>
+        <div className="WaitingRoomControl_addpic">
           <div id="upload-btn-div">
             <button
               className="Btn_primary"
@@ -99,34 +114,40 @@ export default function WaitingRoom(props) {
             </button>
           </div>
         </div>
-        <div className="WaitingRoomControl_selectpic"></div>
       </div>
       <div className="WaitingRoomGallery">
         {props.addedPic != [] ? ( // check for empty addedPic list. TODO: display tutorial if empty?
           <>
             {props.addedPicUrl.map((url) => (
               <>
-                <img className="WaitingPic" src={url} onClick={togglePop} />
-                {seen ? (
-                  <PopUp
-                    toggle={togglePop}
-                    form_change_handler_type1={props.form_change_handler_type1}
-                    form_change_handler_type2={props.form_change_handler_type2}
-                    form_change_handler_type3={props.form_change_handler_type3}
-                    formData={props.formData}
-                    url={url}
-                  />
-                ) : null}
-                <div className="LabelList">
+                <img
+                  className="WaitingPic"
+                  src={url}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setClickedUrl(url);
+                  }}
+                />
+                {/*<div className="LabelList">
                   {addedLabels.map((label) => (
                     <div className="Label">{label}</div>
                   ))}
-                </div>
+                </div> //TODO: hover to show all added labels */}
               </>
             ))}
           </>
         ) : null}
       </div>
+      {(clickedUrl!="") ? (
+        <PopUp
+          url={clickedUrl}
+          closePop={closePop}
+          form_change_handler_type1={props.form_change_handler_type1}
+          form_change_handler_type2={props.form_change_handler_type2}
+          form_change_handler_type3={props.form_change_handler_type3}
+          formData={props.formData}
+        />
+      ) : null}
     </div>
   );
 }

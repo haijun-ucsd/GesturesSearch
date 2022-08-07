@@ -622,8 +622,8 @@
   flex-direction: row;
   align-items: flex-start;
   padding-top: 40px;
-  float:right;
-  margin-right:0;
+  /*float:right;
+  margin-right:0;*/
 }
 
 
@@ -631,16 +631,20 @@
 
 .WaitingRoom {
   height: calc(100vh - 40px); /* minus height of Navbar */
-  overflow-y: scroll;
   /* as an item */
   flex-grow: 1;
+  /* as a container */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .WaitingRoomControl {
   /*position: absolute;
   left: 0;
-  top: 0;
-  align-self: stretch;*/
+  top: 0;*/
+  /* as an item */
+  align-self: stretch;
   /* as a container */
   background-color: #FFFFFF;
   display: flex;
@@ -666,8 +670,21 @@
   gap: 24px;
 }
 
-.WaitingRoomGallery {
+.WaitingRoomControl_uploadpic {  /* right now same as WaitingRoomControl_addpic */
   /* as a container */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+}
+
+.WaitingRoomGallery {
+  overflow-y: scroll;
+  /* as an item */
+  align-self: stretch;
+  flex-grow: 1;
+  /* as a container */
+  background-color: #EFEFEF;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -680,24 +697,85 @@
   max-width: 300px;
   max-height: 200px;
   object-fit: contain;
+  cursor: pointer;
 }
 .WaitingPic[src=""] {
   display: none;
 }
 
 
+/* PopUp Labeling Window */
+
+.PopUpOverlay {  /* old name "modal" */
+  position: fixed;
+  z-index: 12;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+.PopUpModal {  /* old name modal_content */
+  position: absolute;
+  /* centerize absolute-postion element */
+  transform: translate(-50%, -50%);
+  left: 50%;
+  top: 50%;
+  /* as a container */
+  display: flex;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden; /* to apply border-radius to all inner elements */
+  border: 2px solid rgb(234, 197, 197);
+  width: 70%;
+  height: 80%;
+  min-width: 1000px;
+}
+
+.PopUpPic {
+  display: block;
+  height: 100%;
+  width: 100%;
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  top: 50%;
+  padding: 10px; /* margin for absolute-position element. See reference: https://stackoverflow.com/questions/17115344/absolute-positioning-ignoring-padding-of-parent */
+}
+
+.PopUpPic_Container {
+  /* as an item */
+  flex-grow: 1;
+  /* as a container */
+  position: relative;
+  background-color: rgb(234, 197, 197);
+}
+
+.PopUpClose {
+  position:absolute;
+  cursor: pointer;
+  color: #AAAAAA;
+  float: right;
+  right:0;
+  width:50px;
+  height:50px;
+  font-size: 40px;
+}
+.PopUpClose:hover {
+  /*color: cyan;*/
+  filter: brightness(120%);
+}
+
+
 /* LabelsForm */
 
 .LabelsForm {
-  z-index:0;
-  position: absolute;
-  right:0;
-  top: 0px;
-  height: calc(100vh - 40px); /* minus height of Navbar */
   overflow-y: scroll;
-  width: 40vw;
-  max-width: 50%;
-  min-width: 560px;
+  width: 40%;
+  max-width: 640px;
+  min-width: 400px;
   max-height: 100%;
   border-left: 1px solid #CCCCCC; /* TODO: dropshadow */
   /* as an item */
@@ -902,58 +980,4 @@
   font-weight: 700;
   letter-spacing: 0.003em;
   text-decoration-line: underline;
-}
-
-
-/*-------PopUp Labeling Window--------*/
-
-.modal {
-  position: fixed;
-  z-index: 12;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.25);
-}
-
-.modal_content {
-  background-color: white;
-  position: absolute;
-  top: 10%;
-  left: 15%;
-  width: 70%;
-  height:80%;
-  float:right;
-  border-radius: 10px;
-  border: 2px solid rgb(234, 197, 197);
-}
-
-.close {
-  position:absolute;
-  color: Black;
-  float: right;
-  right:0;
-  width:50px;
-  height:50px;
-  font-size: 40px;
-}
-
-.close:hover {
-  color: cyan;
-  cursor: pointer;
-}
-
-.PopUpPic {
-  display:block;
-  max-height: 100%;
-  object-fit: contain;
-  margin-left:auto;
-  margin-right:auto;
-}
-
-.PopUpPic_Container {
-  background-color: rgb(234, 197, 197);
-  position: absolute;
-  width: 50%;
-  height:100.05%;
-  padding-right: 10px;
 }

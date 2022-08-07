@@ -236,15 +236,15 @@ export const labels_data = [
           { label: "senior", label_id: 5, pictures: [] },
         ],
       },
-      // {
-      //   subcategory: "sex",
-      //   subcategory_displaytext: "Biological sex",
-      //   type: 1,
-      //   labels: [
-      //     { label: "female", label_id: 0, pictures: [] },
-      //     { label: "male", label_id: 1, pictures: [] },
-      //   ],
-      // },
+       {
+         subcategory: "sex",
+         subcategory_displaytext: "Biological sex",
+         type: 1,
+         labels: [
+           { label: "female", label_id: 0, pictures: [] },
+           { label: "male", label_id: 1, pictures: [] },
+         ],
+       },
       {
         subcategory: "social_role",
         subcategory_displaytext: "Social role",
