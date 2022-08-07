@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import image from './body.png';
+
 
 //export interface BodyComponentProps {
 //  onClick?: Function
