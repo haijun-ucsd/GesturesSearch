@@ -1,10 +1,10 @@
-import React, { useState , useEffect } from 'react';
+import React, { useState , useEffect, useLayoutEffect } from 'react';
 //import { storage } from '../firebase';
 //import { getDatabase, onValue, ref as ref_db, set } from 'firebase/database';
 //import { ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage';
 //import { v4 } from 'uuid';
 import './components.css';
-import { Filter, Checkbox, SearchBar, AccordionSection, LabelStructure } from './components';
+import { Filter, Checkbox, SearchBar, AccordionSection } from './components';
 import BodyComponent from './BodyComponent.tsx';
 
 /* Assets: */
@@ -18,7 +18,7 @@ import ArrowDown_secondary from "../assets/ArrowDown_secondary.png";
  *
  * Facet menu for users to search and filter pictures at will on the Explore page.
  * 
- * Structure: AppliedFilters, ExploreSearch, {Modality, Posture, Spectators, Demongraphic}
+ * Structure: ExploreSearch, {Modality, Posture, Spectators, Demongraphic}
  * Each Facet Module is too different from each other to be rendered together in a loop,
  * so they are made into separate components at the end of this file.
  *
@@ -27,9 +27,9 @@ import ArrowDown_secondary from "../assets/ArrowDown_secondary.png";
  *  - range: Search range.
  *  - setFilterList(): To update filterList.
  *  - filterList: Up-to-date list of currently applied filters.
- *
- * hooks:
- *  - ...
+ *  - setFacetList(): To update facetList.
+ *  - facetList: List of states in the facet sections.
+ *  - remove_filter(): To help remove from filterList.
  *
  * references:
  *  https://reactjs.org/docs/composition-vs-inheritance.html
@@ -70,6 +70,9 @@ export default function Facet(props) {
   /**
    * filter_change_handler
    *
+   * Default filter_change_handler for checkbox facet fields.
+   * Special case: Modality → see within FacetModality.
+   *
    * @param :
    *  A new filter in filterList contains (input as parameters):
    *  { label, label_id, category, subcategory, color }
@@ -91,7 +94,7 @@ export default function Facet(props) {
       (item) => item.label === label
     )) {
       console.log("label exists, remove."); //DEBUG
-      remove_filter(label);
+      props.remove_filter(label);
     } else {
       console.log("label doesn't exists yet, add."); //DEBUG
       const newFilter = {
@@ -111,111 +114,40 @@ export default function Facet(props) {
     }
   }
 
-  /**
-   * remove_filter
-   * 
-   * To specifically remove an applied filter.
-   *
-   * @param label: Value of the element to remove.
-   *
-   * references:
-   *  https://stackoverflow.com/questions/36326612/how-to-delete-an-item-from-state-array
-   *  https://stackoverflow.com/questions/35338961/how-to-remove-the-li-element-on-click-from-the-list-in-reactjs
-   */
-  const remove_filter = (label) => {
-    // DEBUG
-    console.log("remove filter: " + label);
-
-    // Reset state.list to remove the current filter.
-    props.setFilterList (prev => {
-      let newFilterList = prev.filter(
-        (item) => item.label !== label
-      );
-      return newFilterList;
-    });
-
-    // TODO: Update gallery.
-    //console.log("removing succeeds, gallery updated."); //DEBUG
-  }
-
   /* Render */
   return (
-    <div className="Facet">
-      <AppliedFilters
+    <div className="FacetMenu">
+      {/*<AppliedFilters
         filterList={props.filterList}
         remove_filter={remove_filter}
-      />
-      <ExploreSearch
-        range={props.range}
-        setRange={props.setRange}
-        onchange_handler={range_change_handler}
-        filter_change_handler={filter_change_handler}
-      />
-      <FacetModality
-        filter_change_handler={filter_change_handler}
-      />
-      <FacetPosture
-        filter_change_handler={filter_change_handler}
-      />
-      <FacetSpectators
-        filter_change_handler={filter_change_handler}
-      />
-      <FacetDemongraphic
-        filter_change_handler={filter_change_handler}
-      />
-    </div>
-  );
-}
-
-/**
- * AppliedFilters
- *
- * parent props:
- *  - filterList
- *  - remove_filter()
- *
- * references:
- *  https://robinpokorny.medium.com/index-as-a-key-is-an-anti-pattern-e0349aece318
- */
-function AppliedFilters(props) {
-  return (
-    <div className="Module">
-      <div className="ModuleHeaderBar">
-        <div className="SectionHeader">
-          <div className="SectionName">
-            Applied Filters
-          </div>
-          <div className="AppliedFiltersCount">
-            ({props.filterList.length})
-          </div>
-        </div>
-        {/* TODO: add btns: rearrange, clear all */}
+      />*/}
+      <div className="Facet">
+        <ExploreSearch
+          range={props.range}
+          setRange={props.setRange}
+          onchange_handler={range_change_handler}
+          filter_change_handler={filter_change_handler}
+        />
+        <FacetModality
+          facetList={props.facetList}
+          setFacetList={props.setFacetList} // will only set "modality"
+          setFilterList={props.setFilterList}
+          remove_filter={props.remove_filter}
+        />
+        <FacetPosture
+          postureStates={props.facetList.posture}
+          filter_change_handler={filter_change_handler}
+        />
+        <FacetSpectators
+          filter_change_handler={filter_change_handler}
+        />
+        <FacetDemongraphic
+          filter_change_handler={filter_change_handler}
+        />
       </div>
-      {(props.filterList.length > 0) ?  // only show element when there is some applied filter
-        <div className="FilterList">
-          {props.filterList.map((item) =>
-            <Filter
-              key={item.label_id}
-              label={item.label}
-              color={item.color}
-              //category={item.category}
-              //subcategory={item.subcategory}
-              remove_filter={props.remove_filter}
-            />
-          )}
-        </div>
-      : null }
     </div>
   );
 }
-
-/*function FilterRearrange(props) {
-  return (
-    <div className="Module">
-      <... />
-    </div>
-  );
-}*/
 
 /**
  * ExploreSearch
@@ -302,27 +234,98 @@ function ExploreSearch(props) {
 
 // TODO: improve organization of these category modules, combine things that can be combined.
 
+/**
+ * FacetModality
+ * 
+ * parent props:
+ *  - facetList: for displaying and updating modality states.
+ *  - setFacetList()
+ *  - setFilterList()
+ *  - remove_filter(): Tod help setFilterList().
+ */
 function FacetModality(props) {
+
+  /**
+   * modality_change_handler
+   * 
+   * 1. Modify filterList.
+   * 2. Update facetList.modality.
+   * Click to switch order: any → available → unavailable → any.
+   */
+  const modality_change_handler = (target) => {
+    const bodypart = target.id || target.parentElement.id; // could be either depending on clicking position
+    console.log("modality state is changed on body part: " + bodypart); //DEBUG
+    let currBodypartState = props.facetList["modality"][bodypart];
+
+    // 1. Modify filterList.
+    if (currBodypartState==="any") {
+
+      // any → available
+      currBodypartState = "available";
+      props.setFilterList (prev => ([
+        ...prev,
+        {
+          ['label']: bodypart + " available",
+          ['label_id']: 0, // TODO: label_id
+          ['category']: "modality",
+          ['subcategory']: bodypart,
+          ['color']: "#4FC1E8",
+        },
+      ]));
+    } else if (currBodypartState==="available") {
+
+      // available → unavailable
+      currBodypartState = "unavailable";
+      props.remove_filter(bodypart+" available");
+      props.setFilterList (prev => ([
+        ...prev,
+        {
+          ['label']: bodypart + " unavailable",
+          ['label_id']: 0, // TODO: label_id
+          ['category']: "modality",
+          ['subcategory']: bodypart,
+          ['color']: "#4FC1E8",
+        },
+      ]));
+    } else { // currBodypartState==="unavailable"
+
+      // unavailable → any
+      currBodypartState = "any"; // default bodypart state: any
+      props.remove_filter(bodypart+" unavailable");
+    }
+
+    // 2. Update facetList.modality.
+    props.setFacetList((prev) => ({
+      ...prev,
+      ["modality"]: {
+        ...prev["modality"],
+        [bodypart]: currBodypartState,
+      },
+    }));
+  }
+
+  /* Render */
   return (
     <AccordionSection
       title="Modality"
       color="#4FC1E8"
       //description=""
     >
-      <div /*style={{height:'360px'}}*/>
-        TODO: modality section
-        {/*<BodyComponent
-          partsInput={LabelStructure.modality}
-          form_change_handler={(categoryname, bodypart) => {  // categoryname=="modality", can ignore
-            console.log("modality selection is changed on body part: " + bodypart); //DEBUG
-            props.filter_change_handler (bodypart, 0, categoryname, bodypart, "#4FC1E8");  // TODO: label_id
-          }}
-        />*/}
+      <div style={{height:'360px'}}>
+        <BodyComponent
+          parts={props.facetList.modality}
+          defaultState="any"
+          form_change_handler={modality_change_handler}
+        />
       </div>
     </AccordionSection>
   );
 }
 
+/**
+ * parent props:
+ *  - postureStates
+ */
 function FacetPosture(props) {
   return (
     <AccordionSection

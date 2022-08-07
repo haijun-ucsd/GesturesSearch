@@ -1,44 +1,27 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import image from './body.png';
 
-//export interface BodyComponentProps {
-//  onClick?: Function
-//  onChange?: Function
-//  partsInput?: any
-//}
-
+/**
+ * parent props:
+ *  - parts: formData.modality (default as LabelStructure.modality)
+ *  - defaultState: sting within { "available", "unavailable", "any"}
+ *  - form_change_handler ({target}:any)
+ */
 export default function BodyComponent(props) {
 
-  const [parts, setParts] = useState(props.partsInput);
-
-  const onClickSvg = ({ target }: any) => {
-    const id = target.id || target.parentElement.id;
-    const newParts = { ...parts }; // snapshot previous "parts", prepare to modify into new "parts"
-
-    console.log("onClickSvg"); //DEBUG
-    console.log("id: " + id); //DEBUG
-    props.form_change_handler("modality", id);
-
-    console.log("old 'parts' ↓"); console.log(newParts); //DEBUG
-
-    newParts[id] = !newParts[id];
-    console.log("newParts.id: " + newParts.id); //DEBUG
-    setParts(newParts);
-    console.log("new 'parts' ↓"); console.log(newParts); //DEBUG
-  }
-
+  /* SVGs of highlightable body parts: { head, eyes, voice, facial_expression, r_arm, l_arm, r_hand, l_hand, legs, feet } */
   const svgElements: any = {
 
     /* Head */
     'head':
-      (selected: boolean) =>
+      (state: string) =>
       <svg
-        onClick={onClickSvg}
+        //onClick={onClickSvg}
+        onClick={({target}: any) => {props.form_change_handler(target)}}
         data-position="head"
         key="head"
         id="head"
-        className={(selected ? 'selected ' : '') + "head"}
+        className={state + " " + "head"} // must have space i-between classNames
         xmlns="http://www.w3.org/2000/svg"
         width="56.594"
         height="60"
@@ -56,13 +39,13 @@ export default function BodyComponent(props) {
 
     /* Left arm */
     'l_arm':
-      (selected: boolean) =>
+      (state: string) =>
       <svg
-        onClick={onClickSvg}
+        onClick={({target}: any) => {props.form_change_handler(target)}}
         data-position="l_arm"
         key="l_arm"
         id="l_arm"
-        className={(selected ? 'selected ' : '') + "l_arm"}
+        className={state + " " + "l_arm"}
         xmlns="http://www.w3.org/2000/svg"
         width="40"
         height="100"
@@ -80,13 +63,13 @@ export default function BodyComponent(props) {
 
     /* Right arm */
     'r_arm':
-      (selected: boolean) =>
+      (state: string) =>
       <svg
-        onClick={onClickSvg}
+        onClick={({target}: any) => {props.form_change_handler(target)}}
         data-position="r_arm"
         key="r_arm"
         id="r_arm"
-        className={(selected ? 'selected ' : '') + "r_arm"}
+        className={state + " " + "r_arm"}
         xmlns="http://www.w3.org/2000/svg"
         width="40"
         height="100"
@@ -104,13 +87,13 @@ export default function BodyComponent(props) {
 
     /* Left hand */
     'l_hand':
-      (selected: boolean) =>
+      (state: string) =>
       <svg
-        onClick={onClickSvg}
+        onClick={({target}: any) => {props.form_change_handler(target)}}
         data-position="l_hand"
         key="l_hand"
         id="l_hand"
-        className={(selected ? 'selected ' : '') + "l_hand"}
+        className={state + " " + "l_hand"}
         xmlns="http://www.w3.org/2000/svg"
         width="40"
         height="40"
@@ -128,13 +111,13 @@ export default function BodyComponent(props) {
 
     /* Right hand */
     'r_hand':
-      (selected: boolean) =>
+      (state: string) =>
       <svg
-        onClick={onClickSvg}
+        onClick={({target}: any) => {props.form_change_handler(target)}}
         data-position="r_hand"
         key="r_hand"
         id="r_hand"
-        className={(selected ? 'selected ' : '') + "r_hand"}
+        className={state + " " + "r_hand"}
         xmlns="http://www.w3.org/2000/svg"
         width="40"
         height="40"
@@ -152,13 +135,13 @@ export default function BodyComponent(props) {
 
     /* Facial expression */
     'facial_expression':
-      (selected: boolean) =>
+      (state: string) =>
       <svg
-        onClick={onClickSvg}
+        onClick={({target}: any) => {props.form_change_handler(target)}}
         data-position="facial_expression"
         key="facial_expression"
         id="facial_expression"
-        className={(selected ? 'selected ' : '') + "facial_expression"}
+        className={state + " " + "facial_expression"}
         xmlns="http://www.w3.org/2000/svg"
         width="35"
         height="60"
@@ -176,13 +159,13 @@ export default function BodyComponent(props) {
 
     /* Eyes */
     'eyes':
-      (selected: boolean) =>
+      (state: string) =>
       <svg
-        onClick={onClickSvg}
+        onClick={({target}: any) => {props.form_change_handler(target)}}
         data-position="eyes"
         key="eyes"
         id="eyes"
-        className={(selected ? 'selected ' : '') + "eyes"}
+        className={state + " " + "eyes"}
         xmlns="http://www.w3.org/2000/svg"
         width="30"
         height="10"
@@ -200,13 +183,13 @@ export default function BodyComponent(props) {
 
     /* Voice */
     'voice':
-      (selected: boolean) =>
+      (state: string) =>
       <svg
-        onClick={onClickSvg}
+        onClick={({target}: any) => {props.form_change_handler(target)}}
         data-position="voice"
         key="voice"
         id="voice"
-        className={(selected ? 'selected ' : '') + "voice"}
+        className={state + " " + "voice"}
         xmlns="http://www.w3.org/2000/svg"
         width="20"
         height="10"
@@ -224,13 +207,13 @@ export default function BodyComponent(props) {
 
     /* Leg */
     'legs':
-      (selected: boolean) =>
+      (state: string) =>
       <svg
-        onClick={onClickSvg}
+        onClick={({target}: any) => {props.form_change_handler(target)}}
         data-position="legs"
         key="legs"
         id="legs"
-        className={(selected ? 'selected ' : '') + "legs"}
+        className={state + " " + "legs"}
         xmlns="http://www.w3.org/2000/svg"
         width="60"
         height="120"
@@ -248,13 +231,13 @@ export default function BodyComponent(props) {
 
     /* Feet */
     'feet':
-      (selected: boolean) =>
+      (state: string) =>
       <svg
-        onClick={onClickSvg}
+        onClick={({target}: any) => {props.form_change_handler(target)}}
         data-position="feet"
         key="feet"
         id="feet"
-        className={(selected ? 'selected ' : '') + "feet"}
+        className={state + " " + "feet"}
         xmlns="http://www.w3.org/2000/svg"
         width="50"
         height="40"
@@ -271,6 +254,7 @@ export default function BodyComponent(props) {
       ,
   }
 
+  /* outline of human */
   const bodyOutline = (
     <svg width="131" height="296" viewBox="0 0 131 296" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="1" y="255.5" width="16" height="16" rx="2" fill="#A0D568"/>
@@ -283,6 +267,7 @@ export default function BodyComponent(props) {
     </svg>
   );
 
+  /* Render */
   return (
     <div className="Humanfigure_container">
       <div className="Humanfigure_outline">
@@ -291,11 +276,18 @@ export default function BodyComponent(props) {
       <div className="Humanfigure_highlights">
         {Object.keys(svgElements)
           .map((part: string) => {
-            let selected = true; // default: available
-            //console.log("part: " + part); // DEBUG
-            //console.log("parts[part]: " + parts[part]); // DEBUG
-            selected = !parts[part]; // selected = unavailable
-            return svgElements[part](selected);
+            let state = "available"; // default-default state: available
+            if (props.parts[part]==undefined) { return; } // check for existence
+            if (props.parts[part]==true || props.parts[part]=="available") { // update according to "parts"
+              state = "available";
+            } else if (props.parts[part]==false || props.parts[part]=="unavailable") {
+              state = "unavailable";
+            } else if (props.parts[part]=="any") {
+              state = "any";
+            } else if (props.defaultState!=undefined) {
+              state = props.defaultState;
+            }
+            return svgElements[part](state);
           })
         }
       </div>

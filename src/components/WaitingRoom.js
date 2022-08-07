@@ -100,9 +100,9 @@ export default function WaitingRoom(props) {
                   className="WaitingPic"
                   src={url}
                 />
-                <div className="LabelList">
+                {/*<div className="LabelList">
                   {addedLabels.map((label) => <div className="Label">{label}</div>)}
-                </div>
+                </div>*/}
               </>
             )}
           </>

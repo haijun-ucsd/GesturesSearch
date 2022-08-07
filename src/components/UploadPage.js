@@ -127,24 +127,27 @@ export default function UploadPage() {
   /**
    * Handle update in type 3 (modality) subcategories.
    */
-  const form_change_handler_type3 = (categoryname, subcategoryname) => {
-    //e.preventDefault();
+  const form_change_handler_type3 = (target) => {
+
     console.log("form_change_handler_type3"); //DEBUG
+
+    const bodypart = target.id || target.parentElement.id; // could be either depending on clicking position
+    const newModality = { ...formData.modality }; // snapshot previous formData.modality, prepare for update
+    console.log("bodypart: " + bodypart); //DEBUG
 
     // Update formData by toggling the value of the current subcategory.
     setFormData((prev) => {
-      console.log("before change: " + categoryname + " >> " + subcategoryname + " >> " + prev[categoryname][subcategoryname]); //DEBUG
+      console.log("before change: modality >> " + bodypart + " >> " + prev["modality"][bodypart]); //DEBUG
       let newFormData = {
         ...prev,
-        [categoryname]: {
-          ...prev[categoryname],
-          [subcategoryname]: !prev[categoryname][subcategoryname],
+        ["modality"]: {
+          ...prev["modality"],
+          [bodypart]: !prev["modality"][bodypart],
         },
       };
-      console.log("after change: " + categoryname + " >> " + subcategoryname + " >> " + newFormData[categoryname][subcategoryname]); //DEBUG
+      console.log("after change: modality >> " + bodypart + " >> " + newFormData["modality"][bodypart]); //DEBUG
       return newFormData;
     });
-    console.log("updated formData ↓"); console.log(formData); //DEBUG
   };
 
   // DEBUG

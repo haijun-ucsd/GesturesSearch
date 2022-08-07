@@ -4,25 +4,6 @@
 
 
 
-/**------------ ExplorePage ------------**/
-
-.explore_img {
-  height: 200px;
-  width: 300px;
-  margin: 10px;
-}
-
-.image {
-  margin: 2em;
-  text-align: center;
-}
-
-p {
-  text-align: center;
-} /* TODO: make this a class instead of apply to all p elements */
-
-
-
 /**------------ BASIC ITEMS ------------**/
 
 /* Label */
@@ -371,13 +352,18 @@ p {
 .Humanfigure_highlights svg:hover {
   cursor: pointer;
 }
-
 .Humanfigure_highlights svg:hover path {
   filter: brightness(120%);
 }
 
-.Humanfigure_highlights svg.selected path {
+.Humanfigure_highlights svg.unavailable path {
+  fill: #A0D568;
+}
+.Humanfigure_highlights svg.unavailable path {
   fill: #ED5564;
+}
+.Humanfigure_highlights svg.any path {
+  fill: #4FC1E814; /* #XXXXXX14 = 8% opacity */
 }
 
 .Humanfigure_highlights svg {
@@ -643,7 +629,7 @@ p {
 
 .WaitingRoom {
   height: calc(100vh - 40px); /* minus height of Navbar */
-  overflow: scroll;
+  overflow-y: scroll;
   /* as an item */
   flex-grow: 1;
 }
@@ -685,7 +671,7 @@ p {
   flex-wrap: wrap;
   align-items: flex-start;
   padding: 24px 40px 40px;
-  gap: 24px 12px; /* TODO: ??? */
+  gap: 24px;
 }
 
 .WaitingPic {
@@ -705,7 +691,7 @@ p {
   right: 0;
   top: 0;*/
   height: calc(100vh - 40px); /* minus height of Navbar */
-  overflow: scroll;
+  overflow-y: scroll;
   width: 40vw;
   max-width: 960px;
   min-width: 560px;
@@ -786,14 +772,68 @@ p {
 }
 
 
+/* ExploreGallery */
+
+.ExploreGallery {
+  height: calc(100vh - 40px); /* minus height of Navbar */
+  /* as an item */
+  flex-grow: 1;
+  /* as a container */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.Gallery {
+  overflow-y: scroll;
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  padding: 24px 40px 40px;
+  gap: 24px;
+}
+
+.ExplorePic {
+  max-width: 300px;
+  max-height: 200px;
+  /*max-width: 180px;
+  max-height: 135px;*/
+  object-fit: contain;
+}
+.ExplorePic[src=""] {
+  display: none;
+}
+
+.AppliedFiltersCount {
+  /* font */
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  /*font-size: 18px;*/
+  line-height: 120%;
+  letter-spacing: 0.01em;
+  color: #000000;
+}
+
+.AppliedFiltersList {
+  overflow-y: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-height: 72px;
+  /*overflow-y: scroll;*/
+}
+
+
 /* Facet */
 
-.Facet {
+.FacetMenu {
   /*position: absolute;
   left: 0px;
   top: 0px;*/
   height: calc(100vh - 40px); /* minus height of Navbar */
-  overflow: scroll;
   width: 25vw;
   max-width: 640px;
   min-width: 400px;
@@ -810,15 +850,10 @@ p {
   align-items: flex-start;
 }
 
-.AppliedFiltersCount {
-  /* font */
-  font-family: "Google Sans",Roboto,Arial,sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 18px;
-  line-height: 120%;
-  letter-spacing: 0.01em;
-  color: #000000;
+.Facet {
+  overflow-y: scroll;
+  /* as an item */
+  align-self: stretch;
 }
 
 

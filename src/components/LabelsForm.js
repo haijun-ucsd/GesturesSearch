@@ -61,7 +61,8 @@ export default function LabelsForm(props) {
               <div className="ModalityDisplay">
                 <div>
                   <BodyComponent
-                    partsInput={LabelStructure.modality}
+                    parts={props.formData.modality}
+                    defaultState="available"
                     form_change_handler={props.form_change_handler_type3}
                   />
                 </div>

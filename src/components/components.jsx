@@ -349,7 +349,6 @@ function AccordionSection(props) {
  * LabelStructure
  *
  * The template of label structure to help display and upload.
- * (updated from the old "initialFormData")
  *
  * references:
  *  https://medium.com/@alifabdullah/never-confuse-json-and-javascript-object-ever-again-7c32f4c071ad
@@ -386,4 +385,34 @@ const LabelStructure = Object.freeze({
   posture: [],
 })
 
-export { LabelStructure, CheckLabel, Filter, Checkbox, DescriptionHover, SearchBar, AccordionSection };
+/**
+ * FilterStructure
+ * 
+ * The template of facet filter structure to help filter and display (only the AccordionSection parts).
+ */
+const FilterStructure = Object.freeze({
+  modality: {
+    head: "any",
+    eyes: "any",
+    voice: "any",
+    facial_expression: "any",
+    r_arm: "any",
+    l_arm: "any",
+    r_hand: "any",
+    l_hand: "any",
+    legs: "any",
+    feet: "any",
+  },
+  posture: ["sitting", "..."], //TODO: fill all
+  spectators: {
+    quantity: ["none", "small", "large"],
+    density: ["none", "sparse", "dense"],
+    attentive: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '>8'],
+  },
+  demographic: {
+    age: ["baby", "child", "teen", "young adult", "baby", "baby"],
+    sex: ["male", "female"],
+  },
+})
+
+export { LabelStructure, FilterStructure, CheckLabel, Filter, Checkbox, DescriptionHover, SearchBar, AccordionSection };
