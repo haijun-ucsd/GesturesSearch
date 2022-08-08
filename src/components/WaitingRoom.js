@@ -115,7 +115,7 @@ export default function WaitingRoom(props) {
               variant="primary"
               //disabled={btnDisabled}
             >
-              Upload All
+              Publish All
             </button>
           </div>
         </div>

@@ -395,6 +395,8 @@ function FacetPosture(props) {
  * parent props:
  *  - facetList
  *  - filter_change_handler()
+ * 
+ * TODO: change Attentive to 2 input fields for upper and lower boundaries.
  */
 function FacetSpectators(props) {
   const allQuantities = ["none", "small", "large"];
@@ -420,8 +422,8 @@ function FacetSpectators(props) {
                 spectrumBox={true}
                 value={item}
                 value_displaytext={item}
-                defaultChecked={props.facetList.spectators.quantity.some(i => i===item)}
-                checkedState={props.facetList.spectators.quantity.some(i => i===item)}
+                defaultChecked={props.facetList.spectators.quantity.some(i => i===("spectators quantity: " + item))}
+                checkedState={props.facetList.spectators.quantity.some(i => i===("spectators quantity: " + item))}
                 onchange_handler={() => props.filter_change_handler(("spectators quantity: " + item), 0, "spectators", "quantity", spectatorsColor)} // TODO: label_id?
               />
             )}
@@ -439,8 +441,8 @@ function FacetSpectators(props) {
                 spectrumBox={true}
                 value={item}
                 value_displaytext={item}
-                defaultChecked={props.facetList.spectators.density.some(i => i===item)}
-                checkedState={props.facetList.spectators.density.some(i => i===item)}
+                defaultChecked={props.facetList.spectators.density.some(i => i===("spectators density: " + item))}
+                checkedState={props.facetList.spectators.density.some(i => i===("spectators density: " + item))}
                 onchange_handler={() => props.filter_change_handler(("spectators density: " + item), 0, "spectators", "density", spectatorsColor)} // TODO: label_id?
               />
             )}
@@ -458,8 +460,8 @@ function FacetSpectators(props) {
                 spectrumBox={true}
                 value={item}
                 value_displaytext={item}
-                defaultChecked={props.facetList.spectators.attentive.some(i => i===item)}
-                checkedState={props.facetList.spectators.attentive.some(i => i===item)}
+                defaultChecked={props.facetList.spectators.attentive.some(i => i===("attentive spectators: " + item))}
+                checkedState={props.facetList.spectators.attentive.some(i => i===("attentive spectators: " + item))}
                 onchange_handler={() => props.filter_change_handler(("attentive spectators: " + item), 0, "spectators", "attentive", spectatorsColor)} // TODO: label_id?
               />
             )}
