@@ -63,26 +63,54 @@ export default function AboutPage() {
             </div>
             <div class="row">
                 <div class="column">
+                    <Slide bottom>
                     <img width="100%" src={require("./kitchen.png")}/>
+                    </Slide>
+                    <Slide bottom>
                     <img width="100%" src={require("./airport.png")}/>
+                    </Slide>
+                    <Slide bottom>
                     <img width="100%" src={require("./office.png")}/>
+                    </Slide>
                 </div>
                 <div class="column">
+                    <Slide bottom>
                     <img width="100%" src={require("./Nursinghome.png")}/>
+                    </Slide>
+                    <Slide bottom>
                     <img width="100%" src={require("./office.png")}/>
+                    </Slide>
+                    <Slide bottom>
                     <img width="100%" src={require("./camping.png")}/>
+                    </Slide>
+                    <Slide bottom>
                     <img width="100%" src={require("./hand.png")}/>
+                    </Slide>
                 </div>
                 <div class="column">
+                    <Slide bottom>
                     <img width="100%" src={require("./office.png")}/>
+                    </Slide>
+                    <Slide bottom>
                     <img width="100%" src={require("./kitchen.png")}/>
+                    </Slide>
+                    <Slide bottom>
                     <img width="100%" src={require("./airport.png")}/>
+                    </Slide>
                 </div>
                 <div class="column">
+                    <Slide bottom>
                     <img width="100%" src={require("./camping.png")}/>
+                    </Slide>
+                    <Slide bottom>
                     <img width="100%" src={require("./Nursinghome.png")}/>
+                    </Slide>
+                    <Slide bottom>
                     <img width="100%" src={require("./office.png")}/>
+                    </Slide>
+                    <Slide bottom>
                     <img width="100%" src={require("./Nursinghome.png")}/>
+                    </Slide>
                 </div>
             </div>
             <div className='Team'>
