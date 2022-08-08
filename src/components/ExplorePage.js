@@ -89,16 +89,16 @@ export default function ExplorePage() {
 						<div key={key} className='image'>
 							<img key={key} src={labelData.url} className='explore_img'/>
 							<div key={key} className='labels'>
-								<p><b>Age: </b>{labelData.demographic.age}</p>
-								<p><b>Sex: </b>{labelData.demographic.sex}</p>
-								<p><b>Social Role: </b>{Array.isArray(labelData.demographic.social_role) ? (labelData.demographic.social_role).join(', ') : labelData.demographic.social_role}</p>
-								<p><b>Architecture Component: </b>{Array.isArray(labelData.location.architecture_component) ? (labelData.location.architecture_component).join(', ') : labelData.location.architecture_component}</p>
-								<p><b>In/outdoor: </b>{labelData.location.in_outdoor}</p>
-								<p><b>Purpose: </b>{Array.isArray(labelData.location.purpose) ? (labelData.location.purpose).join(', ') : labelData.location.purpose}</p>
-								<p><b>Modalities: </b>{Array.isArray(available_modalities) ? available_modalities.join(', ') : available_modalities}</p>
-								<p><b>Attentive: </b>{(labelData.spectators.attentive)}</p>
-								<p><b>Density: </b>{(labelData.spectators.density)}</p>
-								<p><b>Quantity: </b>{(labelData.spectators.quantity)}</p>
+								<p class="Attribute"><b>Age: </b>{labelData.demographic.age}</p>
+								<p class="Attribute"><b>Sex: </b>{labelData.demographic.sex}</p>
+								<p class="Attribute"><b>Social Role: </b>{Array.isArray(labelData.demographic.social_role) ? (labelData.demographic.social_role).join(', ') : labelData.demographic.social_role}</p>
+								<p class="Attribute"><b>Architecture Component: </b>{Array.isArray(labelData.location.architecture_component) ? (labelData.location.architecture_component).join(', ') : labelData.location.architecture_component}</p>
+								<p class="Attribute"><b>In/outdoor: </b>{labelData.location.in_outdoor}</p>
+								<p class="Attribute"><b>Purpose: </b>{Array.isArray(labelData.location.purpose) ? (labelData.location.purpose).join(', ') : labelData.location.purpose}</p>
+								<p class="Attribute"><b>Modalities: </b>{Array.isArray(available_modalities) ? available_modalities.join(', ') : available_modalities}</p>
+								<p class="Attribute"><b>Attentive: </b>{(labelData.spectators.attentive)}</p>
+								<p class="Attribute"><b>Density: </b>{(labelData.spectators.density)}</p>
+								<p class="Attribute"><b>Quantity: </b>{(labelData.spectators.quantity)}</p>
 							</div>
 						</div>
 					)
