@@ -28,10 +28,17 @@ export default function ExploreGallery(props) {
 	/* Render */
 	return (
 		<div className="ExploreGallery">
-			<AppliedFilters
-        filterList={props.filterList}
-        remove_filter={props.remove_filter}
-      />
+	    {(props.filterList.length > 0) ?  // only show when there is some applied filter
+				<div className="ExploreGalleryHeader">
+					<AppliedFilters
+		        filterList={props.filterList}
+		        remove_filter={props.remove_filter}
+		      />
+	        <div className="SubsectionName">
+	           Found {props.imageList.length} results
+	        </div>
+	    	</div>
+    	: null }
       <Gallery
       	imageList={props.imageList}
       />
@@ -133,41 +140,32 @@ function AppliedFilters(props) {
   };*/
 
   return (
-	  <div className="Module">
-    	{(props.filterList.length > 0) ?  // only show when there is some applied filter
-    		<>
-		      <div className="ModuleHeaderBar">
-		        <div className="SectionHeader">
-		          <div className="SubsectionName">
-		            Applied Filters
-		          </div>
-		          <div className="AppliedFiltersCount">
-		            ({props.filterList.length})
-		          </div>
-		        </div>
-		        {/* TODO: add btns: rearrange, clear all */}
-		      </div>
-	        {/*<div ref={ref} className={(showMore ? "" : "AppliedFiltersList") + " " + "FilterList"}>*/}
-	        <div className="FilterList">
-	          {props.filterList.map((item) =>
-	            <Filter
-	              key={item.label_id}
-	              label={item.label}
-	              color={item.color}
-	              //category={item.category}
-	              //subcategory={item.subcategory}
-	              remove_filter={props.remove_filter}
-	            />
-	          )}
-	        </div>
-		      {/*showLink && (
-		        <span onClick={onClickMore}>
-		          {showMore ? "show less" : "& more"}
-		        </span>
-		      )*/}
-	      </>
-    	: null }
-	  </div>
+	  <div className="AppliedFilters">
+      <div className="ModuleHeaderBar">
+        <div className="SubsectionName">
+          Applied Filters ({props.filterList.length}) :
+        </div>
+        {/* TODO: add btns: rearrange, clear all */}
+      </div>
+       {/*<div ref={ref} className={(showMore ? "" : "AppliedFiltersList") + " " + "FilterList"}>*/}
+       <div className="FilterList">
+         {props.filterList.map((item) =>
+          <Filter
+            key={item.label_id}
+            label={item.label}
+            color={item.color}
+            //category={item.category}
+            //subcategory={item.subcategory}
+            remove_filter={props.remove_filter}
+          />
+        )}
+      </div>
+      {/*showLink && (
+        <span onClick={onClickMore}>
+          {showMore ? "show less" : "& more"}
+        </span>
+      )*/}
+  </div>
   );
 }
 

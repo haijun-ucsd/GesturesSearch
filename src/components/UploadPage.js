@@ -12,7 +12,8 @@ import LabelsForm from "./LabelsForm";
 import { LabelStructure } from "./components";
 
 export default function UploadPage() {
-  /* To collect data from LabelsForm (labels) */
+
+/* To collect data from LabelsForm (labels) */
 
   const [formData, setFormData] = useState(LabelStructure);
 
@@ -205,7 +206,8 @@ export default function UploadPage() {
     console.log(addedPic); //DEBUG
   }, [addedPic]);
 
-  /* To handle upload */
+
+/* To handle upload */
 
   const [uploadDisabled, setUploadDisabled] = useState(true);
 
@@ -372,8 +374,8 @@ export default function UploadPage() {
     setSeen(!seen);
   };
 
-  /* Render */
 
+/* Render */
   return (
     <div className="PageBox">
       <WaitingRoom

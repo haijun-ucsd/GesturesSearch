@@ -133,7 +133,7 @@
   width: 24px;
   cursor: pointer;
 }
-.Checkbox_default:before {
+.Checkbox_default::before {
   visibility: visible;
   content: "";
   position: absolute;
@@ -143,7 +143,7 @@
   border: none;
   background-image: url("../assets/Checkbox_bg.svg");
 }
-.Checkbox_default:after {  /* :after naturally covers :before */
+.Checkbox_default::after {  /* ::after naturally covers ::before */
   visibility: visible;
   content: "";
   position: absolute;
@@ -154,14 +154,14 @@
   -webkit-mask-image: url("../assets/Checkbox_blank.svg");
   background-color: var(--checkbox-color, #000000);  /* default color: black */
 }
-.Checkbox_default:checked:after {
+.Checkbox_default:checked::after {
   mask-image: url("../assets/Checkbox_checked.svg");
   -webkit-mask-image: url("../assets/Checkbox_checked.svg");
 }
-.Checkbox_default:disabled:after {
+.Checkbox_default:disabled::after {
   background-color: #CCCCCC;
 }
-.Checkbox_default:not(:disabled):hover:after {
+.Checkbox_default:not(:disabled):hover::after {
   filter: brightness(120%);
 }
 
@@ -172,7 +172,6 @@
 .Checkbox_checklabel:checked {
   visibility: hidden;
   display: inline-block;
-  /*cursor: pointer;*/
 }
 .Checkbox_checklabel:checked:after {
   visibility: visible;
@@ -186,6 +185,35 @@
   mask-image: url("../assets/CheckLabel_checkmark.svg");
   -webkit-mask-image: url("../assets/CheckLabel_checkmark.svg");
   background-color: var(--checkbox-color, #000000);  /* default color: black */
+}
+
+.Checkbox_spectrum_container { /* should have ≥2 children elements in this flex */
+  /* as an item */
+  align-self: stretch;
+  /* as a container */
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.Checkbox_spectrum_container::before {  /* ::before naturally covers :before */
+  content: "";
+  border-bottom: 2px solid #CCCCCC;
+  position: absolute;
+  transform: translateY(-50%);
+  top: 12px; /* = 24/2, 24px is the height of one checkbox */
+  height: 0px;
+  left: 8px;
+  right: 8px;
+}
+.Checkbox_spectrum {
+  /* as a container */
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  width: 24px; /* height & width of one checkbox */
+  gap: 8px;
 }
 
 
@@ -205,6 +233,7 @@
   line-height: 120%;
   letter-spacing: 0.01em;
   color: #333333;
+  cursor: pointer;
 }
 
 
@@ -474,7 +503,9 @@
   /* as a container */
   position: relative;
   align-items: center;
-  max-width: 200px; /* TODO: better width */
+  max-width: 240px;
+  min-width: 100px;
+  /* TODO: better max-width and min-width */
   height: 0px; /* constrain vertical position */
 }
 
@@ -572,6 +603,7 @@
 }
 
 .SectionName {  /* right now same as CategoryName */
+  flex: 0 0 auto; /* no wrap */
   /* font */
   font-family: "Google Sans",Roboto,Arial,sans-serif;
   font-style: normal;
@@ -584,6 +616,8 @@
 }
 
 .Subsections {  /* container for all subsections, right now same as FormSubcategories */
+  /*as an item */
+  align-self: stretch;
   /* as a container */
   display: flex;
   flex-direction: column;
@@ -592,6 +626,8 @@
 }
 
 .Subsection {  /* right now same as FormSubcategories */
+  /*as an item */
+  align-self: stretch;
   /* as a container */
   display: flex;
   flex-direction: column;
@@ -600,6 +636,7 @@
 }
 
 .SubsectionName {  /* right now font is same as SubcategoryName */
+  flex: 0 0 auto; /* no wrap */
   display: inline-block;
   /* font */
   font-family: "Google Sans",Roboto,Arial,sans-serif;
@@ -808,6 +845,7 @@
 }
 
 .CategoryName {
+  flex: 0 0 auto; /* no wrap */
   /* font */
   font-family: "Google Sans",Roboto,Arial,sans-serif;
   font-style: normal;
@@ -843,6 +881,7 @@
 }
 
 .SubcategoryName {
+  flex: 0 0 auto; /* no wrap */
   /* font */
   font-family: "Google Sans",Roboto,Arial,sans-serif;
   font-style: normal;
@@ -858,6 +897,7 @@
 
 .ExploreGallery {
   height: calc(100vh - 40px); /* minus height of Navbar */
+  width: 75vw; /* twin: FacetMenu width 25vw */
   /* as an item */
   flex-grow: 1;
   /* as a container */
@@ -888,16 +928,24 @@
   display: none;
 }
 
-.AppliedFiltersCount {
-  /* font */
-  font-family: "Google Sans",Roboto,Arial,sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  /*font-size: 18px;*/
-  line-height: 120%;
-  letter-spacing: 0.01em;
-  color: #000000;
+.ExploreGalleryHeader {
+  /* as an item */
+  align-self: stretch;
+  /* as a container */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 24px 40px;
+  gap: 16px;
+  border-bottom: 1px solid #CCCCCC;
+}
+
+.AppliedFilters {
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
 }
 
 .AppliedFiltersList {
@@ -916,7 +964,7 @@
   left: 0px;
   top: 0px;*/
   height: calc(100vh - 40px); /* minus height of Navbar */
-  width: 25vw;
+  width: 25vw; /* twin: ExploreGallery width 75vw */
   max-width: 640px;
   min-width: 400px;
   border-right: 1px solid #CCCCCC; /* TODO: dropshadow */

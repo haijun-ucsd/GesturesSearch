@@ -4,7 +4,8 @@ import React, { useState , useEffect, useLayoutEffect } from 'react';
 //import { ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage';
 //import { v4 } from 'uuid';
 import './components.css';
-import { Filter, Checkbox, SearchBar, AccordionSection } from './components';
+import { labels_data } from "./labels_data.js";
+import { Filter, Checkbox, CheckLabel, SearchBar, AccordionSection } from './components';
 import BodyComponent from './BodyComponent.tsx';
 
 /* Assets: */
@@ -71,7 +72,8 @@ export default function Facet(props) {
    * filter_change_handler
    *
    * Default filter_change_handler for checkbox facet fields.
-   * Special case: Modality → see within FacetModality.
+   * Special case that doesn't belong to here: Modality → see within FacetModality.
+   * The filter-removing part is located in the parent (ExplorePage) component, function name remove_filter(), because AppliedFilters also call that function.
    *
    * @param :
    *  A new filter in filterList contains (input as parameters):
@@ -83,7 +85,7 @@ export default function Facet(props) {
    */
   const filter_change_handler = (label, label_id, category, subcategory, color) => {
     // DEBUG
-    console.log("try adding filter: " + label + " ...");
+    console.log("clicked on filter: " + label);
 
     // Check for empty.
     if (label == "") { return; }
@@ -93,34 +95,44 @@ export default function Facet(props) {
     if (props.filterList.some(
       (item) => item.label === label
     )) {
+
+      // Remove.
       console.log("label exists, remove."); //DEBUG
-      props.remove_filter(label);
+      props.remove_filter(label); // remove from both filterList and facetList
     } else {
+
+      // Add.
       console.log("label doesn't exists yet, add."); //DEBUG
       const newFilter = {
         ['label']: label,
         ['label_id']: label_id,
         ['category']: category,
         ['subcategory']: subcategory,
-        ['color']: subcategory,
+        ['color']: color,
       };
       props.setFilterList (prev => ([
         ...prev,
         newFilter,
       ]));
+      props.setFacetList(prev => ({
+        ...prev,
+        [category]: {
+          ...prev[category],
+          [subcategory]: [
+            ...prev[category][subcategory],
+            label,
+          ]
+        },
+      }));
+    }
 
     // TODO: Update gallery.
     //console.log("adding succeeds, gallery updated."); //DEBUG
-    }
   }
 
   /* Render */
   return (
     <div className="FacetMenu">
-      {/*<AppliedFilters
-        filterList={props.filterList}
-        remove_filter={remove_filter}
-      />*/}
       <div className="Facet">
         <ExploreSearch
           range={props.range}
@@ -135,19 +147,22 @@ export default function Facet(props) {
           remove_filter={props.remove_filter}
         />
         <FacetPosture
-          postureStates={props.facetList.posture}
+          facetList={props.facetList}
           filter_change_handler={filter_change_handler}
         />
         <FacetSpectators
+          facetList={props.facetList}
           filter_change_handler={filter_change_handler}
         />
         <FacetDemongraphic
+          facetList={props.facetList}
           filter_change_handler={filter_change_handler}
         />
       </div>
     </div>
   );
 }
+
 
 /**
  * ExploreSearch
@@ -197,7 +212,7 @@ function ExploreSearch(props) {
                 value={category}
                 value_displaytext={category.charAt(0).toUpperCase() + category.slice(1)}  // capitalize first letter of the categories for display
                 color={SearchRange_color[category]}
-                defaultChecked={props.range.some(item => item===category) ? true : false}  // render checked state according to the recorded range
+                defaultChecked={props.range.some(item => item===category)}  // render checked state according to the recorded range
                 onchange_handler={props.onchange_handler}
               />
             )}
@@ -276,7 +291,12 @@ function FacetModality(props) {
 
       // available → unavailable
       currBodypartState = "unavailable";
-      props.remove_filter(bodypart+" available");
+      props.setFilterList (prev => {
+        let newFilterList = prev.filter(
+          (item) => (item.label !== (bodypart+" available"))
+        );
+        return newFilterList;
+      });
       props.setFilterList (prev => ([
         ...prev,
         {
@@ -291,7 +311,12 @@ function FacetModality(props) {
 
       // unavailable → any
       currBodypartState = "any"; // default bodypart state: any
-      props.remove_filter(bodypart+" unavailable");
+      props.setFilterList (prev => {
+        let newFilterList = prev.filter(
+          (item) => (item.label !== (bodypart+" unavailable"))
+        );
+        return newFilterList;
+      });
     }
 
     // 2. Update facetList.modality.
@@ -322,42 +347,187 @@ function FacetModality(props) {
   );
 }
 
+
 /**
+ * FacetPosture
+ * 
+ * Select all == select none.
+ * 
  * parent props:
- *  - postureStates
+ *  - facetList
+ *  - filter_change_handler()
+ * 
+ * references:
+ *  https://stackoverflow.com/questions/21659888/find-and-remove-objects-in-an-array-based-on-a-key-value-in-javascript
+ *  https://stackoverflow.com/questions/53114521/react-array-contains-method
  */
 function FacetPosture(props) {
+  const allPostures = ["sitting", "standing", "walking", "running", "jumping", "bending", "squatting", "kneeling", "climbing", "hanging", "lying", "backbending", "holding sth.", "grasping sth.", "operating sth.", "pulling sth.", "pushing sth.", "reaching for sth.", "pointing at sth.", "crossing arms", "raising arm(s)", "crossing legs", "raising leg(s)"];
+  const postureColor = "#AC92EB";
   return (
     <AccordionSection
       title="Posture"
-      color="#AC92EB"
+      color={postureColor}
       //description=""
     >
-      TODO: Posture section
+      <div
+        className="LabelList"
+      >
+        {allPostures.map((label) =>
+          <CheckLabel
+            value={label}
+            color={postureColor}
+            checkedState={props.facetList.posture.posture.some(item => item===label)}
+            onchange_handler={() => props.filter_change_handler(label, 0, "posture", "posture", postureColor)} // TODO: label_id?
+          />
+        )}
+      </div>
     </AccordionSection>
   );
 }
 
+
+/**
+ * FacetSpectators
+ * 
+ * Select all == select none.
+ * 
+ * parent props:
+ *  - facetList
+ *  - filter_change_handler()
+ */
 function FacetSpectators(props) {
+  const allQuantities = ["none", "small", "large"];
+  const allDensities = ["none", "sparse", "dense"];
+  const allAttentives = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '>8'];
+  const spectatorsColor = "#FFCE54";
   return (
     <AccordionSection
       title="Spectators"
-      color="#FFCE54"
+      color={spectatorsColor}
       //description=""
     >
-      TODO: Spectators section
+      <div className="Subsections">
+        <div className="Subsection">
+          <div className="SectionHeader">
+            <div className="SubsectionName">
+              Quantity
+            </div>
+          </div>
+          <div className="Checkbox_spectrum_container">
+            {allQuantities.map((item) =>
+              <Checkbox
+                spectrumBox={true}
+                value={item}
+                value_displaytext={item}
+                defaultChecked={props.facetList.spectators.quantity.some(i => i===item)}
+                checkedState={props.facetList.spectators.quantity.some(i => i===item)}
+                onchange_handler={() => props.filter_change_handler(("spectators quantity: " + item), 0, "spectators", "quantity", spectatorsColor)} // TODO: label_id?
+              />
+            )}
+          </div>
+        </div>
+        <div className="Subsection">
+          <div className="SectionHeader">
+            <div className="SubsectionName">
+              Density
+            </div>
+          </div>
+          <div className="Checkbox_spectrum_container">
+            {allDensities.map((item) =>
+              <Checkbox
+                spectrumBox={true}
+                value={item}
+                value_displaytext={item}
+                defaultChecked={props.facetList.spectators.density.some(i => i===item)}
+                checkedState={props.facetList.spectators.density.some(i => i===item)}
+                onchange_handler={() => props.filter_change_handler(("spectators density: " + item), 0, "spectators", "density", spectatorsColor)} // TODO: label_id?
+              />
+            )}
+          </div>
+        </div>
+        <div className="Subsection">
+          <div className="SectionHeader">
+            <div className="SubsectionName">
+              Attentive
+            </div>
+          </div>
+          <div className="Checkbox_spectrum_container">
+            {allAttentives.map((item) =>
+              <Checkbox
+                spectrumBox={true}
+                value={item}
+                value_displaytext={item}
+                defaultChecked={props.facetList.spectators.attentive.some(i => i===item)}
+                checkedState={props.facetList.spectators.attentive.some(i => i===item)}
+                onchange_handler={() => props.filter_change_handler(("attentive spectators: " + item), 0, "spectators", "attentive", spectatorsColor)} // TODO: label_id?
+              />
+            )}
+          </div>
+        </div>
+      </div>
     </AccordionSection>
   );
 }
 
+
+/**
+ * FacetDemongraphic
+ * 
+ * Select all == select none.
+ * 
+ * parent props:
+ *  - facetList
+ *  - filter_change_handler()
+ */
 function FacetDemongraphic(props) {
+  const allAges = ["baby", "child", "teen", "young adult", "baby", "baby"];
+  const allSexes = ["male", "female"];
+  const demographicColor = "#ED5564";
   return (
     <AccordionSection
       title="Demongraphic"
-      color="#ED5564"
+      color={demographicColor}
       //description=""
     >
-      TODO: Demongraphic section
+      <div className="Subsections">
+        <div className="Subsection">
+          <div className="SectionHeader">
+            <div className="SubsectionName">
+              Age
+            </div>
+          </div>
+          <div className="SearchRangeCheckboxes">
+            {allAges.map((item) =>
+              <Checkbox
+                value={item}
+                value_displaytext={item}
+                defaultChecked={props.facetList.demographic.age.some(i => i===item)}
+                checkedState={props.facetList.demographic.age.some(i => i===item)}
+                onchange_handler={() => props.filter_change_handler(item, 0, "demographic", "age", demographicColor)} // TODO: label_id?
+              />
+            )}
+          </div>
+        </div>
+        <div className="Subsection">
+          <div className="SectionHeader">
+            <div className="SubsectionName">
+              Biological sex
+            </div>
+          </div>
+          <div className="SearchRangeCheckboxes">
+            {allSexes.map((item) =>
+              <Checkbox
+                value={item}
+                value_displaytext={item}
+                defaultChecked={props.facetList.demographic.sex.some(i => i===item)}
+                checkedState={props.facetList.demographic.sex.some(i => i===item)}
+                onchange_handler={() => props.filter_change_handler(item, 0, "demographic", "sex", demographicColor)} // TODO: label_id?
+              />
+            )}
+          </div>
+        </div>
+      </div>
     </AccordionSection>
   );
 }

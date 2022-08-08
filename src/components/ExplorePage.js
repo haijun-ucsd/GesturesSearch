@@ -28,8 +28,8 @@ export default function ExplorePage() {
 	 * List of currently applied filters.
 	 * Structure of each filter item: { label, label_id, category, subcategory, color }
 	 */
-	//const [filterList, setFilterList] = useState([]);
-	const [filterList, setFilterList] = useState([ { label: "library", label_id: 0, category: "location", subcategory: "purpose", color: "#A0D568" }, { label: "hospital", label_id: 1, category: "location", subcategory: "purpose", color: "#A0D568" }, ]); //DEBUG
+	const [filterList, setFilterList] = useState([]);
+	//const [filterList, setFilterList] = useState([ { label: "library", label_id: 0, category: "location", subcategory: "purpose", color: "#A0D568" }, { label: "hospital", label_id: 1, category: "location", subcategory: "purpose", color: "#A0D568" }, ]); //DEBUG
   // DEBUG
   useEffect(() => {
     console.log("updated filterList ↓"); console.log(filterList);
@@ -58,16 +58,48 @@ export default function ExplorePage() {
    *  https://stackoverflow.com/questions/35338961/how-to-remove-the-li-element-on-click-from-the-list-in-reactjs
    */
   const remove_filter = (label) => {
-    // DEBUG
-    console.log("remove filter: " + label);
 
-    // Reset state.list to remove the current filter.
+    let filterToRemove = filterList.find(
+    	(item) => item.label === label
+    );
+    let category = filterToRemove.category;
+    let subcategory = filterToRemove.subcategory;
+
+    // Reset facetList to update the corresponding facet section.
+    // Special case: Modality.
+    if (category === "modality") {
+    	setFacetList(prev => {
+	      return ({
+	        ...prev,
+	        [category]: {
+	          ...prev[category],
+	          [subcategory]: "any", // subcategory in Modality = body part
+	        },
+	      });
+	    });
+    } else {
+	    setFacetList(prev => {
+	      let newSubcategoryList = prev[category][subcategory].filter((item) => item !== label);
+	      console.log("newSubcategoryList: " + newSubcategoryList); //DEBUG
+	      return ({
+	        ...prev,
+	        [category]: {
+	          ...prev[category],
+	          [subcategory]: newSubcategoryList,
+	        },
+	      });
+	    });
+  	}
+
+    // Reset filterList to remove the current filter from AppliedFilter.
     setFilterList (prev => {
       let newFilterList = prev.filter(
         (item) => item.label !== label
       );
       return newFilterList;
     });
+
+    console.log("remove filter: " + label); //DEBUG
 
     // TODO: Update gallery.
     //console.log("removing succeeds, gallery updated."); //DEBUG

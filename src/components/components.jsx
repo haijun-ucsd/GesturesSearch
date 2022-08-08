@@ -60,13 +60,18 @@ class Label extends React.Component {
  * parent props:
  *  - value: string
  *  - color: string
- *  - defaultChecked: boolean
  *  - onchange_handler()
+ *      If checkedState is provided, onchange_handler(), no argument needed;
+ *      If not provided, onchange_handler(e, checked, category, subcategory)
  *  - category: category name, to use in onchange_handler
  *  - subcategory: subcategory name, to use in onchange_handler
+ *  - defaultChecked: boolean
+ *      Optional, no need to provide when checkedState is provided.
+ *  - checkedState: boolean
+ *      Prioritized over the checked hook if provided.
  *
  * hooks:
- *  - checked: To help toggling the color of CheckLabels upon checking.
+ *  - checked: To help toggling the color of CheckLabels upon checking when checkedState is not provided.
  *
  * references:
  *  https://stackoverflow.com/questions/62768262/styling-the-label-of-a-checkbox-when-it-is-checked-with-radium
@@ -80,36 +85,67 @@ function CheckLabel(props) {
       }
       return false; // otherwise default as false
     });
-  return (
-    <label
-      className="Label"
-      style={{
-        borderColor: checked ? props.color : "#CCCCCC",
-        backgroundColor: checked ? props.color+14 : "#FFFFFF"  // +14 = 8% opacity
-      }}
-    >
-      <input
-        type="checkbox"
-        className="Checkbox_checklabel"
-        value={props.value}
-        style={{"--checkbox-color":props.color}}
-        checked={checked}
-        onChange={(e) => {
-          setChecked(prev => !prev);
-          //console.log("checked state in CheckLabel: " + checked); //DEBUG
-          props.onchange_handler(e, !checked, props.category, props.subcategory);  // note: use "!checked" instead of "checked" because check state has not changed yet here
-        }}
-      />
-      <div
-        className="LabelText"
+  if (props.checkedState!==undefined) {
+    return (
+      <label
+        className="Label"
         style={{
-          color: checked ? "#000000" : "#AAAAAA"
+          cursor:"pointer",
+          borderColor: props.checkedState ? props.color : "#CCCCCC",
+          backgroundColor: props.checkedState ? props.color+14 : "#FFFFFF"  // +14 = 8% opacity
         }}
       >
-        {props.value}
-      </div>
-    </label>
-  )
+        <input
+          type="checkbox"
+          className="Checkbox_checklabel"
+          value={props.value}
+          style={{"--checkbox-color":props.color}}
+          checked={props.checkedState}
+          onChange={props.onchange_handler}
+        />
+        <div
+          className="LabelText"
+          style={{
+            color: props.checkedState ? "#000000" : "#AAAAAA"
+          }}
+        >
+          {props.value}
+        </div>
+      </label>
+    );
+  } else {  // when parent did not provide checkedState, use the following as default.
+    return (
+      <label
+        className="Label"
+        style={{
+          cursor:"pointer",
+          borderColor: checked ? props.color : "#CCCCCC",
+          backgroundColor: checked ? props.color+14 : "#FFFFFF"  // +14 = 8% opacity
+        }}
+      >
+        <input
+          type="checkbox"
+          className="Checkbox_checklabel"
+          value={props.value}
+          style={{"--checkbox-color":props.color}}
+          checked={checked}
+          onChange={(e) => {
+            setChecked(prev => !prev);
+            //console.log("checked state in CheckLabel: " + checked); //DEBUG
+            props.onchange_handler(e, !checked, props.category, props.subcategory);  // note: use "!checked" instead of "checked" because check state has not changed yet here
+          }}
+        />
+        <div
+          className="LabelText"
+          style={{
+            color: checked ? "#000000" : "#AAAAAA"
+          }}
+        >
+          {props.value}
+        </div>
+      </label>
+    );
+  }
 }
 
 /**
@@ -220,6 +256,8 @@ function SearchBar(props) {
  *  - color: string
  *  - defaultChecked: boolean
  *  - onchange_handler()
+ *  - checkedState: boolean, prioritized over the checked hook if provided.
+ *  - spectrumBox: boolean, if true, use Checkbox_spectrum class instead of Checkbox.
  * 
  * references:
  *  https://stackoverflow.com/questions/4148499/how-to-style-a-checkbox-using-css
@@ -236,27 +274,47 @@ function Checkbox(props) {
       }
       return false; // otherwise default as false
     });
-  return (
-    <label
-      className="Checkbox"
-    >
-      <input
-        type="checkbox"
-        className="Checkbox_default"
-        value={props.value}
-        style={{"--checkbox-color":props.color}}
-        checked={checked}
-        onChange={(e) => {
-          //e.preventDefault(); // seems not needing preventDefault here
-          setChecked((prev) => !prev);
-          props.onchange_handler(e, !checked);  // note: use "!checked" instead of "checked" because check state has not changed yet here
-        }}
-      />
-      <div className="CheckboxText">
-        {props.value_displaytext}
-      </div>
-    </label>
-  )
+  if (props.checkedState!==undefined) {
+    return (
+      <label
+        className={(props.spectrumBox!==undefined && props.spectrumBox===true) ? "Checkbox_spectrum" : "Checkbox"}
+      >
+        <input
+          type="checkbox"
+          className="Checkbox_default"
+          value={props.value}
+          style={{"--checkbox-color":props.color}}
+          checked={props.checkedState}
+          onChange={props.onchange_handler}
+        />
+        <div className="CheckboxText">
+          {props.value_displaytext}
+        </div>
+      </label>
+    );
+  } else {
+    return (
+      <label
+        className={(props.spectrumBox!==undefined && props.spectrumBox===true) ? "Checkbox_spectrum" : "Checkbox"}
+      >
+        <input
+          type="checkbox"
+          className="Checkbox_default"
+          value={props.value}
+          style={{"--checkbox-color":props.color}}
+          checked={checked}
+          onChange={(e) => {
+            //e.preventDefault(); // seems not needing preventDefault here
+            setChecked((prev) => !prev);
+            props.onchange_handler(e, !checked);  // note: use "!checked" instead of "checked" because check state has not changed yet here
+          }}
+        />
+        <div className="CheckboxText">
+          {props.value_displaytext}
+        </div>
+      </label>
+    );
+  }
 }
 
 /**
@@ -403,15 +461,17 @@ const FilterStructure = Object.freeze({
     legs: "any",
     feet: "any",
   },
-  posture: ["sitting", "..."], //TODO: fill all
+  posture: {
+    posture: [], // ALL: ["sitting", "standing", "walking", "running", "jumping", "bending", "squatting", "kneeling", "climbing", "hanging", "lying", "backbending", "holding sth.", "grasping sth.", "operating sth.", "pulling sth.", "pushing sth.", "reaching for sth.", "pointing at sth.", "crossing arms", "raising arm(s)", "crossing legs", "raising leg(s)"]
+  },
   spectators: {
-    quantity: ["none", "small", "large"],
-    density: ["none", "sparse", "dense"],
-    attentive: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '>8'],
+    quantity: [], // ALL: ["none", "small", "large"]
+    density: [], // ALL: ["none", "sparse", "dense"]
+    attentive: [], // ALL: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '>8']
   },
   demographic: {
-    age: ["baby", "child", "teen", "young adult", "baby", "baby"],
-    sex: ["male", "female"],
+    age: [], // ALL: ["baby", "child", "teen", "young adult", "baby", "baby"]
+    sex: [], // ALL: ["male", "female"]
   },
 })
 
