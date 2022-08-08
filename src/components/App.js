@@ -10,6 +10,7 @@ import './components.css';
 import Navbar from './Navbar';
 import UploadPage from './UploadPage';
 import ExplorePage from './ExplorePage';
+import AboutPage from './AboutPage';
 
 /**
  * references:
@@ -19,7 +20,8 @@ export default function App() {
     <Router>
       <Navbar />
       <Routes>
-        {/*<Route path='/about' element={<AboutPage />} />*/}
+        <Route path='/' element={<AboutPage />} />
+        <Route path='/about' element={<AboutPage />} />
         <Route path='/explore' element={<ExplorePage />} />
         <Route path='/upload' exact element={<UploadPage />} />
       </Routes>

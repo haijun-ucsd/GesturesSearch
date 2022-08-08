@@ -1003,6 +1003,7 @@
   padding: 0px;
   gap: 64px;
   background: #FFFFFF;
+  z-index: 10;
   border-bottom: 1px solid #CCCCCC;
 }
 
@@ -1028,4 +1029,209 @@
   font-weight: 700;
   letter-spacing: 0.003em;
   text-decoration-line: underline;
+}
+
+/* About Page*/
+
+.AboutPageBox {
+  background-color: #f0ecec;
+}
+
+.Home {
+  display: flex;
+  align-items: center;
+  justify-content: center
+}
+.Home img {
+  display: block;
+  margin-left: auto;
+  margin-top: 100px;
+  margin-right: 100px;
+  flex-basis: 40%;
+  width: 45%;
+}
+
+.Home h5 {
+  margin-left: 200px;
+  margin-top: 100px;
+  font-size: 45px;
+  font-weight: bold;
+}
+
+.Intro {
+  margin-top: 250px;
+  display: flex;
+  position: relative;
+  height: 80px;
+}
+
+.Intro img {
+  margin-top: 0px;
+  margin-left: 300px;
+  width: 150px;
+  height: auto;
+  align-self: center;
+}
+
+.Intro h5 {
+  align-self: flex-start;
+  margin-top: 25px;
+  margin-left: 50px;
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.IntroText {
+  margin-top: -50px;
+  width: 50%;
+  line-height: 200%;
+  margin-left: auto;
+  margin-right: auto;
+  width: 55em;
+}
+
+.Problems {
+  margin-top: 100px;
+  position: relative;
+  height: 1300px;
+}
+
+.Problems h5 {
+  margin-top: 200px;
+  margin-left: 300px;
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.Box {
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  border-radius: 20px;
+  overflow: hidden;
+  width: 700px;
+  height: 350px;
+  margin-top: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #e0dcdc;
+}
+
+.Box p {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 20px;
+  width: 40em;
+  line-height: 200%;
+}
+
+.Sample {
+  margin-top: 0px;
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  height: 80px;
+}
+
+/* Create two equal columns that floats next to each other */
+.column {
+  float:left;
+  flex: 25%;
+  padding: 10px;
+}
+
+.column img {
+  margin-top: 20px;
+}
+
+/* Clear floats after the columns */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 4px;
+}
+
+.Sample h5 {
+  align-self: flex-start;
+  margin-top: 25px;
+  margin-left: 100px;
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.Team {
+  margin-top: 50px;
+  display: flex;
+  position: relative;
+  height: 474px;
+}
+
+.Team h5 {
+  margin-left: 200px;
+  margin-top: 100px;
+  font-size: 45px;
+  font-weight: bold;
+}
+
+.Contribution {
+  margin-top: 100px;
+  display: flex;
+  position: relative;
+  height: 325px;
+}
+
+.Contributor {
+  margin-top: 0px;
+  margin-left: 400px;
+  width: 150px;
+  height: auto;
+  align-self: center;
+}
+
+.ContributorTitle{
+  margin-left: -25px;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.Contributor h1 {
+  margin-left: 25px;
+  font-size: 45px;
+}
+
+.Images {
+  margin-top: 0px;
+  margin-left: 150px;
+  width: 150px;
+  height: auto;
+  align-self: center;
+}
+
+.ImageTitle {
+  margin-left: 0px;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.Images h1 {
+  margin-left: 10px;
+  font-size: 45px;
+}
+
+.Locations {
+  margin-top: 0px;
+  margin-left: 150px;
+  width: 150px;
+  height: auto;
+  align-self: center;
+}
+
+.LocationTitle {
+  margin-left: -5px;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.Locations h1 {
+  margin-left: 20px;
+  font-size: 45px;
 }
