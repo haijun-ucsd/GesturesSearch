@@ -1,8 +1,9 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './components.css';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./components.css";
 //import { labels_data } from "./labels_data.js";
-import { useState } from 'react';
+import { useState } from "react";
+import PopUp from "./PopUp";
 
 /**
  * WaitingRoom
@@ -28,16 +29,19 @@ import { useState } from 'react';
  *  https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept
  */
 export default function WaitingRoom(props) {
-  const [addedLabels, setAddedLabels] = useState([]);
+
+
+/* Adding and removing pictures in WaitingRoomGallery */
 
   /**
    * handle_add_pic
-   * 
    * To help store the pictures and initialize URLs for them while using add-pic-btn.
    */
   const handle_add_pic = (e) => {
     // Check for existence of event.target.files.
-    if (!e.target.files) { return; }
+    if (!e.target.files) {
+      return;
+    }
     console.log("Valid new pictures set ↓ , refresh waiting room."); //DUBUG
 
     // Loop through all images to append to:
@@ -52,13 +56,29 @@ export default function WaitingRoom(props) {
     }
     props.setAddedPic(pics_to_store);
     props.setAddedPicUrl(urls_to_store);
-  }
+  };
 
   // TODO: handle_remove_pic
 
 
-/* Render */
+/* Viewing and labeling individual picture */
 
+  /**
+   * clickedUrl
+   * Hook for which picture has been clicked on to be individually seen and labeled.
+   */
+  const [clickedUrl, setClickedUrl] = useState("");
+  const closePop = () => { setClickedUrl(""); }
+
+  /**
+   * addedLabels
+   * To record updates in labeling.
+   */
+  const [addedLabels, setAddedLabels] = useState([]);
+  //const clearLabels = () => { setAddedLabels([]); }  // TODO: add "clear labels" button?
+
+
+/* Render */
   return (
     <div className="WaitingRoom">
       <div className="WaitingRoomControl">
@@ -69,45 +89,70 @@ export default function WaitingRoom(props) {
             </label>
             <input
               id="add-pic-btn"
-              type="file" multiple accept='image/*' // TODO: cannot accept heic yet, possible workaround: https://stackoverflow.com/questions/57127365/make-html5-filereader-working-with-heic-files
+              type="file"
+              multiple
+              accept="image/*" // TODO: cannot accept heic yet, possible workaround: https://stackoverflow.com/questions/57127365/make-html5-filereader-working-with-heic-files
               onChange={handle_add_pic}
-              style={{display:"none"}}
+              style={{ display: "none" }}
             />
           </div>
+          {props.addedPic.length!==0 ?
+            <div className="SubsectionName">
+              Total {props.addedPic.length} pictures
+            </div>
+          : null}
+        </div>
+        <div className="WaitingRoomControl_selectpic"></div>
+        <div className="WaitingRoomControl_addpic">
           <div id="upload-btn-div">
             <button
               className="Btn_primary"
               type="submit"
               onClick={(e) => {
-                alert("Picture is being uploaded!")
+                alert("Picture is being uploaded!");
                 props.uploadImage();
               }}
               variant="primary"
               //disabled={btnDisabled}
             >
-                Upload
+              Publish All
             </button>
           </div>
         </div>
-        <div className="WaitingRoomControl_selectpic"></div>
       </div>
       <div className="WaitingRoomGallery">
-        {props.addedPic != [] ?  // check for empty addedPic list. TODO: display tutorial if empty?
+        {props.addedPic != [] ? ( // check for empty addedPic list. TODO: display tutorial if empty?
           <>
-            {props.addedPicUrl.map((url) => 
+            {props.addedPicUrl.map((url) => (
               <>
                 <img
                   className="WaitingPic"
                   src={url}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setClickedUrl(url);
+                  }}
                 />
-                <div className="LabelList">
-                  {addedLabels.map((label) => <div className="Label">{label}</div>)}
-                </div>
+                {/*<div className="LabelList">
+                  {addedLabels.map((label) => (
+                    <div className="Label">{label}</div>
+                  ))}
+                </div> //TODO: hover to show all added labels */}
               </>
-            )}
+            ))}
           </>
-        : null}
+        ) : null}
       </div>
+      {(clickedUrl!="") ? (
+        <PopUp
+          url={clickedUrl}
+          closePop={closePop}
+          form_change_handler_type1={props.form_change_handler_type1}
+          form_change_handler_type2={props.form_change_handler_type2}
+          form_change_handler_type3={props.form_change_handler_type3}
+          formData={props.formData}
+        />
+      ) : null}
     </div>
   );
 }

@@ -1,10 +1,11 @@
-import React, { useState , useEffect } from 'react';
+import React, { useState , useEffect, useLayoutEffect } from 'react';
 //import { storage } from '../firebase';
 //import { getDatabase, onValue, ref as ref_db, set } from 'firebase/database';
 //import { ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage';
 //import { v4 } from 'uuid';
 import './components.css';
-import { Filter, Checkbox, SearchBar, AccordionSection, LabelStructure } from './components';
+import { labels_data } from "./labels_data.js";
+import { Filter, Checkbox, CheckLabel, SearchBar, AccordionSection } from './components';
 import BodyComponent from './BodyComponent.tsx';
 
 /* Assets: */
@@ -18,7 +19,7 @@ import ArrowDown_secondary from "../assets/ArrowDown_secondary.png";
  *
  * Facet menu for users to search and filter pictures at will on the Explore page.
  * 
- * Structure: AppliedFilters, ExploreSearch, {Modality, Posture, Spectators, Demongraphic}
+ * Structure: ExploreSearch, {Modality, Posture, Spectators, Demongraphic}
  * Each Facet Module is too different from each other to be rendered together in a loop,
  * so they are made into separate components at the end of this file.
  *
@@ -27,9 +28,9 @@ import ArrowDown_secondary from "../assets/ArrowDown_secondary.png";
  *  - range: Search range.
  *  - setFilterList(): To update filterList.
  *  - filterList: Up-to-date list of currently applied filters.
- *
- * hooks:
- *  - ...
+ *  - setFacetList(): To update facetList.
+ *  - facetList: List of states in the facet sections.
+ *  - remove_filter(): To help remove from filterList.
  *
  * references:
  *  https://reactjs.org/docs/composition-vs-inheritance.html
@@ -70,6 +71,10 @@ export default function Facet(props) {
   /**
    * filter_change_handler
    *
+   * Default filter_change_handler for checkbox facet fields.
+   * Special case that doesn't belong to here: Modality → see within FacetModality.
+   * The filter-removing part is located in the parent (ExplorePage) component, function name remove_filter(), because AppliedFilters also call that function.
+   *
    * @param :
    *  A new filter in filterList contains (input as parameters):
    *  { label, label_id, category, subcategory, color }
@@ -80,7 +85,7 @@ export default function Facet(props) {
    */
   const filter_change_handler = (label, label_id, category, subcategory, color) => {
     // DEBUG
-    console.log("try adding filter: " + label + " ...");
+    console.log("clicked on filter: " + label);
 
     // Check for empty.
     if (label == "") { return; }
@@ -90,132 +95,74 @@ export default function Facet(props) {
     if (props.filterList.some(
       (item) => item.label === label
     )) {
+
+      // Remove.
       console.log("label exists, remove."); //DEBUG
-      remove_filter(label);
+      props.remove_filter(label); // remove from both filterList and facetList
     } else {
+
+      // Add.
       console.log("label doesn't exists yet, add."); //DEBUG
       const newFilter = {
         ['label']: label,
         ['label_id']: label_id,
         ['category']: category,
         ['subcategory']: subcategory,
-        ['color']: subcategory,
+        ['color']: color,
       };
       props.setFilterList (prev => ([
         ...prev,
         newFilter,
       ]));
+      props.setFacetList(prev => ({
+        ...prev,
+        [category]: {
+          ...prev[category],
+          [subcategory]: [
+            ...prev[category][subcategory],
+            label,
+          ]
+        },
+      }));
+    }
 
     // TODO: Update gallery.
     //console.log("adding succeeds, gallery updated."); //DEBUG
-    }
-  }
-
-  /**
-   * remove_filter
-   * 
-   * To specifically remove an applied filter.
-   *
-   * @param label: Value of the element to remove.
-   *
-   * references:
-   *  https://stackoverflow.com/questions/36326612/how-to-delete-an-item-from-state-array
-   *  https://stackoverflow.com/questions/35338961/how-to-remove-the-li-element-on-click-from-the-list-in-reactjs
-   */
-  const remove_filter = (label) => {
-    // DEBUG
-    console.log("remove filter: " + label);
-
-    // Reset state.list to remove the current filter.
-    props.setFilterList (prev => {
-      let newFilterList = prev.filter(
-        (item) => item.label !== label
-      );
-      return newFilterList;
-    });
-
-    // TODO: Update gallery.
-    //console.log("removing succeeds, gallery updated."); //DEBUG
   }
 
   /* Render */
   return (
-    <div className="Facet">
-      <AppliedFilters
-        filterList={props.filterList}
-        remove_filter={remove_filter}
-      />
-      <ExploreSearch
-        range={props.range}
-        setRange={props.setRange}
-        onchange_handler={range_change_handler}
-        filter_change_handler={filter_change_handler}
-      />
-      <FacetModality
-        filter_change_handler={filter_change_handler}
-      />
-      <FacetPosture
-        filter_change_handler={filter_change_handler}
-      />
-      <FacetSpectators
-        filter_change_handler={filter_change_handler}
-      />
-      <FacetDemongraphic
-        filter_change_handler={filter_change_handler}
-      />
-    </div>
-  );
-}
-
-/**
- * AppliedFilters
- *
- * parent props:
- *  - filterList
- *  - remove_filter()
- *
- * references:
- *  https://robinpokorny.medium.com/index-as-a-key-is-an-anti-pattern-e0349aece318
- */
-function AppliedFilters(props) {
-  return (
-    <div className="Module">
-      <div className="ModuleHeaderBar">
-        <div className="SectionHeader">
-          <div className="SectionName">
-            Applied Filters
-          </div>
-          <div className="AppliedFiltersCount">
-            ({props.filterList.length})
-          </div>
-        </div>
-        {/* TODO: add btns: rearrange, clear all */}
+    <div className="FacetMenu">
+      <div className="Facet">
+        <ExploreSearch
+          range={props.range}
+          setRange={props.setRange}
+          onchange_handler={range_change_handler}
+          filter_change_handler={filter_change_handler}
+        />
+        <FacetModality
+          facetList={props.facetList}
+          setFacetList={props.setFacetList} // will only set "modality"
+          setFilterList={props.setFilterList}
+          remove_filter={props.remove_filter}
+        />
+        <FacetPosture
+          facetList={props.facetList}
+          filter_change_handler={filter_change_handler}
+        />
+        <FacetSpectators
+          facetList={props.facetList}
+          filter_change_handler={filter_change_handler}
+        />
+        <FacetDemongraphic
+          facetList={props.facetList}
+          filter_change_handler={filter_change_handler}
+        />
       </div>
-      {(props.filterList.length > 0) ?  // only show element when there is some applied filter
-        <div className="FilterList">
-          {props.filterList.map((item) =>
-            <Filter
-              key={item.label_id}
-              label={item.label}
-              color={item.color}
-              //category={item.category}
-              //subcategory={item.subcategory}
-              remove_filter={props.remove_filter}
-            />
-          )}
-        </div>
-      : null }
     </div>
   );
 }
 
-/*function FilterRearrange(props) {
-  return (
-    <div className="Module">
-      <... />
-    </div>
-  );
-}*/
 
 /**
  * ExploreSearch
@@ -265,7 +212,7 @@ function ExploreSearch(props) {
                 value={category}
                 value_displaytext={category.charAt(0).toUpperCase() + category.slice(1)}  // capitalize first letter of the categories for display
                 color={SearchRange_color[category]}
-                defaultChecked={props.range.some(item => item===category) ? true : false}  // render checked state according to the recorded range
+                defaultChecked={props.range.some(item => item===category)}  // render checked state according to the recorded range
                 onchange_handler={props.onchange_handler}
               />
             )}
@@ -302,59 +249,287 @@ function ExploreSearch(props) {
 
 // TODO: improve organization of these category modules, combine things that can be combined.
 
+/**
+ * FacetModality
+ * 
+ * parent props:
+ *  - facetList: for displaying and updating modality states.
+ *  - setFacetList()
+ *  - setFilterList()
+ *  - remove_filter(): Tod help setFilterList().
+ */
 function FacetModality(props) {
+
+  /**
+   * modality_change_handler
+   * 
+   * 1. Modify filterList.
+   * 2. Update facetList.modality.
+   * Click to switch order: any → available → unavailable → any.
+   */
+  const modality_change_handler = (target) => {
+    const bodypart = target.id || target.parentElement.id; // could be either depending on clicking position
+    console.log("modality state is changed on body part: " + bodypart); //DEBUG
+    let currBodypartState = props.facetList["modality"][bodypart];
+
+    // 1. Modify filterList.
+    if (currBodypartState==="any") {
+
+      // any → available
+      currBodypartState = "available";
+      props.setFilterList (prev => ([
+        ...prev,
+        {
+          ['label']: bodypart + " available",
+          ['label_id']: 0, // TODO: label_id
+          ['category']: "modality",
+          ['subcategory']: bodypart,
+          ['color']: "#4FC1E8",
+        },
+      ]));
+    } else if (currBodypartState==="available") {
+
+      // available → unavailable
+      currBodypartState = "unavailable";
+      props.setFilterList (prev => {
+        let newFilterList = prev.filter(
+          (item) => (item.label !== (bodypart+" available"))
+        );
+        return newFilterList;
+      });
+      props.setFilterList (prev => ([
+        ...prev,
+        {
+          ['label']: bodypart + " unavailable",
+          ['label_id']: 0, // TODO: label_id
+          ['category']: "modality",
+          ['subcategory']: bodypart,
+          ['color']: "#4FC1E8",
+        },
+      ]));
+    } else { // currBodypartState==="unavailable"
+
+      // unavailable → any
+      currBodypartState = "any"; // default bodypart state: any
+      props.setFilterList (prev => {
+        let newFilterList = prev.filter(
+          (item) => (item.label !== (bodypart+" unavailable"))
+        );
+        return newFilterList;
+      });
+    }
+
+    // 2. Update facetList.modality.
+    props.setFacetList((prev) => ({
+      ...prev,
+      ["modality"]: {
+        ...prev["modality"],
+        [bodypart]: currBodypartState,
+      },
+    }));
+  }
+
+  /* Render */
   return (
     <AccordionSection
       title="Modality"
       color="#4FC1E8"
       //description=""
     >
-      <div /*style={{height:'360px'}}*/>
-        TODO: modality section
-        {/*<BodyComponent
-          partsInput={LabelStructure.modality}
-          form_change_handler={(categoryname, bodypart) => {  // categoryname=="modality", can ignore
-            console.log("modality selection is changed on body part: " + bodypart); //DEBUG
-            props.filter_change_handler (bodypart, 0, categoryname, bodypart, "#4FC1E8");  // TODO: label_id
-          }}
-        />*/}
+      <div style={{height:'360px'}}>
+        <BodyComponent
+          parts={props.facetList.modality}
+          defaultState="any"
+          form_change_handler={modality_change_handler}
+        />
       </div>
     </AccordionSection>
   );
 }
 
+
+/**
+ * FacetPosture
+ * 
+ * Select all == select none.
+ * 
+ * parent props:
+ *  - facetList
+ *  - filter_change_handler()
+ * 
+ * references:
+ *  https://stackoverflow.com/questions/21659888/find-and-remove-objects-in-an-array-based-on-a-key-value-in-javascript
+ *  https://stackoverflow.com/questions/53114521/react-array-contains-method
+ */
 function FacetPosture(props) {
+  const allPostures = ["sitting", "standing", "walking", "running", "jumping", "bending", "squatting", "kneeling", "climbing", "hanging", "lying", "backbending", "holding sth.", "grasping sth.", "operating sth.", "pulling sth.", "pushing sth.", "reaching for sth.", "pointing at sth.", "crossing arms", "raising arm(s)", "crossing legs", "raising leg(s)"];
+  const postureColor = "#AC92EB";
   return (
     <AccordionSection
       title="Posture"
-      color="#AC92EB"
+      color={postureColor}
       //description=""
     >
-      TODO: Posture section
+      <div
+        className="LabelList"
+      >
+        {allPostures.map((label) =>
+          <CheckLabel
+            value={label}
+            color={postureColor}
+            checkedState={props.facetList.posture.posture.some(item => item===label)}
+            onchange_handler={() => props.filter_change_handler(label, 0, "posture", "posture", postureColor)} // TODO: label_id?
+          />
+        )}
+      </div>
     </AccordionSection>
   );
 }
 
+
+/**
+ * FacetSpectators
+ * 
+ * Select all == select none.
+ * 
+ * parent props:
+ *  - facetList
+ *  - filter_change_handler()
+ * 
+ * TODO: change Attentive to 2 input fields for upper and lower boundaries.
+ */
 function FacetSpectators(props) {
+  const allQuantities = ["none", "small", "large"];
+  const allDensities = ["none", "sparse", "dense"];
+  const allAttentives = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '>8'];
+  const spectatorsColor = "#FFCE54";
   return (
     <AccordionSection
       title="Spectators"
-      color="#FFCE54"
+      color={spectatorsColor}
       //description=""
     >
-      TODO: Spectators section
+      <div className="Subsections">
+        <div className="Subsection">
+          <div className="SectionHeader">
+            <div className="SubsectionName">
+              Quantity
+            </div>
+          </div>
+          <div className="Checkbox_spectrum_container">
+            {allQuantities.map((item) =>
+              <Checkbox
+                spectrumBox={true}
+                value={item}
+                value_displaytext={item}
+                defaultChecked={props.facetList.spectators.quantity.some(i => i===("spectators quantity: " + item))}
+                checkedState={props.facetList.spectators.quantity.some(i => i===("spectators quantity: " + item))}
+                onchange_handler={() => props.filter_change_handler(("spectators quantity: " + item), 0, "spectators", "quantity", spectatorsColor)} // TODO: label_id?
+              />
+            )}
+          </div>
+        </div>
+        <div className="Subsection">
+          <div className="SectionHeader">
+            <div className="SubsectionName">
+              Density
+            </div>
+          </div>
+          <div className="Checkbox_spectrum_container">
+            {allDensities.map((item) =>
+              <Checkbox
+                spectrumBox={true}
+                value={item}
+                value_displaytext={item}
+                defaultChecked={props.facetList.spectators.density.some(i => i===("spectators density: " + item))}
+                checkedState={props.facetList.spectators.density.some(i => i===("spectators density: " + item))}
+                onchange_handler={() => props.filter_change_handler(("spectators density: " + item), 0, "spectators", "density", spectatorsColor)} // TODO: label_id?
+              />
+            )}
+          </div>
+        </div>
+        <div className="Subsection">
+          <div className="SectionHeader">
+            <div className="SubsectionName">
+              Attentive
+            </div>
+          </div>
+          <div className="Checkbox_spectrum_container">
+            {allAttentives.map((item) =>
+              <Checkbox
+                spectrumBox={true}
+                value={item}
+                value_displaytext={item}
+                defaultChecked={props.facetList.spectators.attentive.some(i => i===("attentive spectators: " + item))}
+                checkedState={props.facetList.spectators.attentive.some(i => i===("attentive spectators: " + item))}
+                onchange_handler={() => props.filter_change_handler(("attentive spectators: " + item), 0, "spectators", "attentive", spectatorsColor)} // TODO: label_id?
+              />
+            )}
+          </div>
+        </div>
+      </div>
     </AccordionSection>
   );
 }
 
+
+/**
+ * FacetDemongraphic
+ * 
+ * Select all == select none.
+ * 
+ * parent props:
+ *  - facetList
+ *  - filter_change_handler()
+ */
 function FacetDemongraphic(props) {
+  const allAges = ["baby", "child", "teen", "young adult", "baby", "baby"];
+  const allSexes = ["male", "female"];
+  const demographicColor = "#ED5564";
   return (
     <AccordionSection
       title="Demongraphic"
-      color="#ED5564"
+      color={demographicColor}
       //description=""
     >
-      TODO: Demongraphic section
+      <div className="Subsections">
+        <div className="Subsection">
+          <div className="SectionHeader">
+            <div className="SubsectionName">
+              Age
+            </div>
+          </div>
+          <div className="SearchRangeCheckboxes">
+            {allAges.map((item) =>
+              <Checkbox
+                value={item}
+                value_displaytext={item}
+                defaultChecked={props.facetList.demographic.age.some(i => i===item)}
+                checkedState={props.facetList.demographic.age.some(i => i===item)}
+                onchange_handler={() => props.filter_change_handler(item, 0, "demographic", "age", demographicColor)} // TODO: label_id?
+              />
+            )}
+          </div>
+        </div>
+        <div className="Subsection">
+          <div className="SectionHeader">
+            <div className="SubsectionName">
+              Biological sex
+            </div>
+          </div>
+          <div className="SearchRangeCheckboxes">
+            {allSexes.map((item) =>
+              <Checkbox
+                value={item}
+                value_displaytext={item}
+                defaultChecked={props.facetList.demographic.sex.some(i => i===item)}
+                checkedState={props.facetList.demographic.sex.some(i => i===item)}
+                onchange_handler={() => props.filter_change_handler(item, 0, "demographic", "sex", demographicColor)} // TODO: label_id?
+              />
+            )}
+          </div>
+        </div>
+      </div>
     </AccordionSection>
   );
 }
