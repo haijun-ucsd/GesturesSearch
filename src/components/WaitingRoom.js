@@ -96,6 +96,11 @@ export default function WaitingRoom(props) {
               style={{ display: "none" }}
             />
           </div>
+          {props.addedPic.length!==0 ?
+            <div className="SubsectionName">
+              Total {props.addedPic.length} pictures
+            </div>
+          : null}
         </div>
         <div className="WaitingRoomControl_selectpic"></div>
         <div className="WaitingRoomControl_addpic">
