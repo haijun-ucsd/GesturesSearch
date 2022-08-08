@@ -9,7 +9,7 @@ export default function AboutPage() {
             <div className='Home'>
                 <h5>Ubi-Gesture</h5>
                 <img
-                    src={require('./hand.png')}
+                    src="https://mb.cision.com/Public/14959/3307223/99660166e82b8824_800x800ar.png"
                 />
             </div>
             <div className="Intro">
@@ -64,52 +64,58 @@ export default function AboutPage() {
             <div class="row">
                 <div class="column">
                     <Slide bottom>
-                    <img width="100%" src={require("./kitchen.png")}/>
+                    <img width="100%" src="https://www.eatthis.com/wp-content/uploads/sites/4/2022/07/woman-cooking.jpg?quality=82&strip=all"/>
                     </Slide>
                     <Slide bottom>
-                    <img width="100%" src={require("./airport.png")}/>
+                    <img width="100%" src="https://cloudfront-us-east-2.images.arcpublishing.com/reuters/UY7DGYM4XVMB3IKMYIU7C7IM3U.jpg"/>
                     </Slide>
                     <Slide bottom>
-                    <img width="100%" src={require("./office.png")}/>
-                    </Slide>
-                </div>
-                <div class="column">
-                    <Slide bottom>
-                    <img width="100%" src={require("./Nursinghome.png")}/>
+                    <img width="100%" src="https://images.theconversation.com/files/223381/original/file-20180615-85822-1o2y44i.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=754&fit=clip"/>
                     </Slide>
                     <Slide bottom>
-                    <img width="100%" src={require("./office.png")}/>
-                    </Slide>
-                    <Slide bottom>
-                    <img width="100%" src={require("./camping.png")}/>
-                    </Slide>
-                    <Slide bottom>
-                    <img width="100%" src={require("./hand.png")}/>
+                    <img width="100%" src="https://www.sassyhongkong.com/wp-content/uploads/2021/09/camping-hong-kong-whats-on.png"/>
                     </Slide>
                 </div>
                 <div class="column">
                     <Slide bottom>
-                    <img width="100%" src={require("./office.png")}/>
+                    <img width="100%" src="https://images.theconversation.com/files/223381/original/file-20180615-85822-1o2y44i.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=754&fit=clip" />
                     </Slide>
                     <Slide bottom>
-                    <img width="100%" src={require("./kitchen.png")}/>
+                    <img width="100%" src="https://www.eatthis.com/wp-content/uploads/sites/4/2022/07/woman-cooking.jpg?quality=82&strip=all"/>
                     </Slide>
                     <Slide bottom>
-                    <img width="100%" src={require("./airport.png")}/>
+                    <img width="100%" src="https://upload.wikimedia.org/wikipedia/commons/7/77/Deepsea.JPG"/>
+                    </Slide>
+                    <Slide bottom>
+                    <img width="100%" src="https://domf5oio6qrcr.cloudfront.net/medialibrary/11537/4a78f148-d427-4209-8173-f33d04c44106.jpg"/>
                     </Slide>
                 </div>
                 <div class="column">
                     <Slide bottom>
-                    <img width="100%" src={require("./camping.png")}/>
+                    <img width="100%" src="https://domf5oio6qrcr.cloudfront.net/medialibrary/11537/4a78f148-d427-4209-8173-f33d04c44106.jpg"/>
                     </Slide>
                     <Slide bottom>
-                    <img width="100%" src={require("./Nursinghome.png")}/>
+                    <img width="100%" src="https://volleycountry.com/wp-content/uploads/2020/12/beach-game.jpeg"/>
                     </Slide>
                     <Slide bottom>
-                    <img width="100%" src={require("./office.png")}/>
+                    <img width="100%" src="https://www.sassyhongkong.com/wp-content/uploads/2021/09/camping-hong-kong-whats-on.png"/>
                     </Slide>
                     <Slide bottom>
-                    <img width="100%" src={require("./Nursinghome.png")}/>
+                    <img width="100%" src="https://cloudfront-us-east-2.images.arcpublishing.com/reuters/UY7DGYM4XVMB3IKMYIU7C7IM3U.jpg"/>
+                    </Slide>
+                </div>
+                <div class="column">
+                    <Slide bottom>
+                    <img width="100%" src="https://www.sassyhongkong.com/wp-content/uploads/2021/09/camping-hong-kong-whats-on.png"/>
+                    </Slide>
+                    <Slide bottom>
+                    <img width="100%" src="https://volleycountry.com/wp-content/uploads/2020/12/beach-game.jpeg"/>
+                    </Slide>
+                    <Slide bottom>
+                    <img width="100%" src="https://upload.wikimedia.org/wikipedia/commons/7/77/Deepsea.JPG"/>
+                    </Slide>
+                    <Slide bottom>
+                    <img width="100%" src="https://volleycountry.com/wp-content/uploads/2020/12/beach-game.jpeg"/>
                     </Slide>
                 </div>
             </div>
