@@ -10,12 +10,14 @@ export const labels_data = [
     category: "location",
     category_displaytext: "Location",
     color: "#A0D568",
+    icon: "CategoryIcon_Location",
     subcategories: [
       {
         subcategory: "in_outdoor",
         subcategory_displaytext: "In/outdoor",
         description: "In/outdoor",
         type: 1,
+        required: true,
         labels: [
           { label: "indoor", label_id: 0, pictures: ["id_1", "id_2", "id_3"] },
           { label: "outdoor", label_id: 1, pictures: [] },
@@ -27,6 +29,7 @@ export const labels_data = [
         description:
           "A commonly used name of the place indicating the function that it is designed for. e.g. subway, gym, swimming pool, beach, hospital, parking lot",
         type: 2,
+        required: true,
         labels: [
           { label: "library", label_id: 0, pictures: [] },
           { label: "hospital", label_id: 1, pictures: [] },
@@ -48,6 +51,7 @@ export const labels_data = [
         description:
           "Architecural components that are in proximity to the subject or likely to influence their behaviors. \n e.g. at the entrance, in the corridor, in the waiting room, inside the pool",
         type: 2,
+        required: false,
         labels: [
           { label: "entrance", label_id: 0, pictures: [] },
           { label: "corridor", label_id: 1, pictures: [] },
@@ -68,6 +72,7 @@ export const labels_data = [
     category: "spectators",
     category_displaytext: "Spectators",
     color: "#FFCE54",
+    icon: "CategoryIcon_Spectators",
     subcategories: [
       {
         subcategory: "quantity",
@@ -75,6 +80,7 @@ export const labels_data = [
         description:
           "number of people appearing in the photo minus the observed subject",
         type: 1,
+        required: true,
         labels: [
           { label: "none", label_id: 0, pictures: ["id_1", "id_2", "id_3"] },
           { label: "small", label_id: 1, pictures: [] },
@@ -87,6 +93,7 @@ export const labels_data = [
         description:
           "'dense' if >=3 people within a 2-meter diameter centering the subject; otherwise, 'sparse' if any spectator appeared in the photo and 'none' if no spectator at all. \n If the photo didn't give enough context, select based on your common sense.",
         type: 1,
+        required: true,
         labels: [
           { label: "none", label_id: 0, pictures: [] },
           { label: "sparse", label_id: 1, pictures: [] },
@@ -99,6 +106,7 @@ export const labels_data = [
         description:
           "Attentive spectator are spectators that are attentively paying attention to the subject. \n e.g. friends or audience that are looking at the subject. [input a number, or “many” if N > 8]",
         type: 1,
+        required: true,
         labels: [
           { label: "0", label_id: 0, pictures: [] },
           { label: "1", label_id: 1, pictures: [] },
@@ -120,11 +128,13 @@ export const labels_data = [
     description:
       "'Modality': In the context of human–computer interaction, a modality is the classification of a single independent channel of sensory input/output between a computer and a human. \n Select unavailable modalities (red for unavailable and green for available",
     color: "#4FC1E8",
+    icon: "CategoryIcon_Modality",
     subcategories: [
       {
         subcategory: "head",
         subcategory_displaytext: "Head",
         type: 3,
+        //required: true,
         labels: [
           {
             label: "available",
@@ -138,6 +148,7 @@ export const labels_data = [
         subcategory: "eyes",
         subcategory_displaytext: "Eyes",
         type: 3,
+        //required: true,
         labels: [
           { label: "available", label_id: 0, pictures: [] },
           { label: "unavailable", label_id: 1, pictures: [] },
@@ -147,6 +158,7 @@ export const labels_data = [
         subcategory: "voice",
         subcategory_displaytext: "Voice",
         type: 3,
+        //required: true,
         labels: [
           { label: "available", label_id: 0, pictures: [] },
           { label: "unavailable", label_id: 1, pictures: [] },
@@ -156,6 +168,7 @@ export const labels_data = [
         subcategory: "facial_expression",
         subcategory_displaytext: "Facial expression",
         type: 3,
+        //required: true,
         labels: [
           { label: "available", label_id: 0, pictures: [] },
           { label: "unavailable", label_id: 1, pictures: [] },
@@ -165,6 +178,7 @@ export const labels_data = [
         subcategory: "r_arm",
         subcategory_displaytext: "Right arm",
         type: 3,
+        //required: true,
         labels: [
           { label: "available", label_id: 0, pictures: [] },
           { label: "unavailable", label_id: 1, pictures: [] },
@@ -174,6 +188,7 @@ export const labels_data = [
         subcategory: "l_arm",
         subcategory_displaytext: "Left arm",
         type: 3,
+        //required: true,
         labels: [
           { label: "available", label_id: 0, pictures: [] },
           { label: "unavailable", label_id: 1, pictures: [] },
@@ -183,6 +198,7 @@ export const labels_data = [
         subcategory: "r_hand",
         subcategory_displaytext: "Right hand",
         type: 3,
+        //required: true,
         labels: [
           { label: "available", label_id: 0, pictures: [] },
           { label: "unavailable", label_id: 1, pictures: [] },
@@ -192,6 +208,7 @@ export const labels_data = [
         subcategory: "l_hand",
         subcategory_displaytext: "Left hand",
         type: 3,
+        //required: true,
         labels: [
           { label: "available", label_id: 0, pictures: [] },
           { label: "unavailable", label_id: 1, pictures: [] },
@@ -201,6 +218,7 @@ export const labels_data = [
         subcategory: "legs",
         subcategory_displaytext: "Legs",
         type: 3,
+        //required: true,
         labels: [
           { label: "available", label_id: 0, pictures: [] },
           { label: "unavailable", label_id: 1, pictures: [] },
@@ -210,6 +228,7 @@ export const labels_data = [
         subcategory: "feet",
         subcategory_displaytext: "Feet",
         type: 3,
+        //required: true,
         labels: [
           { label: "available", label_id: 0, pictures: [] },
           { label: "unavailable", label_id: 1, pictures: [] },
@@ -221,12 +240,14 @@ export const labels_data = [
     category: "demographic",
     category_displaytext: "Demographic",
     color: "#ED5564",
+    icon: "CategoryIcon_Demographic",
     subcategories: [
       {
         subcategory: "age",
         subcategory_displaytext: "Age",
         description: "Label subject's age with approximate age group",
         type: 1,
+        required: false, //required: true,
         labels: [
           { label: "baby", label_id: 0, pictures: ["id_1", "id_2", "id_3"] },
           { label: "child", label_id: 1, pictures: [] },
@@ -237,13 +258,14 @@ export const labels_data = [
         ],
       },
        {
-         subcategory: "sex",
-         subcategory_displaytext: "Biological sex",
-         type: 1,
-         labels: [
-           { label: "female", label_id: 0, pictures: [] },
-           { label: "male", label_id: 1, pictures: [] },
-         ],
+        subcategory: "sex",
+        subcategory_displaytext: "Biological sex",
+        type: 1,
+        required: false, //required: true,
+        labels: [
+          { label: "female", label_id: 0, pictures: [] },
+          { label: "male", label_id: 1, pictures: [] },
+        ],
        },
       {
         subcategory: "social_role",
@@ -251,6 +273,7 @@ export const labels_data = [
         description:
           "The role that the subject plays in the current context, including all kinds of occupations and other roles such as: customer, passenger, patient, parents.",
         type: 2,
+        required: false,
         labels: [
           { label: "staff", label_id: 0, pictures: [] },
           { label: "coach", label_id: 1, pictures: [] },
@@ -270,11 +293,13 @@ export const labels_data = [
     description:
       "[choose from list]\nDescription of the subject's physical posture irrelevant to the objects they are interacting with and the environment they are situated in.",
     color: "#AC92EB",
+    icon: "CategoryIcon_Posture",
     subcategories: [
       {
         subcategory: "posture",
         subcategory_displaytext: "",
         type: 2,
+        required: true,
         labels: [
           { label: "sitting", label_id: 0, pictures: ["id_1", "id_2", "id_3"] },
           { label: "standing", label_id: 1, pictures: [] },

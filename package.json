@@ -11,6 +11,7 @@
     "firebase-tools": "^11.4.2",
     "react": "^18.2.0",
     "react-bootstrap": "^2.4.0",
+    "react-circular-progressbar": "^2.1.0",
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
     "react-reveal": "^1.2.2",
@@ -34,6 +35,10 @@
       "react-app/jest"
     ]
   },
+  "eslintIgnore": [
+    "node_modules",
+    "build/*"
+  ],
   "browserslist": {
     "production": [
       ">0.2%",

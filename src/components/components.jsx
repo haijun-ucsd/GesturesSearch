@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import ReactDOM from 'react-dom/client';
 import './components.css';
 import { labels_data } from "./labels_data.js";
 import { useState , useEffect } from 'react';
 
 /* Assets: */
-import FilterRemoveBtn from "../assets/FilterRemoveBtn.png";
+import RemovableLabel_removebtn from "../assets/RemovableLabel_removebtn.png";
+import YesBtn from "../assets/YesBtn.png";
+import NoBtn from "../assets/NoBtn.png";
 import SearchBtn from "../assets/SearchBtn.png";
 import ArrowUp_primary from "../assets/ArrowUp_primary.png";
 import ArrowDown_primary from "../assets/ArrowDown_primary.png";
+import ArrowUp_tiny from "../assets/ArrowUp_tiny.png";
+import ArrowDown_tiny from "../assets/ArrowDown_tiny.png";
 
 
 
@@ -149,7 +153,7 @@ function CheckLabel(props) {
 }
 
 /**
- * Filter
+ * RemovableLabel
  *
  * parent props:
  *  - label: string
@@ -161,7 +165,7 @@ function CheckLabel(props) {
  * references:
  *  https://stackoverflow.com/questions/37644265/correct-path-for-img-on-react-js
  */
-function Filter(props) {
+function RemovableLabel(props) {
   return (
     <div
       className="Label"
@@ -174,7 +178,7 @@ function Filter(props) {
         {props.label}
       </div>
       <input
-        type="image" src={FilterRemoveBtn} 
+        type="image" src={RemovableLabel_removebtn} 
         onClick={() => props.remove_filter(props.label)}
       />
     </div>
@@ -203,46 +207,6 @@ function DescriptionHover(props) {
           <div className="DescriptionText">{props.text}</div>
         </div>
       </div>
-    </div>
-  );
-}
-
-/**
- * SearchBar
- * 
- * parent props:
- *  - search_handler(searText, ...): whatever function to perform at the current search bar
- *  - id: id for this search bar
- * 
- * hooks:
- *  - [searchText, setSearchText]: to record current input in the search bar
- * 
- * references:
- *  https://stackoverflow.com/questions/12875911/how-can-i-make-my-input-type-submit-an-image
- *  https://bobbyhadz.com/blog/react-get-input-value-on-button-click
- */
-function SearchBar(props) {
-  const [searchText, setSearchText] = useState('');
-  return (
-    <div className="SearchBar">
-      <input
-        type="text"
-        className="SearchBarInput"
-        //id={props.id} name={props.id}
-        placeholder=""
-        value={searchText}
-        onChange={(e) => {
-          setSearchText(e.target.value);
-          console.log('searchText is:', e.target.value); //DEBUG
-        }}
-      />
-      <input
-        type="image" src={SearchBtn}  // <input type="image"> defines an image as a submit button
-        onClick={(e) => {
-          e.preventDefault();
-          //props.search_handler(searchText, ...);
-        }}
-      />
     </div>
   );
 }
@@ -318,11 +282,345 @@ function Checkbox(props) {
 }
 
 /**
+ * SearchBar
+ * 
+ * parent props:
+ *  - search_handler(searText, ...): whatever function to perform at the current search bar.
+ *  - searchResults: a list of labels as resulted from the search.
+ *  - id: ref, id and name for this search bar, forwarded from parent.
+ *
+ * hooks:
+ *  - [searchText, setSearchText]: to record current input in the search bar
+ *  - [submittedSearchText, setSubmittedSearchText]: snapshot of searchText at the time of submission (clicking search btn or pressing ENTER)
+ *      TODO: move "submittedSearchText" to a proper parent layer
+ * 
+ * references:
+ *  https://stackoverflow.com/questions/12875911/how-can-i-make-my-input-type-submit-an-image
+ *  https://bobbyhadz.com/blog/react-get-input-value-on-button-click
+ *  https://stackoverflow.com/questions/31272207/to-call-onchange-event-after-pressing-enter-key
+ */
+function ExploreSearchBar(props) {
+
+  const [searchText, setSearchText] = useState('');
+  // DEBUG
+  useEffect(() => {
+    console.log("searchText is: " + searchText);
+  }, [searchText]);
+
+  const [submittedSearchText, setSubmittedSearchText] = useState('');
+  // DEBUG
+  useEffect(() => {
+    console.log("submittedSearchText is: " + submittedSearchText);
+  }, [submittedSearchText]);
+
+  /* Render */
+  return (
+    <div className="SearchBar_container">
+      <div className="SearchBar">
+        <input
+          type="text"
+          className="SearchBarInput"
+          id={props.id} name={props.id}
+          placeholder=""
+          value={searchText}
+          onChange={(e) => {
+            setSearchText(e.target.value);
+          }}
+          onKeyDown={(e) => {  // pressing ENTER == clicking search icon
+            if (e.key==='Enter') {
+              setSubmittedSearchText(searchText);
+              //props.search_handler(searchText, ...);
+            }
+          }}
+        />
+        <input
+          type="image" src={SearchBtn}  // <input type="image"> defines an image as a submit button
+          onClick={(e) => {
+            e.preventDefault();
+            setSubmittedSearchText(searchText);
+            //props.search_handler(searchText, ...);
+          }}
+        />
+      </div>
+      {/* search result */
+      /*(() => {
+        if (submittedSearchText=='') {
+          return null;
+        } else {
+          if (searchResults=='') {
+            return (
+              <p className="HintText">
+                No result is found.
+              </p>
+            );
+          } else {  // normal case
+            return (
+              <div className="LabelList">
+                searchResults.map((item) => {});
+              </div>
+            );
+          }
+        }
+      })*/}
+    </div>
+  );
+}
+
+/**
+ * SearchableDropdown
+ * 
+ * parent props:
+ *  - selectedLabels: a list of labels selected in this SearchableDropdown.
+ *  - id: id to be used for SearchBar.
+ *  - color
+ *  - category
+ *  - subcategory
+ *  - label_change_handler()
+ *  - label_remove_handler()
+ *  - searchResults: a list of labels as resulted from the search.
+ *  - labelsList (TODO: remove once search is implemented?)
+ * 
+ * Searchable drop-down in Upload page. Will do:
+ *  1. Provide labels according input,
+ *  2. Allow for adding new label, especially when no result found.
+ * 
+ * references:
+ *  https://stackoverflow.com/questions/39817007/focus-next-input-once-reaching-maxlength-value-in-react-without-jquery-and-accep
+ *  https://reactjs.org/docs/forwarding-refs.html
+ *  https://stackoverflow.com/questions/42017401/how-to-focus-a-input-field-which-is-located-in-a-child-component
+ *  https://stackoverflow.com/questions/58872407/accessing-refs-in-react-functional-component
+ *  https://stackoverflow.com/questions/52727021/conditional-inline-style-in-react-js
+ *  https://stackoverflow.com/questions/35522220/react-ref-with-focus-doesnt-work-without-settimeout-my-example/35522475#35522475
+ *  https://www.geeksforgeeks.org/is-setstate-method-async/#:~:text=setState()%20async%20Issue%3A%20If,debugging%20issues%20in%20your%20code.
+ *  https://stackoverflow.com/questions/63364282/react-only-display-items-which-fully-fit-within-flex-box-and-dynamically-deter
+ *  https://www.robinwieruch.de/react-custom-hook-check-if-overflow/
+ */
+function SearchableDropdown(props) {
+  const [expanded, setExpanded] = useState(false);
+
+  const [searchText, setSearchText] = useState('');
+  // DEBUG
+  useEffect(() => {
+    console.log("searchText is: " + searchText);
+  }, [searchText]);
+
+  const [submittedSearchText, setSubmittedSearchText] = useState('');
+  // DEBUG
+  useEffect(() => {
+    console.log("submittedSearchText is: " + submittedSearchText);
+  }, [submittedSearchText]);
+
+  const [customizedLabel, setCustomizedLabel] = useState('');
+  // DEBUG
+  useEffect(() => {
+    console.log("customizedLabel is: " + customizedLabel);
+  }, [customizedLabel]);
+  const addCustomizedLabel = () => {
+    const newLabel = customizedLabel; // take snapshot of current entered label
+    if (!(props.selectedLabels.some(item => item===newLabel))) { // check for existence
+      props.label_add_handler(newLabel, props.category, props.subcategory);
+    } else {
+      alert("Label '" + newLabel + "'is already selected.");
+    }
+    setCustomizedLabel(''); // clear CustomizeLabel field
+  }
+
+  /* Jump to focus on search bar while expanding */
+  const searchbarRef = useRef();
+  const focusOnSearchbar = (() => {
+    if (expanded==true) {
+      console.log("SearchableDropdown clicked, find corresponding search bar ↓"); console.log(searchbarRef.current); //DEBUG
+      searchbarRef.current.focus(); // there is a setFocus() function in the SearchBar component to set focus on the search bar input field
+    }
+  });
+  useEffect(() => {  // cannot put this into onClick of dropdown because setState is asynchronous
+    focusOnSearchbar();
+  }, [expanded]);
+
+  /* Render */
+  return (
+    <div className="SearchableDropdown">
+      {expanded ?
+        <>
+          <input
+            className="SearchableDropdown_expandbtn"
+            type="image" src={ArrowUp_tiny} 
+            onClick={(e) => {
+              e.preventDefault();
+              setExpanded(false);
+            }}
+          />
+          <div
+            className="SDSelectedLabelList_expanded"
+            onClick={(e) => {
+              //e.preventDefault();
+              focusOnSearchbar();
+            }}
+          >
+            {props.selectedLabels.map((item) =>
+              <RemovableLabel
+                //key={XX}
+                label={item}
+                color={props.color}
+                category={props.category}
+                subcategory={props.subcategory}
+                remove_filter={(e) => props.label_remove_handler(item, props.category, props.subcategory)}
+              />
+            )}
+          </div>
+        </>
+      :
+        <>
+          <input
+            className="SearchableDropdown_expandbtn"
+            type="image" src={ArrowDown_tiny} 
+            onClick={(e) => {
+              e.preventDefault();
+              setExpanded(true);
+            }}
+          />
+          <div
+            className="SDSelectedLabelList_collapsed"
+            onClick={(e) => {
+              //e.preventDefault();
+              setExpanded(true); // this includes focusOnSearchbar() by using useEffect
+            }}
+          >
+            {props.selectedLabels.map((item) =>
+              <RemovableLabel
+                //key={XX}
+                label={item}
+                color={props.color}
+                category={props.category}
+                subcategory={props.subcategory}
+                remove_filter={(e) => props.label_remove_handler(item, props.category, props.subcategory)}
+              />
+            ) /*TODO: "& N more" when there are too many selected labels*/}
+          </div>
+        </>
+      }
+      <div style={{
+        display: expanded ? "block" : "none",
+        alignSelf: "stretch",
+      }}>
+        <div className="SearchBar_container">
+          <div className="SearchBar">
+            <input
+              ref={searchbarRef}
+              type="text"
+              className="SearchBarInput"
+              id={props.id} name={props.id}
+              placeholder=""
+              value={searchText}
+              onChange={(e) => {
+                setSearchText(e.target.value);
+              }}
+              /*onKeyDown={(e) => {  // pressing ENTER == clicking search icon
+                if (e.key==='Enter') {
+                  setSubmittedSearchText(searchText);
+                  //props.search_handler(searchText, ...);
+                }
+              }}*/
+            />
+            <input
+              type="image" src={SearchBtn}  // <input type="image"> defines an image as a submit button
+              disabled  // TODO: remove when search is implemented
+              /*onClick={(e) => {
+                e.preventDefault();
+                setSubmittedSearchText(searchText);
+                //props.search_handler(searchText, ...);
+              }}*/
+            />
+          </div>
+          {/* search result */
+          /*(() => {
+            if (submittedSearchText=='') {
+              return null;
+            } else {
+              if (searchResults=='') {
+                return (
+                  <p className="HintText">
+                    No result is found.
+                  </p>
+                );
+              } else {  // normal case
+                return (
+                  <div className="LabelList">
+                    searchResults.map((item) => {});
+                  </div>
+                );
+              }
+            }
+          })*/
+          /* TODO: abandon once the actual search is implemented */
+          <div className="LabelList">
+            {props.labelsList.map((label) => {
+              if (!(props.selectedLabels.some(item => item===label.label))) {
+                return (
+                  <CheckLabel
+                    value={label.label}
+                    color={props.color}
+                    key={label.label_id}
+                    category={props.category}
+                    subcategory={props.subcategory}
+                    onchange_handler={props.label_change_handler}
+                  />
+                );
+              }
+            })}
+          </div>
+          /* TODO: after selecting a label, clear search bar and fold the dropdown */}
+        </div>
+      </div>
+      <div
+        className="CustomizeLabel_container"
+        style={{display: expanded ? "flex" : "none",}}
+      >
+        <div className="HintText">couldn't find proper label? customize one:</div>
+        <div className="CustomizeLabel">
+          <input
+            type="text"
+            className="CustomizeLabel_field"
+            placeholder=""
+            value={customizedLabel}
+            onChange={(e) => {
+              setCustomizedLabel(e.target.value);
+            }}
+            onKeyDown={(e) => {  // pressing ENTER == clicking search icon
+              if (e.key==='Enter') { addCustomizedLabel(); }
+            }}
+          />
+          {customizedLabel!=='' ?
+            <>
+              <input
+                type="image" src={YesBtn}
+                onClick={(e) => {
+                  e.preventDefault();
+                  addCustomizedLabel();
+                }}
+              />
+              <input
+                type="image" src={NoBtn}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setCustomizedLabel('');
+                }}
+              />
+            </>
+          : null }
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
  * AccordionSection
  * 
  * parent props:
  *  - title: name of the the current section
  *  - color: color of title if not black
+ *  - icon: icon for this section
  *  - description: a description for the current section to show upon hovering
  * 
  * references:
@@ -334,16 +632,22 @@ function AccordionSection(props) {
     <div className="AccordionSection">
       <div className="AccordionSectionHeaderBar">
         <div className="SectionHeader">
+          {props.icon!==undefined ?
+            <div
+              className={"CategoryIcon" + " " + props.icon}
+              style={{"--categoryicon-color":props.color}}
+            />
+          : null}
           <div
             className="SectionName"
             style={
-              (props.color && props.color!="") ?
+              (props.color && props.color!=="") ?
               {color:props.color} : null
             }
           >
             {props.title}
           </div>
-          {(props.description && props.description!="") ?
+          {(props.description && props.description!=="") ?
             <DescriptionHover text={props.description}/> : null
           }
         </div>
@@ -475,4 +779,4 @@ const FilterStructure = Object.freeze({
   },
 })
 
-export { LabelStructure, FilterStructure, CheckLabel, Filter, Checkbox, DescriptionHover, SearchBar, AccordionSection };
+export { LabelStructure, FilterStructure, CheckLabel, RemovableLabel, Checkbox, DescriptionHover, ExploreSearchBar, SearchableDropdown, AccordionSection };

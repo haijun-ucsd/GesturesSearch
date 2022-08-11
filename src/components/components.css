@@ -1,3 +1,9 @@
+/**
+ * references:
+ *  https://gist.github.com/lopspower/03fb1cc0ac9f32ef38f4
+ */
+
+
 /**------------ TEMPORARY ------------**/
 
 /*.some_temp_class {...}*/
@@ -6,12 +12,29 @@
 
 /**------------ BASIC ITEMS ------------**/
 
+/* Texts */
+.HintText {  /* right now font is same as SubsectionName */
+  /*flex: 0 0 auto; /* no wrap */
+  display: inline-block;
+  /* font */
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 120%;
+  letter-spacing: 0.01em;
+  color: #AAAAAA;
+}
+
+
 /* Label */
 
 .Label {
   border: 1px solid #CCCCCC;
   border-radius: 14px;
   background-color: #FFFFFF; /* default white background */
+  /* as an item */
+  flex: 0 0 auto; /* no squeeze or stretch */
   /* as a container */
   display: inline-flex;
   flex-direction: row;
@@ -23,6 +46,7 @@
 
 .LabelText {
   display: inline-block;
+  flex: 0 0 auto; /* no wrap */
   /* font */
   font-family: "Google Sans",Roboto,Arial,sans-serif;
   font-style: normal;
@@ -225,6 +249,7 @@
   border-radius: 8px;
   padding: 4px 24px 4px 8px;
   min-width: 160px;
+  min-height: 32px;
   /* font */
   font-family: "Google Sans",Roboto,Arial,sans-serif;
   font-style: normal;
@@ -259,6 +284,16 @@
   outline: none;
   background-color: transparent;
   flex: 1;
+}
+
+.SearchBar_container {
+  /* as an item */
+  align-self: stretch;
+  /* as a container */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
 }
 
 .SearchRange_expanded {
@@ -318,6 +353,90 @@
   width: 8px;
   height: 8px;
   border-radius: 100%;
+}
+
+
+/* SearchableDropdown (SD) */
+
+.SearchableDropdown {
+  /* as an item */
+  align-self: stretch;
+  /* as a container */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8px;
+  gap: 16px;
+  border: 1px solid #CCCCCC;
+  border-radius: 8px;
+}
+
+.SearchableDropdown_expandbtn {
+  position: absolute;
+  top: 10px; /* ((28 + 2 * 8) - 24) / 2 = 10 */
+  right: 4px;
+}
+
+.SDSelectedLabelList_collapsed {
+  /* as an item */
+  align-self: stretch;
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  height: 28px; /* label height = 28px, no wrapping because only 1 row is allowed when drop-down is collapsed */
+  align-items: flex-start;
+  padding: 0px;
+  gap: 8px;
+  border: none;
+  outline: none;
+  margin-right: 32px; /* arrow btn width 24 + gap 8 = 32 */
+  overflow-x: hidden;
+}
+
+.SDSelectedLabelList_expanded {  /* right now same as LabelList */
+  /* as an item */
+  align-self: stretch;
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  min-height: 28px; /*label height*/
+  flex-wrap: wrap;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 8px;
+  border: none;
+  outline: none;
+}
+
+.CustomizeLabel {
+  /* as a container */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.CustomizeLabel_field {
+  width: 240px;
+  height: 32px;
+  padding: 8px;
+  background: #FFFFFF;
+  border: 1px solid #CCCCCC;
+  border-radius: 8px;
+  outline: none;
+}
+
+.CustomizeLabel_container {
+  /* as an item */
+  align-self: stretch;
+  /* as a container */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-top: 8px;
+  border-top: 1px solid #CCCCCC;
+  gap: 8px;
 }
 
 
@@ -398,7 +517,6 @@
 .Humanfigure_highlights svg {
   position: absolute;
   left: 50%;
-  /*fill: #E3735E;*/
 }
 
 .Humanfigure_highlights svg#head {
@@ -440,6 +558,12 @@
 .Humanfigure_highlights svg#feet {
   margin-left: -26.5px;
   top: 215px;
+}
+
+
+/* RequiredField indicator */
+.RequiredField {
+  color: #ED556480; /* #XXXXXX80 = 50% opacity */
 }
 
 
@@ -603,6 +727,7 @@
 }
 
 .SectionName {  /* right now same as CategoryName */
+  /* as an item */
   flex: 0 0 auto; /* no wrap */
   /* font */
   font-family: "Google Sans",Roboto,Arial,sans-serif;
@@ -613,10 +738,15 @@
   letter-spacing: 0.01em;
   color: #000000; /* default color: black */
   filter: brightness(80%); /* darkern the colors a bit for readability */
+  /* as a container */
+  display: inline-flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 2px;
 }
 
 .Subsections {  /* container for all subsections, right now same as FormSubcategories */
-  /*as an item */
+  /* as an item */
   align-self: stretch;
   /* as a container */
   display: flex;
@@ -636,8 +766,8 @@
 }
 
 .SubsectionName {  /* right now font is same as SubcategoryName */
+  /* as an item */
   flex: 0 0 auto; /* no wrap */
-  display: inline-block;
   /* font */
   font-family: "Google Sans",Roboto,Arial,sans-serif;
   font-style: normal;
@@ -646,6 +776,11 @@
   line-height: 120%;
   letter-spacing: 0.01em;
   color: #AAAAAA;
+  /* as a container */
+  display: inline-flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 2px;
 }
 
 
@@ -721,13 +856,17 @@
   align-self: stretch;
   flex-grow: 1;
   /* as a container */
-  background-color: #EFEFEF;
+  background-color: #F0ECEC; /* matches with About page */
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   align-items: flex-start;
   padding: 24px 40px 40px;
   gap: 24px;
+}
+
+.WaitingPic_container {
+  position: relative;
 }
 
 .WaitingPic {
@@ -740,6 +879,14 @@
   display: none;
 }
 
+.WaitingPicProgress {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 40px;
+  height: 40px;
+}
+
 
 /* PopUp Labeling Window */
 
@@ -748,27 +895,34 @@
   z-index: 12;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.25);
+  background-color: #00000080; /* #XXXXXX80 = 50% opacity */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
-.PopUpModal {  /* old name modal_content */
-  position: absolute;
-  /* centerize absolute-postion element */
-  transform: translate(-50%, -50%);
-  left: 50%;
-  top: 50%;
+.UploadPopUpModal {  /* old name modal_content */
   /* as a container */
   display: flex;
   background-color: white;
   border-radius: 10px;
   overflow: hidden; /* to apply border-radius to all inner elements */
   border: 2px solid rgb(234, 197, 197);
+  width: 100%;
+  height: 100%;
+}
+
+.UploadPopUpModal_container {
+  position: absolute;
+  /* centerize absolute-postion element */
+  transform: translate(-50%, -50%);
+  left: 50%;
+  top: 50%;
   width: 70%;
   height: 80%;
   min-width: 1000px;
 }
 
-.PopUpPic {
+.UploadPopUpPic {
   display: block;
   height: 100%;
   width: 100%;
@@ -782,7 +936,7 @@
   padding: 10px; /* margin for absolute-position element. See reference: https://stackoverflow.com/questions/17115344/absolute-positioning-ignoring-padding-of-parent */
 }
 
-.PopUpPic_Container {
+.UploadPopUpPic_container {
   /* as an item */
   flex-grow: 1;
   /* as a container */
@@ -791,14 +945,11 @@
 }
 
 .PopUpClose {
-  position:absolute;
   cursor: pointer;
-  color: #AAAAAA;
-  float: right;
-  right:0;
-  width:50px;
-  height:50px;
-  font-size: 40px;
+  position: absolute;
+  transform: translate(100%, -100%);
+  top: -8px;
+  right: -8px;
 }
 .PopUpClose:hover {
   /*color: cyan;*/
@@ -812,7 +963,7 @@
   overflow-y: scroll;
   width: 40%;
   max-width: 640px;
-  min-width: 400px;
+  min-width: 560px;
   max-height: 100%;
   border-left: 1px solid #CCCCCC; /* TODO: dropshadow */
   /* as an item */
@@ -845,6 +996,7 @@
 }
 
 .CategoryName {
+  /* as an item */
   flex: 0 0 auto; /* no wrap */
   /* font */
   font-family: "Google Sans",Roboto,Arial,sans-serif;
@@ -854,9 +1006,42 @@
   line-height: 120%;
   letter-spacing: 0.01em;
   filter: brightness(80%); /* darkern the colors a bit for readability */
+  /* as a container */
+  display: inline-flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.CategoryIcon {
+  height: 24px;
+  width: 24px; /* height and width according to CategoryIcons */
+  background-color: var(--categoryicon-color, #000000);  /* default color: black */
+}
+.CategoryIcon_Location {
+  mask-image: url("../assets/CategoryIcon_Location.png");
+  -webkit-mask-image: url("../assets/CategoryIcon_Location.png");
+}
+.CategoryIcon_Spectators {
+  mask-image: url("../assets/CategoryIcon_Spectators.png");
+  -webkit-mask-image: url("../assets/CategoryIcon_Spectators.png");
+}
+.CategoryIcon_Demographic {
+  mask-image: url("../assets/CategoryIcon_Demographic.png");
+  -webkit-mask-image: url("../assets/CategoryIcon_Demographic.png");
+}
+.CategoryIcon_Modality {
+  mask-image: url("../assets/CategoryIcon_Modality.png");
+  -webkit-mask-image: url("../assets/CategoryIcon_Modality.png");
+}
+.CategoryIcon_Posture {
+  mask-image: url("../assets/CategoryIcon_Posture.png");
+  -webkit-mask-image: url("../assets/CategoryIcon_Posture.png");
 }
 
 .FormSubcategories {  /* container for all subcategories */
+  /* as an item */
+  align-self: stretch;
   /* as a container */
   display: flex;
   flex-direction: column;
@@ -865,6 +1050,8 @@
 }
 
 .FormSubcategory {
+  /* as an item */
+  align-self: stretch;
   /* as a container */
   display: flex;
   flex-direction: column;
@@ -881,6 +1068,7 @@
 }
 
 .SubcategoryName {
+  /* as an item */
   flex: 0 0 auto; /* no wrap */
   /* font */
   font-family: "Google Sans",Roboto,Arial,sans-serif;
@@ -890,6 +1078,11 @@
   line-height: 120%;
   letter-spacing: 0.01em;
   color: #AAAAAA;
+  /* as a container */
+  display: inline-flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 2px;
 }
 
 

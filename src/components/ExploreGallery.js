@@ -4,7 +4,7 @@ import React, { useState , useEffect, useLayoutEffect } from 'react';
 //import { ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage';
 //import { v4 } from 'uuid';
 import './components.css';
-import { Filter } from './components';
+import { RemovableLabel } from './components';
 
 
 
@@ -34,7 +34,7 @@ export default function ExploreGallery(props) {
 		        filterList={props.filterList}
 		        remove_filter={props.remove_filter}
 		      />
-	        <div className="SubsectionName">
+	        <div className="HintText">
 	           Found {props.imageList.length} results
 	        </div>
 	    	</div>
@@ -142,7 +142,7 @@ function AppliedFilters(props) {
   return (
 	  <div className="AppliedFilters">
       <div className="ModuleHeaderBar">
-        <div className="SubsectionName">
+        <div className="HintText">
           Applied Filters ({props.filterList.length}) :
         </div>
         {/* TODO: add btns: rearrange, clear all */}
@@ -150,7 +150,7 @@ function AppliedFilters(props) {
        {/*<div ref={ref} className={(showMore ? "" : "AppliedFiltersList") + " " + "FilterList"}>*/}
        <div className="FilterList">
          {props.filterList.map((item) =>
-          <Filter
+          <RemovableLabel
             key={item.label_id}
             label={item.label}
             color={item.color}

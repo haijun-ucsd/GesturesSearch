@@ -5,12 +5,12 @@ import React, { useState , useEffect, useLayoutEffect } from 'react';
 //import { v4 } from 'uuid';
 import './components.css';
 import { labels_data } from "./labels_data.js";
-import { Filter, Checkbox, CheckLabel, SearchBar, AccordionSection } from './components';
-import BodyComponent from './BodyComponent.tsx';
+import { Filter, Checkbox, CheckLabel, ExploreSearchBar, AccordionSection } from './components';
+import BodyComponent from './BodyComponent';
 
 /* Assets: */
-import ArrowUp_secondary from "../assets/ArrowUp_secondary.png";
-import ArrowDown_secondary from "../assets/ArrowDown_secondary.png";
+//import ArrowUp_secondary from "../assets/ArrowUp_secondary.png";
+//import ArrowDown_secondary from "../assets/ArrowDown_secondary.png";
 
 
 
@@ -176,72 +176,12 @@ export default function Facet(props) {
  *  https://stackoverflow.com/questions/45277306/check-if-item-exists-in-array-react
  */
 function ExploreSearch(props) {
-
-  const SearchRange = ["location", "demographic", "modality", "posture"];
-  const SearchRange_color = {
-    location: "#A0D568",
-    demographic: "#ED5564",
-    modality: "#4FC1E8",
-    posture: "#AC92EB",
-  };
-  const [expanded, setExpanded] = useState(true);  // whether the SearchRange dropdown is expanded, default as true.
-
-  /* Render */
   return (
     <div className="Module">
-      <SearchBar
+      <ExploreSearchBar
         //search_handler = {...} //TODO: define a search function and use it here, in the SearchBar component this function will be used onClick of the search button.
       />
-      {expanded ?
-        <div className="SearchRange_expanded">
-          <div className="SearchRangeHeader">
-            <div className="SubsectionName">
-              search in range:
-            </div>
-            <input
-              type="image" src={ArrowUp_secondary} 
-              onClick={(e) => {
-                e.preventDefault();
-                setExpanded(false);
-              }}
-            />
-          </div>
-          <div className="SearchRangeCheckboxes">
-            {SearchRange.map((category) =>
-              <Checkbox
-                value={category}
-                value_displaytext={category.charAt(0).toUpperCase() + category.slice(1)}  // capitalize first letter of the categories for display
-                color={SearchRange_color[category]}
-                defaultChecked={props.range.some(item => item===category)}  // render checked state according to the recorded range
-                onchange_handler={props.onchange_handler}
-              />
-            )}
-          </div>
-        </div>
-      :
-        <div className="SearchRangeHeader">
-          <div className="SearchRange_collapsed">
-            <div className="SubsectionName">
-              search in range:
-            </div>
-            <div className="SearchRangeDots">
-              {props.range.map((category) =>
-                <div
-                  className="SearchRangeDot"
-                  style={{backgroundColor: SearchRange_color[category]}}
-                />
-              )}
-            </div>
-          </div>
-          <input
-            type="image" src={ArrowDown_secondary} 
-            onClick={(e) => {
-              e.preventDefault();
-              setExpanded(true);
-            }}
-          />
-        </div>
-      }
+      {/* Search in range deleted */}
     </div>
   );
 }
@@ -334,6 +274,7 @@ function FacetModality(props) {
     <AccordionSection
       title="Modality"
       color="#4FC1E8"
+      icon="CategoryIcon_Modality"
       //description=""
     >
       <div style={{height:'360px'}}>
@@ -368,6 +309,7 @@ function FacetPosture(props) {
     <AccordionSection
       title="Posture"
       color={postureColor}
+      icon="CategoryIcon_Posture"
       //description=""
     >
       <div
@@ -407,6 +349,7 @@ function FacetSpectators(props) {
     <AccordionSection
       title="Spectators"
       color={spectatorsColor}
+      icon="CategoryIcon_Spectators"
       //description=""
     >
       <div className="Subsections">
@@ -490,6 +433,7 @@ function FacetDemongraphic(props) {
     <AccordionSection
       title="Demongraphic"
       color={demographicColor}
+      icon="CategoryIcon_Demographic"
       //description=""
     >
       <div className="Subsections">
