@@ -17,6 +17,7 @@ import 'react-circular-progressbar/dist/styles.css';
 /* Assets: */
 import AddPicture from "../assets/AddPicture.png";
 import PublishPicture from "../assets/PublishPicture.png";
+import HintText_ArrowUp from "../assets/HintText_ArrowUp.png";
 
 
 /**
@@ -148,7 +149,7 @@ export default function WaitingRoom(props) {
         </div>
       </div>
       <div className="WaitingRoomGallery">
-        {props.addedPics != [] ?  // check for empty addedPics list. TODO: display tutorial if empty?
+        {props.addedPics.length!==0 ?  // check for empty addedPics list. TODO: display tutorial if empty?
           <>
             {props.addedPicsUrl.map((url, idx) => (
               <div className="WaitingPic_container">
@@ -184,7 +185,12 @@ export default function WaitingRoom(props) {
               </div>
             ))}
           </>
-        : null}
+        :
+          <div className="HintText">
+            <img src={HintText_ArrowUp} />
+            No picture added yet. Click here to start!
+          </div>
+        }
       </div>
       {(clickedUrl!="") ? (
         <PopUp

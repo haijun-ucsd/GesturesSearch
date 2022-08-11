@@ -24,6 +24,11 @@
   line-height: 120%;
   letter-spacing: 0.01em;
   color: #AAAAAA;
+  /* as a container */
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
 }
 
 
