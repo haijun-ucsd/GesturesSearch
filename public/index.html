@@ -25,6 +25,7 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet'>
+    <script src="//d3js.org/d3.v3.min.js"></script>
     <title>Gestures Explorer</title>
   </head>
   <body>
@@ -40,5 +41,9 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <script type="text/javascript" src="./Sequential.js"></script>
+    <script type="text/javascript">
+        d3.select(self.frameElement).style("height", "700px");
+    </script>
   </body>
 </html>

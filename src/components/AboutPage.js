@@ -2,8 +2,17 @@ import React, { useState , useEffect } from 'react';
 import './components.css';
 import Zoom from 'react-reveal/Zoom';
 import { Slide } from 'react-reveal';
+import {select} from 'd3';
 
 export default function AboutPage() {
+    var d3 = require('d3');
+    var Sunburst = require('d3-sunburst');
+    var sunburst = new Sunburst();
+    sunburst.setData([
+        ["account-account-account", 22781],
+        ["account-account-end", 3311],
+        ["account-account-home", 906]
+    ]);
     return (
         <div className="AboutPageBox">
             <div className='Home'>
@@ -119,7 +128,13 @@ export default function AboutPage() {
                     </Slide>
                 </div>
             </div>
+            <div className='Graph'>
+                <script src="https://unpkg.com/d3@6/dist/d3.min.js" type="text/javascript"></script>
+                <script src={require("./Sunburst.js")} type="text/javascript"></script>
+            </div>
             <div className='Team'>
+                <script src="https://unpkg.com/d3@6/dist/d3.min.js" type="text/javascript"></script>
+                <script src={require("./Sunburst.js")} type="text/javascript"></script>
                 <Slide bottom>
                 <h5>Team</h5>
                 </Slide>
