@@ -2,10 +2,10 @@ import React, { useState } from 'react'
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { CheckLabel, LabelStructure, DescriptionHover } from './components';
+import { CheckLabel, SearchableDropdown, DescriptionHover } from './components';
 import './components.css';
 import { labels_data } from "./labels_data.js";
-import BodyComponent from './BodyComponent.tsx';
+import BodyComponent from './BodyComponent';
 
 /**
  * LabelsForm
@@ -33,6 +33,7 @@ export default function LabelsForm(props) {
    * 
    * references:
    *  https://stackoverflow.com/questions/44046037/if-else-statement-inside-jsx-reactjs
+   *  https://stackoverflow.com/questions/42330075/is-there-a-way-to-interpolate-css-variables-with-url
    */
   const render_category = (category) => {
 
@@ -44,10 +45,19 @@ export default function LabelsForm(props) {
       <div className="FormCategory">
         <div className="CategoryHeader">
           <div
+            className={"CategoryIcon" + " " + category.icon}
+            style={{"--categoryicon-color":color}}
+          />
+          <div
             className="CategoryName"
             style={{color:color}}
           >
             {category.category_displaytext}
+
+            {// Special case: modality, posture. RequiredField indicators should be put after CategoryName.
+            category.category === 'posture' || category.category === 'modality' ?
+              <span className="RequiredField">*</span>
+            : null}
           </div>
           {(category.description && category.description!="") ?
             <DescriptionHover text={category.description}/> : null
@@ -87,7 +97,7 @@ export default function LabelsForm(props) {
               </div>
             );
           }
-        })()}
+        })() /* need this extra parathesis to work */}
       </div>
     );
   };
@@ -100,6 +110,8 @@ export default function LabelsForm(props) {
    * references:
    *  https://stackoverflow.com/questions/8605516/default-select-option-as-blank
    *  https://stackoverflow.com/questions/39523040/concatenating-variables-and-strings-in-react
+   *  https://stackoverflow.com/questions/40477245/is-it-possible-to-use-if-else-statement-in-react-render-function
+   *  https://www.w3schools.com/howto/tryit.asp?filename=tryhow_custom_select → TODO: beautify dropdownn
    */
   const render_subcategory = (subcategory, categoryname, color) => {
 
@@ -114,6 +126,7 @@ export default function LabelsForm(props) {
               <div className="SubcategoryHeader">
                 <div className="SubcategoryName">
                   {subcategory.subcategory_displaytext}
+                  {subcategory.required ? <span className="RequiredField">*</span> : null}
                 </div>
                 {(subcategory.description && subcategory.description!="") ?
                   <DescriptionHover text={subcategory.description}/> : null
@@ -126,24 +139,61 @@ export default function LabelsForm(props) {
               id={subcategory.subcategory}
               onChange={(e) => props.form_change_handler_type1(e, categoryname, subcategory.subcategory)}
             >
-                <option disabled selected value>
-                  ---
-                </option>
-              {subcategory.labels.map((label) =>
-                <option
-                  value={label.label}
-                  key={label.label_id}
-                >
-                  {label.label}
-                </option>
-              )}
+
+              {/* Placeholder option */
+              (() => {
+                if (subcategory.required) {
+                  if (props.formData[categoryname][subcategory.subcategory]==="") {
+                    // Use a placeholder as default when no value is selected for the drop down.
+                    return (<option disabled selected value="">---</option>);
+                  } else {
+                    // In a required field, although we still show the placeholder option after selection,
+                    // it is only for consistency, since this option is disabled and will no longer be useful
+                    // after any selection is made.
+                    return (<option disabled value="">---</option>);
+                  }
+                } else {
+                  if (
+                    props.formData[categoryname][subcategory.subcategory]==="") {
+                    // Allow re-selecting the placeholder option for non-required fields.
+                    return (<option selected value="">---</option>);
+                  } else {
+                    // "---N/A---" instead of "---" to reduce confusion.
+                    return (<option value="">---N/A---</option>);
+                  }
+                }
+              })() /* need this extra parathesis to work */}
+
+              {/* Actual options */
+              subcategory.labels.map((label) => {
+                // Select that label that has been saved.
+                if (props.formData[categoryname][subcategory.subcategory]===label.label) {
+                  return (
+                    <option
+                      selected
+                      value={label.label}
+                      key={label.label_id}
+                    >
+                      {label.label}
+                    </option>
+                  );
+                } else {
+                  return (
+                    <option
+                      value={label.label}
+                      key={label.label_id}
+                    >
+                      {label.label}
+                    </option>
+                  );
+                }
+              })}
             </select>
           </div>
         );
         break;
 
-      // Type 2 → checklabel list (accepts a list of labels, any number from 0 to all possible.)
-      // TODO: make searchable
+      // Type 2 → searchable dropdown (accepts a list of labels, any number from 0 to all possible.)
       case 2:
         return (
           <div className="FormSubcategory">
@@ -151,6 +201,7 @@ export default function LabelsForm(props) {
               <div className="SubcategoryHeader">
                 <div className="SubcategoryName">
                   {subcategory.subcategory_displaytext}
+                  {subcategory.required ? <span className="RequiredField">*</span> : null}
                 </div>
                 {(subcategory.description && subcategory.description!="") ?
                   <DescriptionHover text={subcategory.description}/> : null
@@ -158,23 +209,24 @@ export default function LabelsForm(props) {
               </div>
             : null
             }
-            <div
-              className="LabelList"
-              id={subcategory.subcategory}
+            <SearchableDropdown
+              selectedLabels={
+                // Special case: posture, no subcategory in formData.
+                categoryname==='posture' ?
+                  props.formData[categoryname]
+                :
+                  props.formData[categoryname][subcategory.subcategory]
+              }
+              id={"LabelsForm-" + subcategory.subcategory}
+              //searchResults={XX}
+              labelsList={subcategory.labels}
+              color={color}
               category={categoryname}
               subcategory={subcategory.subcategory}
-            >
-              {subcategory.labels.map((label) =>
-                <CheckLabel
-                  value={label.label}
-                  color={color}
-                  key={label.label_id}
-                  category={categoryname}
-                  subcategory={subcategory.subcategory}
-                  onchange_handler={props.form_change_handler_type2}
-                />
-              )}
-            </div>
+              label_change_handler={props.form_change_handler_type2}
+              label_add_handler={props.add_label_handler_type2}
+              label_remove_handler={props.remove_label_handler_type2}
+            />
           </div>
         );
         break;
