@@ -14,16 +14,46 @@ import AboutPage from './AboutPage';
 
 /**
  * references:
+ *  
  */
 export default function App() {
+
+  /* Hooks for UploadPage */
+  const [addedPics, setAddedPics] = useState([]);
+  const [addedPicsUrl, setAddedPicsUrl] = useState([]);
+  const [formDataList, setFormDataList] = useState([]);
+  const [completePercentages, setCompletePercentages] = useState([]);
+  // DEBUG
+  useEffect(() => {
+    console.log("addedPics list has changed.");
+    console.log("current addedPics list ↓"); console.log(addedPics);
+    console.log("current addedPicsUrl list ↓"); console.log(addedPicsUrl);
+    console.log("current formDataList list ↓"); console.log(formDataList);
+  }, [addedPics]);
+  useEffect(() => {
+    console.log("formDataList has been updated ↓"); console.log(formDataList);
+  }, [formDataList])
+
+  /* Render */
   return (
     <Router>
       <Navbar />
       <Routes>
         <Route path='/' element={<AboutPage />} />
-        <Route path='/about' element={<AboutPage />} />
-        <Route path='/explore' element={<ExplorePage />} />
-        <Route path='/upload' exact element={<UploadPage />} />
+        <Route
+          path='/upload'
+          element={<UploadPage
+            addedPics={addedPics}
+            setAddedPics={setAddedPics}
+            addedPicsUrl={addedPicsUrl}
+            setAddedPicsUrl={setAddedPicsUrl}
+            formDataList={formDataList}
+            setFormDataList={setFormDataList}
+            completePercentages={completePercentages}
+            setCompletePercentages={setCompletePercentages}
+          />}
+        />
+        <Route path='/explore' exact element={<ExplorePage />} />
       </Routes>
     </Router>
   );
