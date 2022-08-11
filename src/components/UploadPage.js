@@ -10,25 +10,16 @@ import WaitingRoom from "./WaitingRoom";
 import { LabelStructure } from "./components";
 
 
-export default function UploadPage() {
-
-/* To collect data from WaitingRoom */
-
-  const [addedPics, setAddedPics] = useState([]);
-  const [addedPicsUrl, setAddedPicsUrl] = useState([]);
-  const [formDataList, setFormDataList] = useState([]);
-
-  // DEBUG
-  useEffect(() => {
-    console.log("addedPics list has changed.");
-    console.log("current addedPics list ↓"); console.log(addedPics);
-    console.log("current addedPicsUrl list ↓"); console.log(addedPicsUrl);
-    console.log("current formDataList list ↓"); console.log(formDataList);
-  }, [addedPics]);
-  useEffect(() => {
-    console.log("formDataList has been updated ↓"); console.log(formDataList);
-  }, [formDataList])
-
+/**
+ * UploadPage
+ * 
+ * hooks stored at App level:
+ *  - [addedPics, setAddedPics]
+ *  - [addedPicsUrl, setAddedPicsUrl]
+ *  - [formDataList, setFormDataList]
+ *  - [completePercentages, setCompletePercentages]
+ */
+export default function UploadPage(props) {
 
 /* To handle upload */
 
@@ -50,8 +41,8 @@ export default function UploadPage() {
       )) {
 
         // Upload all valid pictures.
-        for (let i = 0; i < addedPics.length; i++) {
-          if (completePercentages[i] === 100) { // valid picture, can upload
+        for (let i = 0; i < props.addedPics.length; i++) {
+          if (props.completePercentages[i] === 100) { // valid picture, can upload
             console.log("addedPics[" + i + "] is valid"); //DEBUG
             uploadImage(i);
           }
@@ -60,13 +51,13 @@ export default function UploadPage() {
     } else {
 
       // Upload all pictures.
-      for (let i = 0; i < addedPics.length; i++) {
+      for (let i = 0; i < props.addedPics.length; i++) {
         uploadImage(i);
       }
     }
 
     console.log("Uploaded pictures should have been cleared"); //DEBUG
-    console.log("addedPics ↓"); console.log(addedPics); //DEBUG
+    console.log("addedPics ↓"); console.log(props.addedPics); //DEBUG
 
     // Alert successful upload.
     alert("Pictures have been uploaded! :D");
@@ -91,7 +82,7 @@ export default function UploadPage() {
     console.log("new key: " + key); //DEBUG
 
     // Store picture to firebase.
-    uploadBytes(imageRef, addedPics[idx]).then((snapshot) => {
+    uploadBytes(imageRef, props.addedPics[idx]).then((snapshot) => {
       getDownloadURL(snapshot.ref).then((url) => {
 
         // Store url and labels to firebase realtime database.
@@ -99,7 +90,7 @@ export default function UploadPage() {
         //  2. get the labels associated with that image.
         console.log("upload image with labels at key: " + key); //DEBUG
         console.log("url: " + url); //DEBUG
-        let finalLabels = processData(formDataList[idx], url); // call processData to turn javascript object into json item.
+        let finalLabels = processData(props.formDataList[idx], url); // call processData to turn javascript object into json item.
         const db = getDatabase();
         const path = "images/" + key;
         set(
@@ -111,10 +102,10 @@ export default function UploadPage() {
     });
 
     // Clear the uploaded picture.
-    setAddedPics(prev => { return (prev.filter((item, index) => index !== idx)); });
-    setAddedPicsUrl(prev => { return (prev.filter((item, index) => index !== idx)); });
-    setFormDataList(prev => { return (prev.filter((item, index) => index !== idx)); });
-    setCompletePercentages(prev => { return (prev.filter((item, index) => index !== idx)); });
+    props.setAddedPics(prev => { return (prev.filter((item, index) => index !== idx)); });
+    props.setAddedPicsUrl(prev => { return (prev.filter((item, index) => index !== idx)); });
+    props.setFormDataList(prev => { return (prev.filter((item, index) => index !== idx)); });
+    props.setCompletePercentages(prev => { return (prev.filter((item, index) => index !== idx)); });
   };
 
   /**
@@ -175,11 +166,6 @@ export default function UploadPage() {
 
 /* Validation & Progress */
 
-  /**
-   * completePercentages
-   */
-  const [completePercentages, setCompletePercentages] = useState([]);
-
   const [uploadDisabled, setUploadDisabled] = useState(true);
   // DEBUG
   useEffect(() => {
@@ -201,8 +187,8 @@ export default function UploadPage() {
   const validate = () => {
     let publishable_flag = false;
     let all_validate_flag = true;
-    for (let i = 0; i < completePercentages.length; i++) {
-      if (completePercentages[i] === 100) { // valid to upload
+    for (let i = 0; i < props.completePercentages.length; i++) {
+      if (props.completePercentages[i] === 100) { // valid to upload
         publishable_flag = true; // turn on publishable_flag if any picture has been fully labeled
       } else {
         all_validate_flag = false; // turn off all_validate_flag if any picture has not been fully labeled
@@ -233,7 +219,7 @@ export default function UploadPage() {
   /**
    * Check progresses regularly to turn on the upload btn.
    */
-  useEffect(() => { validate(); }, [addedPics, addedPicsUrl, formDataList, completePercentages]);
+  useEffect(() => { validate(); }, [props.addedPics, props.addedPicsUrl, props.formDataList, props.completePercentages]);
 
 
 /* Render */
@@ -242,14 +228,14 @@ export default function UploadPage() {
       <WaitingRoom
         uploadDisabled={uploadDisabled}
         uploadImages={uploadImages}
-        setAddedPics={setAddedPics}
-        addedPics={addedPics}
-        setAddedPicsUrl={setAddedPicsUrl}
-        addedPicsUrl={addedPicsUrl}
-        formDataList={formDataList}
-        setFormDataList={setFormDataList}
-        completePercentages={completePercentages}
-        setCompletePercentages={setCompletePercentages}
+        setAddedPics={props.setAddedPics}
+        addedPics={props.addedPics}
+        setAddedPicsUrl={props.setAddedPicsUrl}
+        addedPicsUrl={props.addedPicsUrl}
+        formDataList={props.formDataList}
+        setFormDataList={props.setFormDataList}
+        completePercentages={props.completePercentages}
+        setCompletePercentages={props.setCompletePercentages}
       />
     </div>
   );
