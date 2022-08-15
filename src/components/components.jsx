@@ -198,7 +198,7 @@ function DescriptionHover(props) {
   return (
     <div className="DescriptionHover">
       <div
-        className="DescriptionBtn"
+        className="DescriptionBtn Description_elementtohover"
         onClick={(e) => { e.preventDefault(); }} // prevent default refresh
       >
         ?
@@ -283,7 +283,7 @@ function Checkbox(props) {
 }
 
 /**
- * SearchBar
+ * ExploreSearchBar
  * 
  * parent props:
  *  - search_handler(searText, ...): whatever function to perform at the current search bar.

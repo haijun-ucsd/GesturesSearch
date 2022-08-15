@@ -434,7 +434,7 @@ function FacetSpectators(props) {
  *  - filter_change_handler()
  */
 function FacetDemongraphic(props) {
-  const allAges = ["baby", "child", "teen", "young adult", "baby", "baby"];
+  const allAges = ["baby", "child", "teen", "young adult", "adult", "senior"];
   const allSexes = ["male", "female"];
   const demographicColor = "#ED5564";
   return (

@@ -18,6 +18,7 @@ import { LabelStructure } from "./components";
  *  - [addedPicsUrl, setAddedPicsUrl]
  *  - [formDataList, setFormDataList]
  *  - [completePercentages, setCompletePercentages]
+ *  - [addedLabels, setAddedLabels]
  */
 export default function UploadPage(props) {
 
@@ -83,7 +84,7 @@ export default function UploadPage(props) {
 
     // Store picture to firebase.
     uploadBytes(imageRef, props.addedPics[idx]).then((snapshot) => {
-      getDownloadURL(snapshot.ref).then((url) => {
+      getDownloadURL(snapshot.ref).then((url) => {  
 
         // Store url and labels to firebase realtime database.
         //  1. get the UUID of uploaded image,
@@ -236,6 +237,8 @@ export default function UploadPage(props) {
         setFormDataList={props.setFormDataList}
         completePercentages={props.completePercentages}
         setCompletePercentages={props.setCompletePercentages}
+        addedLabels={props.addedLabels}
+        setAddedLabels={props.setAddedLabels}
       />
     </div>
   );
