@@ -23,6 +23,7 @@ export default function App() {
   const [addedPicsUrl, setAddedPicsUrl] = useState([]);
   const [formDataList, setFormDataList] = useState([]);
   const [completePercentages, setCompletePercentages] = useState([]);
+  const [addedLabels, setAddedLabels] = useState([]);
   // DEBUG
   useEffect(() => {
     console.log("addedPics list has changed.");
@@ -51,6 +52,8 @@ export default function App() {
             setFormDataList={setFormDataList}
             completePercentages={completePercentages}
             setCompletePercentages={setCompletePercentages}
+            addedLabels={addedLabels}
+            setAddedLabels={setAddedLabels}
           />}
         />
         <Route path='/explore' exact element={<ExplorePage />} />

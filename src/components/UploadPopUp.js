@@ -19,45 +19,85 @@ import PopUpCloseBtn from "../assets/PopUpCloseBtn.png";
  */
 export default function UploadPopUp(props) {
 
-  const required_fields_to_validate = [
+  const required_fields = [
     {category: "location", subcategories: ["in_outdoor", "purpose"]},
     {category: "spectators", subcategories: ["quantity", "density", "attentive"]},
     {category: "posture"},
   ];
+  const optional_fields = [
+    {category: "location", subcategories: ["architecture_component"]},
+    {category: "demographic", subcategories: ["age", "sex", "social_role"]},
+  ];
   const close_pop_and_save = () => {
 
     // Update completePercentage by checking all required fields that needs to be validated.
+    // Percentage calculation:
+    //  required field = 16%
+    //  optional field = 1%
+    //  ≥96% = 100%, because 6*16=96.
     props.setCompletePercentages((prev) => {
       console.log("Checking progress..."); //DEBUG
       let newCompletePercentages = [...prev];
       let percentage = 0;
-      for (let i = 0; i < required_fields_to_validate.length; i++) {
-        const category = required_fields_to_validate[i].category;
-        if (required_fields_to_validate[i].subcategories !== undefined) {
-          for (let j = 0; j < required_fields_to_validate[i].subcategories.length; j++) {
-            const subcategory = required_fields_to_validate[i].subcategories[j];
-            if (!(
-              formData[category][subcategory] === ""
-              || formData[category][subcategory].length === 0
+
+      // Calculate required fields.
+      for (let i = 0; i < required_fields.length; i++) {
+        const category = required_fields[i].category;
+        if (required_fields[i].subcategories !== undefined) {
+          for (let j = 0; j < required_fields[i].subcategories.length; j++) {
+            const subcategory = required_fields[i].subcategories[j];
+            if ((
+              Array.isArray(formData[category][subcategory])
+              && formData[category][subcategory].length !== 0
+              ) || (
+              (!Array.isArray(formData[category][subcategory]))
+              && formData[category][subcategory] !== ""
             )) {
-              console.log("Field '" + subcategory + "' is filled ↓"); console.log(formData[category][subcategory]); //DEBUG
+              console.log("Required field '" + subcategory + "' is filled ↓"); console.log(formData[category][subcategory]); //DEBUG
               percentage += 17; // 100/6≈17
             }
           }
         } else {
-          if (!(
-            formData[category] === ""
-            || formData[category].length === 0
+          if ((
+            Array.isArray(formData[category])
+            && formData[category].length !== 0
+            ) || (
+            (!Array.isArray(formData[category]))
+            && formData[category] !== ""
           )) {
-            console.log("Field '" + category + "' is filled ↓"); console.log(formData[category]); //DEBUG
-            percentage += 17; // 100/6≈17
+            console.log("Required field '" + category + "' is filled ↓"); console.log(formData[category]); //DEBUG
+            percentage += 16;
           }
         }
       }
-      if (percentage > 100) { percentage = 100; } // max value 100
+
+      // Calculate optional fields.
+      for (let i = 0; i < optional_fields.length; i++) {
+        const category = optional_fields[i].category;
+        for (let j = 0; j < optional_fields[i].subcategories.length; j++) {
+          const subcategory = optional_fields[i].subcategories[j];
+          if ((
+            Array.isArray(formData[category][subcategory])
+            && formData[category][subcategory].length !== 0
+            ) || (
+            (!Array.isArray(formData[category][subcategory]))
+            && formData[category][subcategory] !== ""
+          )) {
+            console.log("Optional field '" + subcategory + "' is filled ↓"); console.log(formData[category][subcategory]); //DEBUG
+            console.log(formData);
+            percentage += 1;
+          }
+        }
+      }
+
+      // Accumulate and validate.
+      if (percentage >= 96) { percentage = 100; }
       newCompletePercentages[props.formDataIndex] = percentage;
       return newCompletePercentages;
     });
+
+    // Update addedLabels.
+    props.reprint_added_labels(props.formDataIndex, formData);
 
     // Update formDataList.
     props.setFormDataList((prev) => {
@@ -115,7 +155,7 @@ export default function UploadPopUp(props) {
           " >> " +
           subcategoryname +
           " >> " +
-          prev[categoryname][subcategoryname]
+          newFormData[categoryname][subcategoryname]
       ); //DEBUG
       return newFormData;
     });

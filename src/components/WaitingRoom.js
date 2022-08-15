@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import "./components.css";
 //import { labels_data } from "./labels_data.js";
@@ -18,6 +18,7 @@ import 'react-circular-progressbar/dist/styles.css';
 import AddPicture from "../assets/AddPicture.png";
 import PublishPicture from "../assets/PublishPicture.png";
 import HintText_ArrowUp from "../assets/HintText_ArrowUp.png";
+import ZeroProgressAddLabel from "../assets/ZeroProgressAddLabel.png";
 
 
 /**
@@ -28,14 +29,16 @@ import HintText_ArrowUp from "../assets/HintText_ArrowUp.png";
  * parent props:
  *  - uploadDisabled: Whether to disable the upload btn.
  *  - uploadImages(): Method to upload images.
- *  - setAddedPics(): To update addedPics.
  *  - addedPics: All added pictures in the waitingroom gallery.
- *  - setAddedPicsUrl(): To update addedPicsUrl.
+ *  - setAddedPics(): To update addedPics.
  *  - addedPicsUrl: URLs of all added pictures in the waitingroom gallery.
- *  - setFormDataList(): To update formDataList.
+ *  - setAddedPicsUrl(): To update addedPicsUrl.
  *  - formDataList: List of all formDatas corrsponding to each picture.
- *  - setCompletePercentages(): To update completePercentages.
+ *  - setFormDataList(): To update formDataList.
  *  - completePercentages: For progress bar and validation.
+ *  - setCompletePercentages(): To update completePercentages.
+ *  - addedLabels: Strings of added labels to display upon hovering the progress.
+ *  - setAddedLabels(): To update addedLabels.
  *
  * references:
  *  https://stackoverflow.com/questions/33766085/how-to-avoid-extra-wrapping-div-in-react
@@ -101,6 +104,93 @@ export default function WaitingRoom(props) {
   const closePop = () => { setClickedUrl(""); }
 
 
+/* Displaying progress and added labels */
+
+  /**
+   * reprint_added_labels
+   *
+   * Return a text that lists out all added labels
+   * @param idx: Index of formDataList to fetch added labels from
+   *
+   * references:
+   *  https://www.codegrepper.com/code-examples/javascript/how+to+check+if+something+is+an+array+javascript
+   *  https://www.codegrepper.com/code-examples/javascript/remove+last+character+from+a+string+in+react
+   */
+  const reprint_added_labels = (idx, data) => {
+    let added_labels_string = "Added labels: \n";
+    for (let category in data) {
+
+      // Ignored case: url.
+      if (category==='url') { continue; }
+
+      // Special case: posture, no subcategory in formData.
+      if (category==='posture') {
+        if (data[category].length !== 0) {
+          added_labels_string += "• Postures: ";
+          for (let i = 0; i < data[category].length; i++) {
+            added_labels_string += (data[category][i] + ", ");
+          }
+          added_labels_string += "\n";
+        }
+      }
+
+      // Special case modality: only record occupied modalities.
+      else if (category==='modality') {
+        let occupied_modalities = "";
+        for (let bodypart in data[category]) {
+          if (data[category][bodypart] === false) {
+            occupied_modalities += (bodypart + ", ");
+          }
+        }
+        if (occupied_modalities === "") {
+          added_labels_string += "• All modalities available, \n";
+        } else {
+          added_labels_string += ("• Occupied modalities: " + occupied_modalities + "\n");
+        }
+      }
+
+      // Default case.
+      else {
+        let empty_flag = true; // whether all subcategories of this category are emoty. If empty, won't include this category in addedLabels.
+        let category_added_labels = "";
+        for (let subcategory in data[category]) {
+          let subcategory_content = data[category][subcategory];
+          if (Array.isArray(subcategory_content)) {
+            if (subcategory_content.length !== 0) {
+              empty_flag = false; // turn off empty_flag if any subcategory is not empty
+              for (let i = 0; i < subcategory_content.length; i++) {
+                category_added_labels += (subcategory_content[i] + ", ");
+              }
+            }
+          } else { // not array
+            if (subcategory_content !== "") {
+              empty_flag = false;
+              category_added_labels += (subcategory_content + ", ");
+            }
+          }
+        }
+        if (empty_flag === false) {
+          added_labels_string += (
+            "• " // append bullet point
+            + (category.charAt(0).toUpperCase()+category.slice(1)) // capitalize first letter
+            + ": "
+            + category_added_labels
+            + "\n"
+          );
+        }
+      }
+    }
+
+    added_labels_string = added_labels_string.slice(0, -3); // cut off the extra ", \n" at the end
+    console.log("added_labels_string ↓\n" + added_labels_string); //DEBUG
+    props.setAddedLabels((prev) => {
+      let newAddedLabels = [...prev];
+      newAddedLabels[idx] = added_labels_string;
+      return newAddedLabels;
+    })
+  }
+
+
 /* Render */
   return (
     <div className="WaitingRoom">
@@ -154,25 +244,44 @@ export default function WaitingRoom(props) {
             {props.addedPicsUrl.map((url, idx) => (
               <div className="WaitingPic_container">
                 <div className="WaitingPicProgress">
-                  <CircularProgressbar
-                    value={props.completePercentages[idx]}
-                    text={props.completePercentages[idx] + "%"}
-                    strokeWidth={16}
-                    background backgroundPadding={4}
-                    styles={buildStyles({
-                      strokeLinecap: "butt",
-                      textSize: "24px",
-                      textColor: "#333333",
-                      pathColor: "#A0D568",
-                      trailColor: "#EEEEEE",
-                      backgroundColor: "#FFFFFF",
-                    })}
-                  />
-                  {/*<div className="LabelList">
-                    {addedLabels.map((label) => (
-                      <div className="Label">{label}</div>
-                    ))}
-                  </div> //TODO: hover progress to show all added labels */}
+                  {props.completePercentages[idx]===0 ?
+                    <input
+                      type="image" src={ZeroProgressAddLabel}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setClickedUrl(url);
+                      }}
+                    />
+                  :
+                    <div className="DescriptionHover">
+                      <div className="Description_elementtohover">
+                        <CircularProgressbar
+                          className="WaitingPicProgressBar"
+                          value={props.completePercentages[idx]}
+                          text={props.completePercentages[idx] + "%"}
+                          strokeWidth={16}
+                          background backgroundPadding={4}
+                          styles={buildStyles({
+                            strokeLinecap: "butt",
+                            textSize: "24px",
+                            textColor: "#333333",
+                            pathColor: "#A0D568",
+                            trailColor: "#EEEEEE",
+                            backgroundColor: "#FFFFFF",
+                          })}
+                        />
+                      </div>
+                      {// Hover progress, show all added labels
+                      <div className="DescriptionTextBox_container">
+                        <div className="DescriptionTextBox" style={{"--desbox-color":"#FFFFFF"}}>
+                          <div className="DescriptionText">
+                            {props.addedLabels[idx].split('\n').map(str => <>{str}<br/></>)}
+                          </div>
+                        </div>
+                      </div>
+                      }
+                    </div>
+                  }
                 </div>
                 <img
                   className="WaitingPic"
@@ -201,6 +310,7 @@ export default function WaitingRoom(props) {
           formDataIndex={props.addedPicsUrl.findIndex(item => item===clickedUrl)}
           setCompletePercentages={props.setCompletePercentages}
           completePercentages={props.completePercentages}
+          reprint_added_labels={reprint_added_labels}
         />
       ) : null}
     </div>
