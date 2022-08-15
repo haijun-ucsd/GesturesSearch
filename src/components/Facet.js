@@ -139,6 +139,7 @@ export default function Facet(props) {
           setRange={props.setRange}
           onchange_handler={range_change_handler}
           filter_change_handler={filter_change_handler}
+          handleSearch={props.handleSearch}
         />
         <FacetModality
           facetList={props.facetList}
@@ -176,9 +177,16 @@ export default function Facet(props) {
  *  https://stackoverflow.com/questions/45277306/check-if-item-exists-in-array-react
  */
 function ExploreSearch(props) {
+
+  const [searchData, setSearchData] = useState('');
+  const handleSearch = (input) => {
+    setSearchData(input);
+  }
+
   return (
     <div className="Module">
       <ExploreSearchBar
+        handleSearch={props.handleSearch}
         //search_handler = {...} //TODO: define a search function and use it here, in the SearchBar component this function will be used onClick of the search button.
       />
       {/* Search in range deleted */}

@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './components.css';
 import { labels_data } from "./labels_data.js";
 import { useState , useEffect } from 'react';
+import { Autocomplete, TextField } from '@mui/material';
 
 /* Assets: */
 import RemovableLabel_removebtn from "../assets/RemovableLabel_removebtn.png";
@@ -313,11 +314,41 @@ function ExploreSearchBar(props) {
     console.log("submittedSearchText is: " + submittedSearchText);
   }, [submittedSearchText]);
 
+  // Examples:
+  const locationLabels = [
+    { label: 'library'},
+    { label: 'hospital'},
+    { label: 'shopping'},
+    { label: 'public transportation'},
+    { label: 'entertainment'},
+    { label: 'sport'},
+    { label: 'nature'},
+    { label: 'parking lot'},
+    { label: 'street'},
+    { label: 'pedestrian'},
+    { label: 'restaurant'},
+    { label: 'work space'},
+    { label: 'hostpital'},
+    { label: 'indoor'},
+    { label: 'outdoor'},
+    { label: 'entrance'},
+    { label: 'corridor'},
+    { label: 'bench'},
+    { label: 'cabin'},
+    { label: 'waiting room'},
+    { label: 'shelf'},
+    { label: 'pool'},
+    { label: 'poolside'},
+    { label: 'table'},
+    { label: 'zebra walk'},
+    { label: 'rock climbing wall'}
+  ];
+
   /* Render */
   return (
     <div className="SearchBar_container">
       <div className="SearchBar">
-        <input
+        {/* <input
           type="text"
           className="SearchBarInput"
           id={props.id} name={props.id}
@@ -329,7 +360,25 @@ function ExploreSearchBar(props) {
           onKeyDown={(e) => {  // pressing ENTER == clicking search icon
             if (e.key==='Enter') {
               setSubmittedSearchText(searchText);
-              //props.search_handler(searchText, ...);
+            }
+          }}
+        /> */}
+        <Autocomplete
+          disablePortal
+          id="combo-box-demo"
+          options={locationLabels}
+          sx={{ width: 300 }}
+          renderInput={
+            (params) => <TextField {...params} label="Location"/>
+          }
+          onKeyPress= {(e, value) => {
+            if (e.key === 'Enter') {
+              console.log('Enter key pressed');
+              // write your functionality here
+              // search for relevant images here
+              // send inputed location back to Facet and re-render images
+              // console.log(e.target.value);
+              props.handleSearch(e.target.value);
             }
           }}
         />
@@ -338,30 +387,9 @@ function ExploreSearchBar(props) {
           onClick={(e) => {
             e.preventDefault();
             setSubmittedSearchText(searchText);
-            //props.search_handler(searchText, ...);
           }}
         />
       </div>
-      {/* search result */
-      /*(() => {
-        if (submittedSearchText=='') {
-          return null;
-        } else {
-          if (searchResults=='') {
-            return (
-              <p className="HintText">
-                No result is found.
-              </p>
-            );
-          } else {  // normal case
-            return (
-              <div className="LabelList">
-                searchResults.map((item) => {});
-              </div>
-            );
-          }
-        }
-      })*/}
     </div>
   );
 }
