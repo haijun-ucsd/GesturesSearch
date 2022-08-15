@@ -110,6 +110,12 @@ export default function ExplorePage() {
 
 	const [imageList, setImageList] = useState([]); // list of currently shown pictures
 
+	const [searchData, setSearchData] = useState('');
+	const handleSearch = (input) => {
+		console.log('search input:', input);
+		setSearchData(input);
+	}
+
 	/* Update the gallery upon any change. */
 	useEffect(() => {
 		// listAll(imageListRef).then((response) => {
@@ -133,8 +139,27 @@ export default function ExplorePage() {
 
 	//console.log(imageList); //DEBUG
 
-
 /* Render */
+	useEffect(() => {
+		const db = getDatabase()
+		const dbRef = ref_db(db, 'images');
+		onValue(dbRef, (snapshot) => {
+			const data = snapshot.val();
+			let filtered = []
+			for (const [imgKey, labels] of Object.entries(data)) {
+				console.log(labels)
+				if (labels.location.in_outdoor === searchData) {
+					filtered.push([imgKey, labels]);
+				}
+			}
+			if (searchData !== '') {
+				setImageList(filtered);
+			}
+		})
+	}, [searchData])
+
+	// Query from database for correct images:
+
 
 	return (
 		<div className="PageBox">
@@ -146,6 +171,7 @@ export default function ExplorePage() {
 				filterList={filterList}
 				setFacetList={setFacetList}
 				facetList={facetList}
+				handleSearch={handleSearch}
 			/>
 			<ExploreGallery
 				imageList={imageList}

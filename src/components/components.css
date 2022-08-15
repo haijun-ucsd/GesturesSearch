@@ -516,7 +516,7 @@
   fill: #ED5564;
 }
 .Humanfigure_highlights svg.any path {
-  fill: #4FC1E814; /* #XXXXXX14 = 8% opacity */
+  fill: #F1FAFD; /* = #4FC1E8 with 8% opacity on white background */
 }
 
 .Humanfigure_highlights svg {
@@ -615,13 +615,15 @@
   width: auto;
   will-change: transform,opacity;*/
 }
-
 .DescriptionBtn:hover {
   background: #F6F9FE;
   color: #174ea6;
 }
 
-.DescriptionBtn:hover ~ .DescriptionTextBox_container {
+.Description_elementtohover {
+  flex: 0 0 auto;
+}
+.Description_elementtohover:hover ~ .DescriptionTextBox_container {
   display: inline-flex;
 }
 
@@ -633,7 +635,7 @@
   position: relative;
   align-items: center;
   max-width: 240px;
-  min-width: 100px;
+  min-width: 160px;
   /* TODO: better max-width and min-width */
   height: 0px; /* constrain vertical position */
 }
@@ -644,7 +646,7 @@
   flex-direction: row;
   align-items: center;
   padding: 4px 8px;
-  background-color: #EEEEEE;
+  background-color: var(--desbox-color, #EEEEEE);
   border-radius: 2px;
 }
 
@@ -652,7 +654,7 @@
 .DescriptionTextBox:after {  /* little triangle arrow */
   content: "";
   border: 8px solid;
-  border-color: transparent #EEEEEE transparent transparent; /* matches background color of the textbox */
+  border-color: transparent var(--desbox-color, #EEEEEE) transparent transparent; /* matches background color of the textbox */
   position: absolute;  
   left: -15px; 
   transform: translateY(-50%);
@@ -888,6 +890,9 @@
   position: absolute;
   top: 4px;
   left: 4px;
+}
+
+.WaitingPicProgressBar {
   width: 40px;
   height: 40px;
 }
