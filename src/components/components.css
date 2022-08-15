@@ -1196,7 +1196,7 @@
   /* as a container */
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   padding: 0px;
   gap: 64px;
@@ -1212,7 +1212,8 @@
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  padding: 4px;
+  margin-right: 20px;
+  /* padding: 4px; */
   /* font */
   font-family: "Google Sans",Roboto,Arial,sans-serif;
   font-style: normal;
