@@ -252,7 +252,7 @@ export default function LabelsForm(props) {
     }
   };
 
-  /* render */
+  /* Render */
   return (
     <Form
       className="LabelsForm"

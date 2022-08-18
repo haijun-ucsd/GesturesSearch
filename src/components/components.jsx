@@ -97,7 +97,7 @@ function CheckLabel(props) {
         style={{
           cursor:"pointer",
           borderColor: props.checkedState ? props.color : "#CCCCCC",
-          backgroundColor: props.checkedState ? props.color+14 : "#FFFFFF"  // +14 = 8% opacity
+          backgroundColor: props.checkedState ? props.color+14 : "transparent"  // +14 = 8% opacity
         }}
       >
         <input
@@ -121,9 +121,8 @@ function CheckLabel(props) {
   } else {  // when parent did not provide checkedState, use the following as default.
     return (
       <label
-        className="Label"
+        className="Label CheckLabel"
         style={{
-          cursor:"pointer",
           borderColor: checked ? props.color : "#CCCCCC",
           backgroundColor: checked ? props.color+14 : "#FFFFFF"  // +14 = 8% opacity
         }}

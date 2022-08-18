@@ -45,23 +45,37 @@ export default function UploadPage(props) {
         for (let i = 0; i < props.addedPics.length; i++) {
           if (props.completePercentages[i] === 100) { // valid picture, can upload
             console.log("addedPics[" + i + "] is valid"); //DEBUG
+            console.log(props.addedPics.length); //DEBUG
             uploadImage(i);
           }
         }
+
+        // Clear the uploaded images according to "undefined" tombstones.
+        props.setAddedPics(prev => { return (prev.filter((item) => item !== undefined)); });
+        props.setAddedPicsUrl(prev => { return (prev.filter((item) => item !== undefined)); });
+        props.setFormDataList(prev => { return (prev.filter((item) => item !== undefined)); });
+        props.setCompletePercentages(prev => { return (prev.filter((item) => item !== undefined)); });
       }
     } else {
 
       // Upload all pictures.
       for (let i = 0; i < props.addedPics.length; i++) {
+        console.log(props.addedPics.length); //DEBUG
         uploadImage(i);
       }
-    }
 
-    console.log("Uploaded pictures should have been cleared"); //DEBUG
-    console.log("addedPics ↓"); console.log(props.addedPics); //DEBUG
+      // Simply clear all helper lists.
+      props.setAddedPics([]);
+      props.setAddedPicsUrl([]);
+      props.setFormDataList([]);
+      props.setCompletePercentages([]);
+    }
 
     // Alert successful upload.
     alert("Pictures have been uploaded! :D");
+
+    console.log("Uploaded pictures should have been cleared"); //DEBUG
+    console.log("addedPics ↓"); console.log(props.addedPics); //DEBUG
   }
 
   /**
@@ -83,7 +97,7 @@ export default function UploadPage(props) {
     console.log("new key: " + key); //DEBUG
 
     // Store picture to firebase.
-    uploadBytes(imageRef, props.addedPics[idx]).then((snapshot) => {
+    /*uploadBytes(imageRef, props.addedPics[idx]).then((snapshot) => {
       getDownloadURL(snapshot.ref).then((url) => {  
 
         // Store url and labels to firebase realtime database.
@@ -100,13 +114,15 @@ export default function UploadPage(props) {
         );
         console.log("final labels ↓"); console.log(finalLabels); //DEBUG
       });
-    });
+    });*/
 
-    // Clear the uploaded picture.
-    props.setAddedPics(prev => { return (prev.filter((item, index) => index !== idx)); });
-    props.setAddedPicsUrl(prev => { return (prev.filter((item, index) => index !== idx)); });
-    props.setFormDataList(prev => { return (prev.filter((item, index) => index !== idx)); });
-    props.setCompletePercentages(prev => { return (prev.filter((item, index) => index !== idx)); });
+    // Prepare to clear the uploaded picture.
+    // For now, maintain a tombstone at the index to facilitate the upload loop.
+    // Will remove all together after the upload loop.
+    props.setAddedPics(prev => { let newList=[...prev]; newList[idx] = undefined; return (newList); });
+    props.setAddedPicsUrl(prev => { let newList=[...prev]; newList[idx] = undefined; return (newList); });
+    props.setFormDataList(prev => { let newList=[...prev]; newList[idx] = undefined; return (newList); });
+    props.setCompletePercentages(prev => { let newList=[...prev]; newList[idx] = undefined; return (newList); });
   };
 
   /**

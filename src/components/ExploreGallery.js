@@ -41,6 +41,8 @@ export default function ExploreGallery(props) {
     	: null }
       <Gallery
       	imageList={props.imageList}
+      	click_picture={props.click_picture}
+      	pictureClicked={props.pictureClicked}
       />
     </div>
 	);
@@ -52,60 +54,27 @@ export default function ExploreGallery(props) {
  * 
  * parent props:
  *	- imageList
+ *	- click_picture(): to expand the ExploreDetails menu and view details of the clicked image.
+ *	- pictureClicked: to determine whether a picture should be highlighted.
+ *
+ * references:
+ *	https://stackoverflow.com/questions/9102900/css-outside-border
  */
 function Gallery(props) {
 	return(
 		<div className='Gallery'>
 			{ 
-				props.imageList.map((data) => {
-				const key = data[0];
-				const labelData = data[1];
-				const available_modalities = []
-				for (let modality in labelData.modality) {
-					if (labelData.modality[modality] == 'available') {
-						available_modalities.push(modality)
-					}
-				}
-				return(
-					<div key={key}>
-						<img
-							className='ExplorePic'
-							key={key}
-							src={labelData.url}
-						/>
-						{/*<div key={key} className='labels'>
-							<p><b>Age: </b>{labelData.demographic.age}</p>
-							<p><b>Sex: </b>{labelData.demographic.sex}</p>
-							<p><b>Social Role: </b>{Array.isArray(labelData.demographic.social_role) ? (labelData.demographic.social_role).join(', ') : labelData.demographic.social_role}</p>
-							<p><b>Architecture Component: </b>{Array.isArray(labelData.location.architecture_component) ? (labelData.location.architecture_component).join(', ') : labelData.location.architecture_component}</p>
-							<p><b>In/outdoor: </b>{labelData.location.in_outdoor}</p>
-							<p><b>Purpose: </b>{Array.isArray(labelData.location.purpose) ? (labelData.location.purpose).join(', ') : labelData.location.purpose}</p>
-							<p><b>Modalities: </b>{Array.isArray(available_modalities) ? available_modalities.join(', ') : available_modalities}</p>
-							<p><b>Attentive: </b>{(labelData.spectators.attentive)}</p>
-							<p><b>Density: </b>{(labelData.spectators.density)}</p>
-							<p><b>Quantity: </b>{(labelData.spectators.quantity)}</p>
-						</div> //TODO: hover or click to show */}
-					</div>
+				props.imageList.map((data) =>
+					<img
+						className={
+							"ExplorePic" + " "
+							+ ((props.pictureClicked && props.pictureClicked.url===data[1].url) ? "ExplorePic_selected" : "")
+						}
+						key={data[0]}
+						src={data[1].url}
+						onClick={()=>props.click_picture(data[1])} // data[1] includes labels and imgUrl
+					/>
 				)
-				// const modalities = available_modalities.join(', ');
-				// console.log(modalities)
-				// return (<div key={data[0]} className='textLeft'>
-				// 			<img key={data[0]} src={data[1].url}/> 
-							// <p>Age: {data[1].demographic.age}</p>
-							// <p>Occupation: {data[1].demographic.occupation}</p>
-							// <p>Sex: {data[1].demographic.sex}</p>
-							// <p>Location: {data[1].location}</p>
-							// <p>Available modalities: {modalities}</p>
-							// {/* {
-							// available_modalities.map((modality) => {
-							// 	return <p> modality </p>
-							// })
-							// } */}
-							// <p>All: {data[1].spectators.all}</p>s
-							// <p>Attentive: {data[1].spectators.attentive}</p>
-							// <p>Density: {data[1].spectators.density}</p>
-				// 		</div>)
-				})
 			}
      </div>
 	);

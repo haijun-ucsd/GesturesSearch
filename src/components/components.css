@@ -1,7 +1,29 @@
 /**
  * references:
  *  https://gist.github.com/lopspower/03fb1cc0ac9f32ef38f4
+ *  https://stackoverflow.com/questions/15831657/creating-css-global-variables-stylesheet-theme-management
+ *  https://stackoverflow.com/questions/40010597/how-do-i-apply-opacity-to-a-css-color-variable
  */
+
+
+/**------------ STYLESHEET ------------**/
+
+:root {
+  --img-container-bg: rgb(234, 197, 197);
+  --demographic-color: #ED5564;
+  --spectators-color: #FFCE54;
+  --location-color: #A0D568;
+  --posture-color: #AC92EB;
+  --modality-color: #4FC1E8;
+  --available-modality-color: #A0D568; /* right now same green as Location */
+  --occupied-modality-color: #ED5564; /* right now same red as Demographic */
+  --black: #000000;
+  --faded-black: #333333;
+  --gray-dark: #AAAAAA;
+  --gray-mid: #CCCCCC;
+  --gray-light: #EEEEEE;
+  --gray-bg: #F0ECEC;
+}
 
 
 /**------------ TEMPORARY ------------**/
@@ -23,7 +45,7 @@
   font-size: 16px;
   line-height: 120%;
   letter-spacing: 0.01em;
-  color: #AAAAAA;
+  color: var(--gray-dark);
   /* as a container */
   display: inline-flex;
   flex-direction: row;
@@ -32,12 +54,25 @@
 }
 
 
-/* Label */
+/* SeparationLine (note that these are default cases, color might differ according to inline styles) */
+.SeparationLine_H {
+  border-top: 1px solid var(--gray-mid);
+  align-self: stretch;
+  flex-grow: 0;
+}
+.SeparationLine_V {
+  border-left: 1px solid var(--gray-mid);
+  align-self: stretch;
+  flex-grow: 0;
+}
+
+
+/* Label (note that these are only the default, color might change with inline styles according to categories) */
 
 .Label {
-  border: 1px solid #CCCCCC;
+  border: 1px solid var(--gray-mid);
   border-radius: 14px;
-  background-color: #FFFFFF; /* default white background */
+  background-color: transparent; /* default transparent background */
   /* as an item */
   flex: 0 0 auto; /* no squeeze or stretch */
   /* as a container */
@@ -45,8 +80,15 @@
   flex-direction: row;
   align-items: center;
   height: 28px;
-  padding: 0 12px;
+  padding: 4px 12px;
   gap: 8px;
+}
+
+.CheckLabel {
+  cursor: pointer;
+}
+.CheckLabel:hover {
+  filter: brightness(60%); /* hover to darken */
 }
 
 .LabelText {
@@ -84,8 +126,8 @@
 /* Btn */
 
 .Btn_primary {
-  background: #EEEEEE;
-  border: 1px solid #CCCCCC;
+  background: var(--gray-light);
+  border: 1px solid var(--gray-mid);
   border-radius: 8px;
   box-shadow:
     0px 4px 8px rgba(170, 170, 170, 0.16),
@@ -101,7 +143,7 @@
 }
 
 .Btn_secondary {
-  border: 1px solid #CCCCCC;
+  border: 1px solid var(--gray-mid);
   border-radius: 8px;
   filter:
     drop-shadow(0px 4px 8px rgba(170, 170, 170, 0.16))
@@ -117,7 +159,7 @@
 }
 
 .Btn_small {
-  border: 1px solid #CCCCCC;
+  border: 1px solid var(--gray-mid);
   border-radius: 8px;
   filter:
     drop-shadow(0px 4px 8px rgba(170, 170, 170, 0.16))
@@ -145,6 +187,7 @@
 
 .CheckboxText {
   display: inline-block;
+  cursor: pointer;
   /* font */
   font-family: "Google Sans",Roboto,Arial,sans-serif;
   font-style: normal;
@@ -152,7 +195,7 @@
   font-size: 16px;
   line-height: 120%;
   letter-spacing: 0.01em;
-  color: #333333;
+  color: var(--faded-black);
 }
 
 .Checkbox_default {
@@ -181,17 +224,17 @@
   width: 24px;
   mask-image: url("../assets/Checkbox_blank.svg");
   -webkit-mask-image: url("../assets/Checkbox_blank.svg");
-  background-color: var(--checkbox-color, #000000);  /* default color: black */
+  background-color: var(--checkbox-color, #666666);  /* default color: gray */
 }
 .Checkbox_default:checked::after {
   mask-image: url("../assets/Checkbox_checked.svg");
   -webkit-mask-image: url("../assets/Checkbox_checked.svg");
 }
 .Checkbox_default:disabled::after {
-  background-color: #CCCCCC;
+  background-color: var(--gray-mid);
 }
 .Checkbox_default:not(:disabled):hover::after {
-  filter: brightness(120%);
+  background-color: var(--black); /* hover to darken */
 }
 
 .Checkbox_checklabel {
@@ -213,7 +256,7 @@
   width: 14px; /* height and width according to size of CheckLabel_checkmark.svg */
   mask-image: url("../assets/CheckLabel_checkmark.svg");
   -webkit-mask-image: url("../assets/CheckLabel_checkmark.svg");
-  background-color: var(--checkbox-color, #000000);  /* default color: black */
+  background-color: var(--checkbox-color, #666666);  /* default color: gray */
 }
 
 .Checkbox_spectrum_container { /* should have ≥2 children elements in this flex */
@@ -228,7 +271,7 @@
 }
 .Checkbox_spectrum_container::before {  /* ::before naturally covers :before */
   content: "";
-  border-bottom: 2px solid #CCCCCC;
+  border-bottom: 2px solid var(--gray-mid);
   position: absolute;
   transform: translateY(-50%);
   top: 12px; /* = 24/2, 24px is the height of one checkbox */
@@ -250,7 +293,7 @@
 
 .Dropdown {
   background: #FFFFFF;
-  border: 1px solid #CCCCCC;
+  border: 1px solid var(--gray-mid);
   border-radius: 8px;
   padding: 4px 24px 4px 8px;
   min-width: 160px;
@@ -262,7 +305,7 @@
   font-size: 16px;
   line-height: 120%;
   letter-spacing: 0.01em;
-  color: #333333;
+  color: var(--faded-black);
   cursor: pointer;
 }
 
@@ -280,7 +323,7 @@
   padding: 8px 12px 8px 16px;
   gap: 8px;
   background: #FFFFFF;
-  border: 1px solid #CCCCCC;
+  border: 1px solid var(--gray-mid);
   border-radius: 8px;
 }
 
@@ -373,7 +416,7 @@
   align-items: flex-start;
   padding: 8px;
   gap: 16px;
-  border: 1px solid #CCCCCC;
+  border: 1px solid var(--gray-mid);
   border-radius: 8px;
 }
 
@@ -427,7 +470,7 @@
   height: 32px;
   padding: 8px;
   background: #FFFFFF;
-  border: 1px solid #CCCCCC;
+  border: 1px solid var(--gray-mid);
   border-radius: 8px;
   outline: none;
 }
@@ -440,7 +483,7 @@
   flex-direction: column;
   align-items: flex-start;
   padding-top: 8px;
-  border-top: 1px solid #CCCCCC;
+  border-top: 1px solid var(--gray-mid);
   gap: 8px;
 }
 
@@ -509,11 +552,11 @@
   filter: brightness(120%);
 }
 
-.Humanfigure_highlights svg.unavailable path {
-  fill: #A0D568;
+.Humanfigure_highlights svg.available path {
+  fill: var(--available-modality-color);
 }
 .Humanfigure_highlights svg.unavailable path {
-  fill: #ED5564;
+  fill: var(--occupied-modality-color);
 }
 .Humanfigure_highlights svg.any path {
   fill: #F1FAFD; /* = #4FC1E8 with 8% opacity on white background */
@@ -568,7 +611,7 @@
 
 /* RequiredField indicator */
 .RequiredField {
-  color: #ED556480; /* #XXXXXX80 = 50% opacity */
+  color: #ED556480; /* same red as Demographic, #XXXXXX80 = 50% opacity */
 }
 
 
@@ -646,7 +689,7 @@
   flex-direction: row;
   align-items: center;
   padding: 4px 8px;
-  background-color: var(--desbox-color, #EEEEEE);
+  background-color: var(--desbox-color, var(--gray-light));
   border-radius: 2px;
 }
 
@@ -654,7 +697,7 @@
 .DescriptionTextBox:after {  /* little triangle arrow */
   content: "";
   border: 8px solid;
-  border-color: transparent var(--desbox-color, #EEEEEE) transparent transparent; /* matches background color of the textbox */
+  border-color: transparent var(--desbox-color, var(--gray-light)) transparent transparent; /* matches background color of the textbox */
   position: absolute;  
   left: -15px; 
   transform: translateY(-50%);
@@ -688,7 +731,7 @@
   align-items: flex-start;
   padding: 24px;
   gap: 24px;
-  border-bottom: 1px solid #CCCCCC;
+  border-bottom: 1px solid var(--gray-mid);
 }
 
 .ModuleHeaderBar {
@@ -711,7 +754,7 @@
   align-items: flex-start;
   padding: 24px;
   gap: 16px;
-  border-bottom: 1px solid #CCCCCC;
+  border-bottom: 1px solid var(--gray-mid);
 }
 
 .AccordionSectionHeaderBar {  /* right now the same as ModuleHeaderBar */
@@ -743,7 +786,7 @@
   font-size: 18px;
   line-height: 120%;
   letter-spacing: 0.01em;
-  color: #000000; /* default color: black */
+  color: var(--black); /* default color: black */
   filter: brightness(80%); /* darkern the colors a bit for readability */
   /* as a container */
   display: inline-flex;
@@ -782,7 +825,7 @@
   font-size: 16px;
   line-height: 120%;
   letter-spacing: 0.01em;
-  color: #AAAAAA;
+  color: var(--gray-dark);
   /* as a container */
   display: inline-flex;
   flex-direction: row;
@@ -863,7 +906,7 @@
   align-self: stretch;
   flex-grow: 1;
   /* as a container */
-  background-color: #F0ECEC; /* matches with About page */
+  background-color: var(--gray-bg); /* matches with About page */
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -916,7 +959,7 @@
   background-color: white;
   border-radius: 10px;
   overflow: hidden; /* to apply border-radius to all inner elements */
-  border: 2px solid rgb(234, 197, 197);
+  border: 2px solid var(--img-container-bg);
   width: 100%;
   height: 100%;
 }
@@ -951,7 +994,7 @@
   flex-grow: 1;
   /* as a container */
   position: relative;
-  background-color: rgb(234, 197, 197);
+  background-color: var(--img-container-bg);
 }
 
 .PopUpClose {
@@ -975,7 +1018,7 @@
   max-width: 640px;
   min-width: 560px;
   max-height: 100%;
-  border-left: 1px solid #CCCCCC; /* TODO: dropshadow */
+  border-left: 1px solid var(--gray-mid); /* TODO: dropshadow */
   /* as an item */
   flex-grow: 0;
   /* as a container */
@@ -986,7 +1029,7 @@
 }
 
 .FormCategory {
-  border-bottom: 1px solid #CCCCCC;
+  border-bottom: 1px solid var(--gray-mid);
   /* as an item */
   align-self: stretch;
   /* as a container */
@@ -1026,7 +1069,7 @@
 .CategoryIcon {
   height: 24px;
   width: 24px; /* height and width according to CategoryIcons */
-  background-color: var(--categoryicon-color, #000000);  /* default color: black */
+  background-color: var(--categoryicon-color, var(--black));  /* default color: black */
 }
 .CategoryIcon_Location {
   mask-image: url("../assets/CategoryIcon_Location.png");
@@ -1087,7 +1130,7 @@
   font-size: 16px;
   line-height: 120%;
   letter-spacing: 0.01em;
-  color: #AAAAAA;
+  color: var(--gray-dark);
   /* as a container */
   display: inline-flex;
   flex-direction: row;
@@ -1100,7 +1143,6 @@
 
 .ExploreGallery {
   height: calc(100vh - 40px); /* minus height of Navbar */
-  width: 75vw; /* twin: FacetMenu width 25vw */
   /* as an item */
   flex-grow: 1;
   /* as a container */
@@ -1126,9 +1168,13 @@
   /*max-width: 180px;
   max-height: 135px;*/
   object-fit: contain;
+  cursor: pointer;
 }
 .ExplorePic[src=""] {
   display: none;
+}
+.ExplorePic_selected {
+  outline: 4px solid var(--img-container-bg);
 }
 
 .ExploreGalleryHeader {
@@ -1140,7 +1186,7 @@
   align-items: flex-start;
   padding: 24px 40px;
   gap: 16px;
-  border-bottom: 1px solid #CCCCCC;
+  border-bottom: 1px solid var(--gray-mid);
 }
 
 .AppliedFilters {
@@ -1160,22 +1206,18 @@
 }
 
 
-/* Facet */
+/* Facet & ExploreDetails */
 
 .FacetMenu {
-  /*position: absolute;
-  left: 0px;
-  top: 0px;*/
   height: calc(100vh - 40px); /* minus height of Navbar */
-  width: 25vw; /* twin: ExploreGallery width 75vw */
-  max-width: 640px;
-  min-width: 400px;
-  border-right: 1px solid #CCCCCC; /* TODO: dropshadow */
-  /*box-shadow:
+  /*border-right: 1px solid var(--gray-mid);*/
+  box-shadow:
     8px 0px 16px rgba(170, 170, 170, 0.16),
-    0px 0px 40px 8px rgba(204, 204, 204, 0.25);*/
+    0px 0px 40px 8px rgba(204, 204, 204, 0.25);
   /* as an item */
-  flex-grow: 0;
+  flex: 1 0 25vw;
+  max-width: 560px;
+  min-width: 400px;
   /* as a container (module layout) */
   background-color: #FFFFFF;
   display: flex;
@@ -1187,6 +1229,129 @@
   overflow-y: scroll;
   /* as an item */
   align-self: stretch;
+}
+
+.ExploreDetailsMenu {
+  height: calc(100vh - 40px); /* minus height of Navbar */
+  /*border-left: 1px solid var(--gray-mid);*/
+  box-shadow:
+    0px 8px 16px rgba(170, 170, 170, 0.16),
+    0px 0px 40px 8px rgba(204, 204, 204, 0.25);
+  /* as an item */
+  flex: 1 0 40vw;
+  max-width: 640px;
+  min-width: 480px;
+  /* as a container (module layout) */
+  background-color: #FFFFFF;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+
+.ExploreDetailsPic_container {
+  /* as an item */
+  align-self: stretch;
+  /* as a container */
+  position: relative;
+  height: 400px;
+  background: var(--img-container-bg);
+  border: 4px solid var(--img-container-bg);
+}
+.ExploreDetailsPic {
+  position: absolute;
+  max-width: 100%;
+  max-height: 100%;
+  transform: translate(-50%, -50%); top: 50%; left: 50%;
+}
+
+.ExploreDetailsCloseBtn_expanded {
+  position: absolute;
+  z-index: 1;
+  cursor: pointer;
+  top: 8px;
+  left: 8px;
+  padding: 8px;
+  background-color: var(--img-container-bg);
+  border-radius: 20px;
+}
+.ExploreDetailsCloseBtn_collapsed {
+  position: absolute;
+  top: 16px;
+}
+.ExploreDetailsCloseBtn:hover {
+  filter: brightness(60%); /* darken upon hover */
+}
+
+.DetailsLabels_container {
+  /* as an item */
+  align-self: stretch;
+  /* as a container */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px 24px;
+  gap: 24px;
+}
+
+.DetailsCategory {
+  /* as an item */
+  align-self: stretch;
+  /* as a container */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.DetailsCategoryIcon {
+  height: 18px;
+  width: 18px; /* height and width according to CategoryIcons@75%x */
+  background-color: var(--gray-dark);
+}
+.CategoryIcon_Location_small {
+  mask-image: url("../assets/CategoryIcon_Location@75%x.png");
+  -webkit-mask-image: url("../assets/CategoryIcon_Location@75%x.png");
+}
+.CategoryIcon_Spectators_small {
+  mask-image: url("../assets/CategoryIcon_Spectators@75%x.png");
+  -webkit-mask-image: url("../assets/CategoryIcon_Spectators@75%x.png");
+}
+.CategoryIcon_Demographic_small {
+  mask-image: url("../assets/CategoryIcon_Demographic@75%x.png");
+  -webkit-mask-image: url("../assets/CategoryIcon_Demographic@75%x.png");
+}
+.CategoryIcon_Modality_small {
+  mask-image: url("../assets/CategoryIcon_Modality@75%x.png");
+  -webkit-mask-image: url("../assets/CategoryIcon_Modality@75%x.png");
+}
+.CategoryIcon_Posture_small {
+  mask-image: url("../assets/CategoryIcon_Posture@75%x.png");
+  -webkit-mask-image: url("../assets/CategoryIcon_Posture@75%x.png");
+}
+
+.CollapsedMenu {
+  cursor: pointer;
+  height: calc(100vh - 40px); /* minus height of Navbar */
+  width: 40px;
+  flex-grow: 0;
+  /* as a container (module layout) */
+  background-color: var(--gray-bg);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0 8px;
+  gap: 8px;
+}
+
+.CollapsedMenuText {
+  display: flex;
+  writing-mode: vertical-lr; /* reference: https://stackoverflow.com/questions/45787013/vertical-text-in-flexbox-layout */
+  writing-mode: tb-lr;
+  color: var(--gray-dark);
 }
 
 
@@ -1207,7 +1372,7 @@
   gap: 64px;
   background: #FFFFFF;
   z-index: 10;
-  border-bottom: 1px solid #CCCCCC;
+  border-bottom: 1px solid var(--gray-mid);
 }
 
 .Navtab {
@@ -1225,7 +1390,7 @@
   font-size: 18px;
   line-height: 150%;
   letter-spacing: 0.01em;
-  color: #000000;
+  color: var(--black);
   text-decoration-line: none;
 }
 .Navtab.active {
