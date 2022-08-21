@@ -171,73 +171,36 @@ export default function ExplorePage() {
 
 	const click_picture = (labelData) => {
 
-		// If the current picture has been clicked twice while ExploreDetails is expanded, then close ExploreDetails.
-		if (
-			pictureClicked
-			&& labelData.url === pictureClicked.url
-			&& detailsExpanded===true
-		) {
-			close_exploredetails();
+		// If the current picture has been clicked twice, then close ExploreDetails.
+		if (pictureClicked && labelData.url === pictureClicked.url) {
+			setPictureClicked(undefined);
 		}
 
 		// Otherwise, open up (or expand) ExploreDetails by setting pictureClicked as the input labelData of the picture being clicked on.
 		// Facet panel will be pushed into collapsed state.
 		else {
 			setPictureClicked(labelData);
-			setDetailsExpanded(true);
-			setFacetExpanded(false);
 		}
 	}
 
 	const close_exploredetails = () => {
-
-		// Close the ExploreDetails panel.
 		setPictureClicked(undefined);
-
-		// Make sure the Facet panel is pulled out after ExploreDetails gets closed.
-		setFacetExpanded(true);
-	}
-
-	// The two panels Facet and Explore details cannot expand at the same time.
-	const expand_facet = () => {
-		setFacetExpanded(true);
-		setDetailsExpanded(false);
-	}
-	const expand_details =() => {
-		setDetailsExpanded(true);
-		setFacetExpanded(false);
 	}
 
 
 /* Render */
-
-	const [facetExpanded, setFacetExpanded] = useState(true);	// whether the Facet is expanded, default as true (expanded)
-	const [detailsExpanded, setDetailsExpanded] = useState();	// whether the ExploreDetails sidebar is expanded. The sidebar only exists when pictureClicked!==undefined
-
 	return (
-		<div className="PageBox">
-			{facetExpanded ?
-				<Facet
-					setRange={setRange}
-					range={range}
-					setFilterList={setFilterList}
-					remove_filter={remove_filter}
-					filterList={filterList}
-					setFacetList={setFacetList}
-					facetList={facetList}
-					handleSearch={handleSearch}
-				/>
-			:
-				<div
-					className="CollapsedMenu"
-					onClick={() => expand_facet()}
-				>
-					<img src={ArrowRight}/>
-					<div className="CollapsedMenuText">
-						SEARCH & FILTERS
-					</div>
-				</div>
-			}
+		<div className="PageBox PageBox_Explore">
+			<Facet
+				setRange={setRange}
+				range={range}
+				setFilterList={setFilterList}
+				remove_filter={remove_filter}
+				filterList={filterList}
+				setFacetList={setFacetList}
+				facetList={facetList}
+				handleSearch={handleSearch}
+			/>
 			<ExploreGallery
 				imageList={imageList}
 				filterList={filterList}
@@ -246,29 +209,10 @@ export default function ExplorePage() {
 				pictureClicked={pictureClicked}
 			/>
 			{pictureClicked!==undefined ?
-				<>
-					{detailsExpanded ?
-						<ExploreDetails
-							pictureClicked={pictureClicked}
-							close_exploredetails={close_exploredetails}
-						/>
-					:
-						<div
-							className="CollapsedMenu"
-							onClick={() => expand_details()}
-						>
-							<img
-								src={ExploreDetailsCloseBtn}
-								className="ExploreDetailsCloseBtn ExploreDetailsCloseBtn_collapsed"
-								onClick={() => close_exploredetails()}
-							/>
-							<img src={ArrowLeft}/>
-							<div className="CollapsedMenuText">
-								PICTURE DETAILS
-							</div>
-						</div>
-					}
-				</>
+				<ExploreDetails
+					pictureClicked={pictureClicked}
+					close_exploredetails={close_exploredetails}
+				/>
 			: null }
 		</div>
 	);

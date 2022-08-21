@@ -97,7 +97,7 @@ export default function UploadPage(props) {
     console.log("new key: " + key); //DEBUG
 
     // Store picture to firebase.
-    /*uploadBytes(imageRef, props.addedPics[idx]).then((snapshot) => {
+    uploadBytes(imageRef, props.addedPics[idx]).then((snapshot) => {
       getDownloadURL(snapshot.ref).then((url) => {  
 
         // Store url and labels to firebase realtime database.
@@ -114,7 +114,7 @@ export default function UploadPage(props) {
         );
         console.log("final labels ↓"); console.log(finalLabels); //DEBUG
       });
-    });*/
+    });
 
     // Prepare to clear the uploaded picture.
     // For now, maintain a tombstone at the index to facilitate the upload loop.
@@ -129,6 +129,7 @@ export default function UploadPage(props) {
    * processData
    *
    * Convert javascript object into json item.
+   * TODO: make this not hard-coded
    */
   const processData = (data, url) => {
     const spectators_group = ["all", "density", "attentive"];
@@ -174,11 +175,6 @@ export default function UploadPage(props) {
     finalLabels["url"] = url;
     return finalLabels;
   };
-
-  // const handleImageAdd = (currImg) => {
-  //   console.log(currImg);
-  //   setCurrImg(currImg)
-  // }
 
 
 /* Validation & Progress */
@@ -241,7 +237,7 @@ export default function UploadPage(props) {
 
 /* Render */
   return (
-    <div className="PageBox">
+    <div className="PageBox PageBox_Upload">
       <WaitingRoom
         uploadDisabled={uploadDisabled}
         uploadImages={uploadImages}
