@@ -151,12 +151,12 @@ export default function ExplorePage() {
 			for (const searchLabel of searchData) {
 				for (const [imgKey, labels] of Object.entries(data)) {
 					console.log(labels)
-					console.log(imgKey);
-					if (labels.location.in_outdoor === searchLabel || 
+					console.log(labels.location);
+					if (labels.location !== undefined && ((labels.location.in_outdoor !== undefined && String(labels.location.in_outdoor) === searchLabel) || 
 						(labels.location.architecture_component !== undefined && String(labels.location.architecture_component).includes(searchLabel)) || 
 						(labels.location.purpose !== undefined && String(labels.location.purpose).includes(searchLabel)) ||
 						(labels.posture !== undefined && String(labels.posture).includes(searchLabel)) ||
-						(labels.demographic.social_role !== undefined && String(labels.demographic.social_role).includes(searchLabel))) {
+						(labels.demographic.social_role !== undefined && String(labels.demographic.social_role).includes(searchLabel)))) {
 						filtered.push([imgKey, labels]);
 					}
 				}
