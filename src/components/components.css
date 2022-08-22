@@ -1242,10 +1242,65 @@
 }
 
 .Stats {
-  margin-top: 0px;
+  margin-top: 50px;
   display: flex;
   position: relative;
   height: 325px;
+}
+
+.HistoryTitle {
+  margin-top: 0px;
+  display: flex;
+  position: relative;
+  height: 50px;
+}
+
+.HistoryTitle h5 {
+  margin-left: 400px;
+  margin-right: 100px;
+}
+
+.LineChart {
+  margin-left: 100px;
+  margin-right: 50px;
+}
+
+/* .BarChar {
+  margin-left: 1200px;
+} */
+
+.Vis {
+  margin-top: 0px;
+  display: flex;
+  position: relative;
+  height: 400px;
+}
+
+/* .VisBar {
+  margin-top: 0px;
+  display: flex;
+  position: relative;
+  height: 400px;
+} */
+
+.RoleBar {
+  margin-left: 1100px;
+  margin-top: 50px;
+  margin-bottom: 150px;
+}
+
+.Age{
+  margin-left: 800px;
+  margin-top: 100px;
+  height: 250px;
+  width: 250px;
+}
+
+.Pie {
+  margin-top: 100px;
+  margin-left: 80px;
+  height: 250px;
+  width: 250px;
 }
 
 .Intro {
@@ -1376,6 +1431,11 @@
   font-weight: bold;
 }
 
+.Contributor p {
+  margin-left: 25px;
+  color: #174ea6;
+}
+
 .Contributor h1 {
   margin-left: 25px;
   font-size: 30px;
@@ -1395,8 +1455,13 @@
   font-weight: bold;
 }
 
+.Images p {
+  margin-left: 25px;
+  color: #ED5564;
+}
+
 .Images h1 {
-  margin-left: 10px;
+  margin-left: 0px;
   font-size: 30px;
 }
 
@@ -1409,7 +1474,7 @@
 }
 
 .LocationTitle {
-  margin-left: -5px;
+  margin-left: -10px;
   font-size: 25px;
   font-weight: bold;
 }
@@ -1417,4 +1482,9 @@
 .Locations h1 {
   margin-left: 20px;
   font-size: 30px;
+}
+
+.Locations p {
+  margin-left: 30px;
+  color: #A0D568;
 }
