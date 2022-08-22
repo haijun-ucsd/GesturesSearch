@@ -1,7 +1,30 @@
 /**
  * references:
  *  https://gist.github.com/lopspower/03fb1cc0ac9f32ef38f4
+ *  https://stackoverflow.com/questions/15831657/creating-css-global-variables-stylesheet-theme-management
+ *  https://stackoverflow.com/questions/40010597/how-do-i-apply-opacity-to-a-css-color-variable
  */
+
+
+/**------------ STYLESHEET ------------**/
+
+:root {
+	--img-container-bg: rgb(234, 197, 197);
+	--demographic-color: #ED5564;
+	--spectators-color: #FFCE54;
+	--location-color: #A0D568;
+	--posture-color: #AC92EB;
+	--modality-color: #4FC1E8;
+	--available-modality-color: #A0D568; /* right now same green as Location */
+	--occupied-modality-color: #ED5564; /* right now same red as Demographic */
+	--black: #000000;
+	--faded-black: #333333;
+	--gray-dark: #AAAAAA;
+	--gray-mid: #CCCCCC;
+	--gray-light: #EEEEEE;
+	--gray-bg: #F0ECEC;
+	--pic-width: 300px; /* value should be changed together along the "GalleryColumn_helper" function in components.js. */
+}
 
 
 /**------------ TEMPORARY ------------**/
@@ -13,781 +36,841 @@
 /**------------ BASIC ITEMS ------------**/
 
 /* Texts */
+
 .HintText {  /* right now font is same as SubsectionName */
-  /*flex: 0 0 auto; /* no wrap */
-  display: inline-block;
-  /* font */
-  font-family: "Google Sans",Roboto,Arial,sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 120%;
-  letter-spacing: 0.01em;
-  color: #AAAAAA;
-  /* as a container */
-  display: inline-flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
+	/*flex: 0 0 auto; /* no wrap */
+	display: inline-block;
+	/* font */
+	font-family: "Google Sans",Roboto,Arial,sans-serif;
+	font-style: normal;
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 120%;
+	letter-spacing: 0.01em;
+	color: var(--gray-dark);
+	/* as a container */
+	display: inline-flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
+}
+
+.HintTextWithIcon_container {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
 }
 
 
-/* Label */
+/* SeparationLine (note that these are default cases, color might differ according to inline styles) */
+.SeparationLine_H {
+	border-top: 1px solid var(--gray-mid);
+	align-self: stretch;
+	flex-grow: 0;
+}
+.SeparationLine_V {
+	border-left: 1px solid var(--gray-mid);
+	align-self: stretch;
+	flex-grow: 0;
+}
+
+
+/* Label (note that these are only the default, color might change with inline styles according to categories) */
 
 .Label {
-  border: 1px solid #CCCCCC;
-  border-radius: 14px;
-  background-color: #FFFFFF; /* default white background */
-  /* as an item */
-  flex: 0 0 auto; /* no squeeze or stretch */
-  /* as a container */
-  display: inline-flex;
-  flex-direction: row;
-  align-items: center;
-  height: 28px;
-  padding: 0 12px;
-  gap: 8px;
+	border: 1px solid var(--gray-mid);
+	border-radius: 14px;
+	background-color: transparent; /* default transparent background */
+	/* as an item */
+	flex: 0 0 auto; /* no squeeze or stretch */
+	/* as a container */
+	display: inline-flex;
+	flex-direction: row;
+	align-items: center;
+	height: 28px;
+	padding: 4px 12px;
+	gap: 8px;
+}
+
+.CheckLabel {
+	cursor: pointer;
+}
+.CheckLabel:hover {
+	filter: brightness(60%); /* hover to darken */
+}
+
+.RemovableLabel_removebtn:hover {
+	filter: brightness(60%); /* hover to darken */
 }
 
 .LabelText {
-  display: inline-block;
-  flex: 0 0 auto; /* no wrap */
-  /* font */
-  font-family: "Google Sans",Roboto,Arial,sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 120%;
-  letter-spacing: 0.01em;
+	display: inline-block;
+	flex: 0 0 auto; /* no wrap */
+	/* font */
+	font-family: "Google Sans",Roboto,Arial,sans-serif;
+	font-style: normal;
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 120%;
+	letter-spacing: 0.01em;
 }
 
 .LabelList {
-  /* as a container*/
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-content: flex-start;
-  gap: 8px;
+	/* as a container*/
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-content: flex-start;
+	gap: 8px;
 }
 
 .FilterList {
-  /* as a container*/
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-content: flex-start;
-  min-height: 30px; /* 28px label height + 2 * 1px border */
-  gap: 16px;
+	/* as a container*/
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-content: flex-start;
+	min-height: 30px; /* 28px label height + 2 * 1px border */
+	gap: 16px;
 }
 
 
 /* Btn */
 
 .Btn_primary {
-  background: #EEEEEE;
-  border: 1px solid #CCCCCC;
-  border-radius: 8px;
-  box-shadow:
-    0px 4px 8px rgba(170, 170, 170, 0.16),
-    0px 0px 16px rgba(170, 170, 170, 0.08);
-  cursor: pointer;
-  /* as a container */
-  display: inline-flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 8px 16px;
-  gap: 8px;
+	background: var(--gray-light);
+	border: 1px solid var(--gray-mid);
+	border-radius: 8px;
+	box-shadow:
+		0px 4px 8px rgba(170, 170, 170, 0.16),
+		0px 0px 16px rgba(170, 170, 170, 0.08);
+	cursor: pointer;
+	/* as a container */
+	display: inline-flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	padding: 8px 16px;
+	gap: 8px;
 }
 
 .Btn_secondary {
-  border: 1px solid #CCCCCC;
-  border-radius: 8px;
-  filter:
-    drop-shadow(0px 4px 8px rgba(170, 170, 170, 0.16))
-    drop-shadow(0px 0px 16px rgba(170, 170, 170, 0.08));
-  cursor: pointer;
-  /* as a container */
-  display: inline-flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 8px 16px;
-  gap: 8px;
+	border: 1px solid var(--gray-mid);
+	border-radius: 8px;
+	filter:
+		drop-shadow(0px 4px 8px rgba(170, 170, 170, 0.16))
+		drop-shadow(0px 0px 16px rgba(170, 170, 170, 0.08));
+	cursor: pointer;
+	/* as a container */
+	display: inline-flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	padding: 8px 16px;
+	gap: 8px;
 }
 
 .Btn_small {
-  border: 1px solid #CCCCCC;
-  border-radius: 8px;
-  filter:
-    drop-shadow(0px 4px 8px rgba(170, 170, 170, 0.16))
-    drop-shadow(0px 0px 16px rgba(170, 170, 170, 0.08));
-  cursor: pointer;
-  /* as a container */
-  display: inline-flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 4px;
+	border: 1px solid var(--gray-mid);
+	border-radius: 8px;
+	filter:
+		drop-shadow(0px 4px 8px rgba(170, 170, 170, 0.16))
+		drop-shadow(0px 0px 16px rgba(170, 170, 170, 0.08));
+	cursor: pointer;
+	/* as a container */
+	display: inline-flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	padding: 4px;
 }
 
 
 /* Checkbox */
 
 .Checkbox {
-  /* as a container */
-  display: inline-flex;
-  flex-direction: row;
-  align-items: center;
-  height: 24px;
-  gap: 8px;
+	/* as a container */
+	display: inline-flex;
+	flex-direction: row;
+	align-items: center;
+	height: 24px;
+	gap: 8px;
 }
 
 .CheckboxText {
-  display: inline-block;
-  /* font */
-  font-family: "Google Sans",Roboto,Arial,sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 120%;
-  letter-spacing: 0.01em;
-  color: #333333;
+	display: inline-block;
+	cursor: pointer;
+	/* font */
+	font-family: "Google Sans",Roboto,Arial,sans-serif;
+	font-style: normal;
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 120%;
+	letter-spacing: 0.01em;
+	color: var(--faded-black);
 }
 
 .Checkbox_default {
-  visibility: hidden;
-  position: relative;
-  height: 24px;
-  width: 24px;
-  cursor: pointer;
+	visibility: hidden;
+	position: relative;
+	height: 24px;
+	width: 24px;
+	cursor: pointer;
 }
 .Checkbox_default::before {
-  visibility: visible;
-  content: "";
-  position: absolute;
-  display: inline-block;
-  height: 24px;
-  width: 24px;
-  border: none;
-  background-image: url("../assets/Checkbox_bg.svg");
+	visibility: visible;
+	content: "";
+	position: absolute;
+	display: inline-block;
+	height: 24px;
+	width: 24px;
+	border: none;
+	background-image: url("../assets/Checkbox_bg.svg");
 }
 .Checkbox_default::after {  /* ::after naturally covers ::before */
-  visibility: visible;
-  content: "";
-  position: absolute;
-  display: inline-block;
-  height: 24px;
-  width: 24px;
-  mask-image: url("../assets/Checkbox_blank.svg");
-  -webkit-mask-image: url("../assets/Checkbox_blank.svg");
-  background-color: var(--checkbox-color, #000000);  /* default color: black */
+	visibility: visible;
+	content: "";
+	position: absolute;
+	display: inline-block;
+	height: 24px;
+	width: 24px;
+	mask-image: url("../assets/Checkbox_blank.svg");
+	-webkit-mask-image: url("../assets/Checkbox_blank.svg");
+	background-color: var(--checkbox-color, #666666);  /* default color: gray */
 }
 .Checkbox_default:checked::after {
-  mask-image: url("../assets/Checkbox_checked.svg");
-  -webkit-mask-image: url("../assets/Checkbox_checked.svg");
+	mask-image: url("../assets/Checkbox_checked.svg");
+	-webkit-mask-image: url("../assets/Checkbox_checked.svg");
 }
 .Checkbox_default:disabled::after {
-  background-color: #CCCCCC;
+	background-color: var(--gray-mid);
 }
 .Checkbox_default:not(:disabled):hover::after {
-  filter: brightness(120%);
+	background-color: var(--black); /* hover to darken */
 }
 
 .Checkbox_checklabel {
-  display: none;
-  position: relative;
+	display: none;
+	position: relative;
 }
 .Checkbox_checklabel:checked {
-  visibility: hidden;
-  display: inline-block;
+	visibility: hidden;
+	display: inline-block;
 }
 .Checkbox_checklabel:checked:after {
-  visibility: visible;
-  display: inline-block;
-  content: "";
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%); /* vertically center-align for absolute-position element */
-  height: 20px;
-  width: 14px; /* height and width according to size of CheckLabel_checkmark.svg */
-  mask-image: url("../assets/CheckLabel_checkmark.svg");
-  -webkit-mask-image: url("../assets/CheckLabel_checkmark.svg");
-  background-color: var(--checkbox-color, #000000);  /* default color: black */
+	visibility: visible;
+	display: inline-block;
+	content: "";
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%); /* vertically center-align for absolute-position element */
+	height: 20px;
+	width: 14px; /* height and width according to size of CheckLabel_checkmark.svg */
+	mask-image: url("../assets/CheckLabel_checkmark.svg");
+	-webkit-mask-image: url("../assets/CheckLabel_checkmark.svg");
+	background-color: var(--checkbox-color, #666666);  /* default color: gray */
 }
 
 .Checkbox_spectrum_container { /* should have ≥2 children elements in this flex */
-  /* as an item */
-  align-self: stretch;
-  /* as a container */
-  position: relative;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-start;
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	position: relative;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: flex-start;
 }
 .Checkbox_spectrum_container::before {  /* ::before naturally covers :before */
-  content: "";
-  border-bottom: 2px solid #CCCCCC;
-  position: absolute;
-  transform: translateY(-50%);
-  top: 12px; /* = 24/2, 24px is the height of one checkbox */
-  height: 0px;
-  left: 8px;
-  right: 8px;
+	content: "";
+	border-bottom: 2px solid var(--gray-mid);
+	position: absolute;
+	transform: translateY(-50%);
+	top: 12px; /* = 24/2, 24px is the height of one checkbox */
+	height: 0px;
+	left: 8px;
+	right: 8px;
 }
 .Checkbox_spectrum {
-  /* as a container */
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  width: 24px; /* height & width of one checkbox */
-  gap: 8px;
+	/* as a container */
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	width: 24px; /* height & width of one checkbox */
+	gap: 8px;
 }
 
 
 /* Dropdown */
 
 .Dropdown {
-  background: #FFFFFF;
-  border: 1px solid #CCCCCC;
-  border-radius: 8px;
-  padding: 4px 24px 4px 8px;
-  min-width: 160px;
-  min-height: 32px;
-  /* font */
-  font-family: "Google Sans",Roboto,Arial,sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 120%;
-  letter-spacing: 0.01em;
-  color: #333333;
-  cursor: pointer;
+	background: #FFFFFF;
+	border: 1px solid var(--gray-mid);
+	border-radius: 8px;
+	padding: 4px 24px 4px 8px;
+	min-width: 160px;
+	min-height: 32px;
+	/* font */
+	font-family: "Google Sans",Roboto,Arial,sans-serif;
+	font-style: normal;
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 120%;
+	letter-spacing: 0.01em;
+	color: var(--faded-black);
+	cursor: pointer;
 }
 
 
 /* Search */
 
 .SearchBar {
-  /* as an item */
-  align-self: stretch;
-  /* as a container */
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 12px 8px 16px;
-  gap: 8px;
-  background: #FFFFFF;
-  border: 1px solid #CCCCCC;
-  border-radius: 8px;
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	padding: 8px 12px 8px 16px;
+	gap: 8px;
+	background: #FFFFFF;
+	border: 1px solid var(--gray-mid);
+	border-radius: 8px;
 }
 
 .SearchBarInput {
-  border: none;
-  outline: none;
-  background-color: transparent;
-  flex: 1;
+	border: none;
+	outline: none;
+	background-color: transparent;
+	flex: 1;
 }
 
 .SearchBar_container {
-  /* as an item */
-  align-self: stretch;
-  /* as a container */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 16px;
 }
 
 .SearchRange_expanded {
-  /* as an item */
-  align-self: stretch;
-  /* as a container */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 8px;
 }
 
 .SearchRange_collapsed {
-  /* as an container */
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  /*align-items: center;*/
-  gap: 16px;
+	/* as an container */
+	display: flex;
+	flex-direction: row;
+	align-items: baseline;
+	/*align-items: center;*/
+	gap: 16px;
 }
 
 .SearchRangeHeader {
-  /* as an item */
-  align-self: stretch;
-  /* as a container */
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	gap: 8px;
 }
 
 .SearchRangeCheckboxes {
-  /* as an item */
-  align-self: stretch;
-  /* as a container */
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-gap: 0;
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	grid-gap: 0;
 }
 
 .SearchRangeCheckbox {
-  /* as an item */
-  grid-column: span 1;
+	/* as an item */
+	grid-column: span 1;
 }
 
 .SearchRangeDots { /* array of dots */
-  /* as a container */
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
 }
 
 .SearchRangeDot { /* a single dot */
-  content: "";
-  width: 8px;
-  height: 8px;
-  border-radius: 100%;
+	content: "";
+	width: 8px;
+	height: 8px;
+	border-radius: 100%;
 }
 
 
 /* SearchableDropdown (SD) */
 
 .SearchableDropdown {
-  /* as an item */
-  align-self: stretch;
-  /* as a container */
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 8px;
-  gap: 16px;
-  border: 1px solid #CCCCCC;
-  border-radius: 8px;
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: 8px;
+	gap: 16px;
+	border: 1px solid var(--gray-mid);
+	border-radius: 8px;
 }
 
 .SearchableDropdown_expandbtn {
-  position: absolute;
-  top: 10px; /* ((28 + 2 * 8) - 24) / 2 = 10 */
-  right: 4px;
+	position: absolute;
+	top: 10px; /* ((28 + 2 * 8) - 24) / 2 = 10 */
+	right: 4px;
 }
 
 .SDSelectedLabelList_collapsed {
-  /* as an item */
-  align-self: stretch;
-  /* as a container */
-  display: flex;
-  flex-direction: row;
-  height: 28px; /* label height = 28px, no wrapping because only 1 row is allowed when drop-down is collapsed */
-  align-items: flex-start;
-  padding: 0px;
-  gap: 8px;
-  border: none;
-  outline: none;
-  margin-right: 32px; /* arrow btn width 24 + gap 8 = 32 */
-  overflow-x: hidden;
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	height: 28px; /* label height = 28px, no wrapping because only 1 row is allowed when drop-down is collapsed */
+	align-items: flex-start;
+	padding: 0px;
+	gap: 8px;
+	border: none;
+	outline: none;
+	margin-right: 32px; /* arrow btn width 24 + gap 8 = 32 */
+	overflow-x: hidden;
 }
 
 .SDSelectedLabelList_expanded {  /* right now same as LabelList */
-  /* as an item */
-  align-self: stretch;
-  /* as a container */
-  display: flex;
-  flex-direction: row;
-  min-height: 28px; /*label height*/
-  flex-wrap: wrap;
-  align-items: flex-start;
-  padding: 0px;
-  gap: 8px;
-  border: none;
-  outline: none;
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	min-height: 28px; /*label height*/
+	flex-wrap: wrap;
+	align-items: flex-start;
+	padding: 0px;
+	gap: 8px;
+	border: none;
+	outline: none;
 }
 
 .CustomizeLabel {
-  /* as a container */
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 16px;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 16px;
 }
 
 .CustomizeLabel_field {
-  width: 240px;
-  height: 32px;
-  padding: 8px;
-  background: #FFFFFF;
-  border: 1px solid #CCCCCC;
-  border-radius: 8px;
-  outline: none;
+	width: 240px;
+	height: 32px;
+	padding: 8px;
+	background: #FFFFFF;
+	border: 1px solid var(--gray-mid);
+	border-radius: 8px;
+	outline: none;
 }
 
 .CustomizeLabel_container {
-  /* as an item */
-  align-self: stretch;
-  /* as a container */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding-top: 8px;
-  border-top: 1px solid #CCCCCC;
-  gap: 8px;
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding-top: 8px;
+	border-top: 1px solid var(--gray-mid);
+	gap: 8px;
 }
 
 
 /* Humanfigure */
 
 .ModalityDisplay {
-  /* as a container */
-  display: flex;
-  flex-direction: row;
-  align-content: flex-start;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-content: flex-start;
 }
 
 .ModalityDisplay_statelist {
-  /* as an item */
-  width: 240px;
-  /* as a container */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
+	/* as an item */
+	width: 240px;
+	/* as a container */
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 8px;
 }
 
 .ModalityDisplay_state {
-  /* as an item */
-  width: 100%;
-  /* as a container */
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: space-between;
+	/* as an item */
+	width: 100%;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	justify-content: space-between;
 }
 
 .Humanfigure_container {
-  /*margin-top: -275px; /* to correct for the top margin caused by svg? TODO: improve*/
-  position: relative;
-  height: 250px;
-  width: 250px;
+	/*margin-top: -275px; /* to correct for the top margin caused by svg? TODO: improve*/
+	position: relative;
+	height: 250px;
+	width: 250px;
 }
 
 /* reference: https://stackoverflow.com/questions/6300635/how-to-make-an-element-transparent-to-clicks-but-still-visible */
 .Humanfigure_outline {
-  position: absolute;
-  margin-left: 58.5px;
-  top: 36px;
-  /*top: 278px;*/
-  z-index: 1;
-  pointer-events: none;
-  /*height: 120%;
-  width: auto;*/
+	position: absolute;
+	margin-left: 58.5px;
+	top: 36px;
+	/*top: 278px;*/
+	z-index: 1;
+	pointer-events: none;
+	/*height: 120%;
+	width: auto;*/
 }
 
 .Humanfigure_highlights {
-  position: absolute;
-  width: 250px;
-  padding-top: 10px;
-  height: 250px;
-  display: block;
-  margin: 40px auto;
+	position: absolute;
+	width: 250px;
+	padding-top: 10px;
+	height: 250px;
+	display: block;
+	margin: 40px auto;
 }
 
 .Humanfigure_highlights svg:hover {
-  cursor: pointer;
+	cursor: pointer;
 }
 .Humanfigure_highlights svg:hover path {
-  filter: brightness(120%);
+	filter: brightness(120%);
 }
 
-.Humanfigure_highlights svg.unavailable path {
-  fill: #A0D568;
+.Humanfigure_highlights svg.available path {
+	fill: var(--available-modality-color);
 }
 .Humanfigure_highlights svg.unavailable path {
-  fill: #ED5564;
+	fill: var(--occupied-modality-color);
 }
 .Humanfigure_highlights svg.any path {
-  fill: #F1FAFD; /* = #4FC1E8 with 8% opacity on white background */
+	fill: #F1FAFD; /* = #4FC1E8 with 8% opacity on white background */
 }
 
 .Humanfigure_highlights svg {
-  position: absolute;
-  left: 50%;
+	position: absolute;
+	left: 50%;
 }
 
 .Humanfigure_highlights svg#head {
-  margin-left: -25.4px;
-  top: -5px;
+	margin-left: -25.4px;
+	top: -5px;
 }
 .Humanfigure_highlights svg#l_arm {
-  margin-left: -50px;
-  top: 58px;
+	margin-left: -50px;
+	top: 58px;
 }
 .Humanfigure_highlights svg#r_arm {
-  margin-left: 13.5px;
-  top: 58px;
+	margin-left: 13.5px;
+	top: 58px;
 }
 .Humanfigure_highlights svg#l_hand {
-  margin-left: -66.7px;
-  top: 109px;
+	margin-left: -66.7px;
+	top: 109px;
 }
 .Humanfigure_highlights svg#r_hand {
-  margin-left: 36.5px;
-  top: 109px;
+	margin-left: 36.5px;
+	top: 109px;
 }
 .Humanfigure_highlights svg#facial_expression {
-  margin-left: -17.5px;
-  top: 1px;
+	margin-left: -17.5px;
+	top: 1px;
 }
 .Humanfigure_highlights svg#eyes {
-  margin-left: -15.5px;
-  top: 20px;
+	margin-left: -15.5px;
+	top: 20px;
 }
 .Humanfigure_highlights svg#voice {
-  margin-left: -9.5px;
-  top: 38px;
+	margin-left: -9.5px;
+	top: 38px;
 }
 .Humanfigure_highlights svg#legs {
-  margin-left: -25.4px;
-  top: 120px;
+	margin-left: -25.4px;
+	top: 120px;
 }
 .Humanfigure_highlights svg#feet {
-  margin-left: -26.5px;
-  top: 215px;
+	margin-left: -26.5px;
+	top: 215px;
 }
 
 
 /* RequiredField indicator */
 .RequiredField {
-  color: #ED556480; /* #XXXXXX80 = 50% opacity */
+	color: #ED556480; /* same red as Demographic, #XXXXXX80 = 50% opacity */
 }
 
 
 /* DescriptionHover */
 
 .DescriptionHover {
-  /* as a container */
-  display: inline-flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 12px; /* 4px gap + 8px arrow width */
+	/* as a container */
+	display: inline-flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 12px; /* 4px gap + 8px arrow width */
 }
 
 .DescriptionBtn {
-  align-items: center;
-  appearance: none;
-  background-color: #fff;
-  border-radius: 24px;
-  border-style: none;
-  /* box-shadow: rgba(0, 0, 0, .2) 0 3px 5px -1px,rgba(0, 0, 0, .14) 0 6px 10px 0,rgba(0, 0, 0, .12) 0 1px 18px 0; */
-  box-shadow: rgb(70, 99, 162) 0 0px 2px 0;
-  box-sizing: border-box;
-  color: #3c4043;
-  cursor: help; /*cursor: pointer;*/
-  display: inline-flex;
-  fill: currentcolor;
-  font-family: "Google Sans",Roboto,Arial,sans-serif;
-  font-size: 10px;
-  font-weight: 500;
-  height: 14px;
-  justify-content: center;
-  letter-spacing: .25px;
-  line-height: 100%;
-  max-width: 100%;
-  overflow: visible;
-  padding: 2px 4px;
-  position: relative;
-  text-align: center;
-  /*text-transform: none;
-  transition: box-shadow 280ms cubic-bezier(.4, 0, .2, 1),opacity 15ms linear 30ms,transform 270ms cubic-bezier(0, 0, .2, 1) 0ms;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-  width: auto;
-  will-change: transform,opacity;*/
+	align-items: center;
+	appearance: none;
+	background-color: #fff;
+	border-radius: 24px;
+	border-style: none;
+	/* box-shadow: rgba(0, 0, 0, .2) 0 3px 5px -1px,rgba(0, 0, 0, .14) 0 6px 10px 0,rgba(0, 0, 0, .12) 0 1px 18px 0; */
+	box-shadow: rgb(70, 99, 162) 0 0px 2px 0;
+	box-sizing: border-box;
+	color: #3c4043;
+	cursor: help; /*cursor: pointer;*/
+	display: inline-flex;
+	fill: currentcolor;
+	font-family: "Google Sans",Roboto,Arial,sans-serif;
+	font-size: 10px;
+	font-weight: 500;
+	height: 14px;
+	justify-content: center;
+	letter-spacing: .25px;
+	line-height: 100%;
+	max-width: 100%;
+	overflow: visible;
+	padding: 2px 4px;
+	position: relative;
+	text-align: center;
+	/*text-transform: none;
+	transition: box-shadow 280ms cubic-bezier(.4, 0, .2, 1),opacity 15ms linear 30ms,transform 270ms cubic-bezier(0, 0, .2, 1) 0ms;
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: manipulation;
+	width: auto;
+	will-change: transform,opacity;*/
 }
 .DescriptionBtn:hover {
-  background: #F6F9FE;
-  color: #174ea6;
+	background: #F6F9FE;
+	color: #174ea6;
 }
 
 .Description_elementtohover {
-  flex: 0 0 auto;
+	flex: 0 0 auto;
 }
 .Description_elementtohover:hover ~ .DescriptionTextBox_container {
-  display: inline-flex;
+	display: inline-flex;
 }
 
 .DescriptionTextBox_container { /* position constrainer of DescriptionTextBox */
-  display: none; /* hidden by default */
-  /*display: inline-flex; /*DEBUG*/
-  z-index: 10; /* top layer */
-  /* as a container */
-  position: relative;
-  align-items: center;
-  max-width: 240px;
-  min-width: 160px;
-  /* TODO: better max-width and min-width */
-  height: 0px; /* constrain vertical position */
+	display: none; /* hidden by default */
+	/*display: inline-flex; /*DEBUG*/
+	z-index: 10; /* top layer */
+	/* as a container */
+	position: relative;
+	align-items: center;
+	max-width: 240px;
+	min-width: 160px;
+	/* TODO: better max-width and min-width */
+	height: 0px; /* constrain vertical position */
 }
 
 .DescriptionTextBox {
-  /* as a container */
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 4px 8px;
-  background-color: var(--desbox-color, #EEEEEE);
-  border-radius: 2px;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 4px 8px;
+	background-color: var(--desbox-color, var(--gray-light));
+	border-radius: 2px;
 }
 
 /* reference: https://blog.logrocket.com/creating-beautiful-tooltips-with-only-css/ */
 .DescriptionTextBox:after {  /* little triangle arrow */
-  content: "";
-  border: 8px solid;
-  border-color: transparent var(--desbox-color, #EEEEEE) transparent transparent; /* matches background color of the textbox */
-  position: absolute;  
-  left: -15px; 
-  transform: translateY(-50%);
-  top: 50%;
+	content: "";
+	border: 8px solid;
+	border-color: transparent var(--desbox-color, var(--gray-light)) transparent transparent; /* matches background color of the textbox */
+	position: absolute;  
+	left: -15px; 
+	transform: translateY(-50%);
+	top: 50%;
 }
 
 .DescriptionText {
-  pointer-events: none; /* make transparent for clicking */
-  /* as an item */
-  flex-grow: 1;
-  align-self: stretch;
-  /* font */
-  font-family: "Google Sans",Roboto,Arial,sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 120%;
-  letter-spacing: 0.01em;
-  color:#3c4043d7
+	pointer-events: none; /* make transparent for clicking */
+	/* as an item */
+	flex-grow: 1;
+	align-self: stretch;
+	/* font */
+	font-family: "Google Sans",Roboto,Arial,sans-serif;
+	font-style: normal;
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 120%;
+	letter-spacing: 0.01em;
+	color:#3c4043d7
 }
 
 
 /* Accordion: Module & AccordionSection */
 
 .Module {  /* non-collapsable */
-  /* as an item */
-  align-self: stretch;
-  /* as a container */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 24px;
-  gap: 24px;
-  border-bottom: 1px solid #CCCCCC;
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: 24px;
+	gap: 24px;
+	border-bottom: 1px solid var(--gray-mid);
 }
 
 .ModuleHeaderBar {
-  /* as an item */
-  align-self: stretch;
-  /* as a container */
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	gap: 8px;
 }
 
 .AccordionSection {  /* collapsable, right now the same as Module */
-  /* as an item */
-  align-self: stretch;
-  /* as a container */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 24px;
-  gap: 16px;
-  border-bottom: 1px solid #CCCCCC;
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: 24px;
+	gap: 16px;
+	border-bottom: 1px solid var(--gray-mid);
 }
 
 .AccordionSectionHeaderBar {  /* right now the same as ModuleHeaderBar */
-  /* as an item */
-  align-self: stretch;
-  /* as a container */
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	gap: 8px;
 }
 
 .SectionHeader {  /* section name + description. right now same as CategoryHeader */
-  /* as a container */
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
 }
 
 .SectionName {  /* right now same as CategoryName */
-  /* as an item */
-  flex: 0 0 auto; /* no wrap */
-  /* font */
-  font-family: "Google Sans",Roboto,Arial,sans-serif;
-  font-style: normal;
-  font-weight: 500;
-  font-size: 18px;
-  line-height: 120%;
-  letter-spacing: 0.01em;
-  color: #000000; /* default color: black */
-  filter: brightness(80%); /* darkern the colors a bit for readability */
-  /* as a container */
-  display: inline-flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 2px;
+	/* as an item */
+	flex: 0 0 auto; /* no wrap */
+	/* font */
+	font-family: "Google Sans",Roboto,Arial,sans-serif;
+	font-style: normal;
+	font-weight: 500;
+	font-size: 18px;
+	line-height: 120%;
+	letter-spacing: 0.01em;
+	color: var(--black); /* default color: black */
+	filter: brightness(80%); /* darkern the colors a bit for readability */
+	/* as a container */
+	display: inline-flex;
+	flex-direction: row;
+	align-items: flex-start;
+	gap: 2px;
 }
 
 .Subsections {  /* container for all subsections, right now same as FormSubcategories */
-  /* as an item */
-  align-self: stretch;
-  /* as a container */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 16px;
 }
 
 .Subsection {  /* right now same as FormSubcategories */
-  /*as an item */
-  align-self: stretch;
-  /* as a container */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
+	/*as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 8px;
 }
 
 .SubsectionName {  /* right now font is same as SubcategoryName */
-  /* as an item */
-  flex: 0 0 auto; /* no wrap */
-  /* font */
-  font-family: "Google Sans",Roboto,Arial,sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 120%;
-  letter-spacing: 0.01em;
-  color: #AAAAAA;
-  /* as a container */
-  display: inline-flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 2px;
+	/* as an item */
+	flex: 0 0 auto; /* no wrap */
+	/* font */
+	font-family: "Google Sans",Roboto,Arial,sans-serif;
+	font-style: normal;
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 120%;
+	letter-spacing: 0.01em;
+	color: var(--gray-dark);
+	/* as a container */
+	display: inline-flex;
+	flex-direction: row;
+	align-items: flex-start;
+	gap: 2px;
+}
+
+
+/* Gallery */
+
+.Gallery {
+	/* as an item */
+	align-self: stretch;
+	flex-grow: 1;
+	/* as a container */
+	overflow-y: scroll;
+	position: relative;
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+	padding: 24px 40px 40px;
+	gap: 24px;
+	min-width: calc(2 * var(--pic-width) + 24px + 2 * 40px); /* minimal two columns */
+}
+
+.GalleryColumn {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+.GalleryColumn[style] { /* to override inline style */
+	width: var(--pic-width) !important;
 }
 
 
@@ -795,444 +878,588 @@
 /**------------ BIG BLOCKS ------------**/
 
 /* PageBox */
+
 .PageBox {
-  /* as a container */
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  padding-top: 40px;
-  /*float:right;
-  margin-right:0;*/
+	/* as a container */
+	display: flex;
+	/* flex-direction according to specific page */
+	align-items: flex-start;
+	padding-top: 40px;
+	/*float:right;
+	margin-right:0;*/
+}
+
+.PageBox_Upload {
+	flex-direction: column;
+}
+
+.PageBox_Explore {
+	flex-direction: row;
 }
 
 
 /* WaitingRoom */
 
 .WaitingRoom {
-  height: calc(100vh - 40px); /* minus height of Navbar */
-  /* as an item */
-  flex-grow: 1;
-  /* as a container */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+	height: calc(100vh - 40px); /* minus height of Navbar */
+	/* as an item */
+	align-self: stretch;
+	flex-grow: 1;
+	/* as a container */
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
 }
 
 .WaitingRoomControl {
-  /*position: absolute;
-  left: 0;
-  top: 0;*/
-  /* as an item */
-  align-self: stretch;
-  /* as a container */
-  background-color: #FFFFFF;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-end;
-  padding: 24px 40px;
+	/*position: absolute;
+	left: 0;
+	top: 0;*/
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	background-color: #FFFFFF;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: flex-end;
+	padding: 24px 40px;
 }
 
 .WaitingRoomControl_addpic {
-  /* as a container */
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 24px;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 24px;
 }
 
 .WaitingRoomControl_selectpic {  /* right now same as WaitingRoomControl_addpic */
-  /* as a container */
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 24px;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 24px;
 }
 
 .WaitingRoomControl_uploadpic {  /* right now same as WaitingRoomControl_addpic */
-  /* as a container */
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 24px;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 24px;
 }
 
 .WaitingRoomGallery {
-  overflow-y: scroll;
-  /* as an item */
-  align-self: stretch;
-  flex-grow: 1;
-  /* as a container */
-  background-color: #F0ECEC; /* matches with About page */
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  padding: 24px 40px 40px;
-  gap: 24px;
+	/* as an item */
+	align-self: stretch;
+	flex-grow: 1;
+	/* as a container */
+	background-color: var(--gray-bg); /* matches with About page */
 }
 
 .WaitingPic_container {
-  position: relative;
+	position: relative;
 }
 
 .WaitingPic {
-  max-width: 300px;
-  max-height: 200px;
-  object-fit: contain;
-  cursor: pointer;
+	width: 100%;
+	/*max-width: var(--pic-width);
+	max-height: 200px;*/
+	object-fit: contain;
+	cursor: pointer;
 }
 .WaitingPic[src=""] {
-  display: none;
+	display: none;
 }
 
 .WaitingPicProgress {
-  position: absolute;
-  top: 4px;
-  left: 4px;
+	position: absolute;
+	top: 4px;
+	left: 4px;
 }
 
 .WaitingPicProgressBar {
-  width: 40px;
-  height: 40px;
+	width: 40px;
+	height: 40px;
 }
 
 
 /* PopUp Labeling Window */
 
 .PopUpOverlay {  /* old name "modal" */
-  position: fixed;
-  z-index: 12;
-  width: 100%;
-  height: 100%;
-  background-color: #00000080; /* #XXXXXX80 = 50% opacity */
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+	position: fixed;
+	z-index: 12;
+	width: 100%;
+	height: 100%;
+	background-color: #00000080; /* #XXXXXX80 = 50% opacity */
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
 }
 
 .UploadPopUpModal {  /* old name modal_content */
-  /* as a container */
-  display: flex;
-  background-color: white;
-  border-radius: 10px;
-  overflow: hidden; /* to apply border-radius to all inner elements */
-  border: 2px solid rgb(234, 197, 197);
-  width: 100%;
-  height: 100%;
+	/* as a container */
+	display: flex;
+	background-color: white;
+	border-radius: 10px;
+	overflow: hidden; /* to apply border-radius to all inner elements */
+	border: 2px solid var(--img-container-bg);
+	width: 100%;
+	height: 100%;
 }
 
 .UploadPopUpModal_container {
-  position: absolute;
-  /* centerize absolute-postion element */
-  transform: translate(-50%, -50%);
-  left: 50%;
-  top: 50%;
-  width: 70%;
-  height: 80%;
-  min-width: 1000px;
+	position: absolute;
+	/* centerize absolute-postion element */
+	transform: translate(-50%, -50%);
+	left: 50%;
+	top: 50%;
+	width: 70%;
+	height: 80%;
+	min-width: 1000px;
 }
 
 .UploadPopUpPic {
-  display: block;
-  height: 100%;
-  width: 100%;
-  max-height: 100%;
-  max-width: 100%;
-  object-fit: contain;
-  position: absolute;
-  transform: translate(-50%, -50%);
-  left: 50%;
-  top: 50%;
-  padding: 10px; /* margin for absolute-position element. See reference: https://stackoverflow.com/questions/17115344/absolute-positioning-ignoring-padding-of-parent */
+	display: block;
+	/*height: 100%;
+	width: 100%;*/
+	max-height: 100%;
+	max-width: 100%;
+	object-fit: contain;
+	position: absolute;
+	transform: translate(-50%, -50%); top: 50%; left: 50%;
 }
 
-.UploadPopUpPic_container {
-  /* as an item */
-  flex-grow: 1;
-  /* as a container */
-  position: relative;
-  background-color: rgb(234, 197, 197);
+.UploadPopUpCanvas {
+	position: absolute;
+	transform: translate(-50%, -50%); top: 50%; left: 50%;
+	z-index: 1;
+}
+
+.UploadPopUpPic_outercontainer {
+	/* as an item */
+	flex-grow: 1;
+	/* as a container */
+	background-color: var(--img-container-bg);
+	padding: 10px;
+}
+.UploadPopUpPic_innercontainer {
+	/* as an item */
+	height: 100%;
+	width: 100%;
+	/* as a container */
+	position: relative;
+	background-color: var(--img-container-bg);
 }
 
 .PopUpClose {
-  cursor: pointer;
-  position: absolute;
-  transform: translate(100%, -100%);
-  top: -8px;
-  right: -8px;
+	cursor: pointer;
+	position: absolute;
+	transform: translate(100%, -100%);
+	top: -8px;
+	right: -8px;
 }
 .PopUpClose:hover {
-  /*color: cyan;*/
-  filter: brightness(120%);
+	/*color: cyan;*/
+	filter: brightness(120%);
 }
 
 
 /* LabelsForm */
 
 .LabelsForm {
-  overflow-y: scroll;
-  width: 40%;
-  max-width: 640px;
-  min-width: 560px;
-  max-height: 100%;
-  border-left: 1px solid #CCCCCC; /* TODO: dropshadow */
-  /* as an item */
-  flex-grow: 0;
-  /* as a container */
-  background-color: #FFFFFF;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+	overflow-y: scroll;
+	width: 40%;
+	max-width: 640px;
+	min-width: 560px;
+	max-height: 100%;
+	border-left: 1px solid var(--gray-mid); /* TODO: dropshadow */
+	/* as an item */
+	flex-grow: 0;
+	/* as a container */
+	background-color: #FFFFFF;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
 }
 
 .FormCategory {
-  border-bottom: 1px solid #CCCCCC;
-  /* as an item */
-  align-self: stretch;
-  /* as a container */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 24px;
-  gap: 16px;
+	border-bottom: 1px solid var(--gray-mid);
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: 24px;
+	gap: 16px;
 }
 
 .CategoryHeader {
-  /* as a container */
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
 }
 
 .CategoryName {
-  /* as an item */
-  flex: 0 0 auto; /* no wrap */
-  /* font */
-  font-family: "Google Sans",Roboto,Arial,sans-serif;
-  font-style: normal;
-  font-weight: 500;
-  font-size: 18px;
-  line-height: 120%;
-  letter-spacing: 0.01em;
-  filter: brightness(80%); /* darkern the colors a bit for readability */
-  /* as a container */
-  display: inline-flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 2px;
+	/* as an item */
+	flex: 0 0 auto; /* no wrap */
+	/* font */
+	font-family: "Google Sans",Roboto,Arial,sans-serif;
+	font-style: normal;
+	font-weight: 500;
+	font-size: 18px;
+	line-height: 120%;
+	letter-spacing: 0.01em;
+	filter: brightness(80%); /* darkern the colors a bit for readability */
+	/* as a container */
+	display: inline-flex;
+	flex-direction: row;
+	align-items: flex-start;
+	gap: 2px;
 }
 
 .CategoryIcon {
-  height: 24px;
-  width: 24px; /* height and width according to CategoryIcons */
-  background-color: var(--categoryicon-color, #000000);  /* default color: black */
+	height: 24px;
+	width: 24px; /* height and width according to CategoryIcons */
+	background-color: var(--categoryicon-color, var(--black));  /* default color: black */
 }
 .CategoryIcon_Location {
-  mask-image: url("../assets/CategoryIcon_Location.png");
-  -webkit-mask-image: url("../assets/CategoryIcon_Location.png");
+	mask-image: url("../assets/CategoryIcon_Location.png");
+	-webkit-mask-image: url("../assets/CategoryIcon_Location.png");
 }
 .CategoryIcon_Spectators {
-  mask-image: url("../assets/CategoryIcon_Spectators.png");
-  -webkit-mask-image: url("../assets/CategoryIcon_Spectators.png");
+	mask-image: url("../assets/CategoryIcon_Spectators.png");
+	-webkit-mask-image: url("../assets/CategoryIcon_Spectators.png");
 }
 .CategoryIcon_Demographic {
-  mask-image: url("../assets/CategoryIcon_Demographic.png");
-  -webkit-mask-image: url("../assets/CategoryIcon_Demographic.png");
+	mask-image: url("../assets/CategoryIcon_Demographic.png");
+	-webkit-mask-image: url("../assets/CategoryIcon_Demographic.png");
 }
 .CategoryIcon_Modality {
-  mask-image: url("../assets/CategoryIcon_Modality.png");
-  -webkit-mask-image: url("../assets/CategoryIcon_Modality.png");
+	mask-image: url("../assets/CategoryIcon_Modality.png");
+	-webkit-mask-image: url("../assets/CategoryIcon_Modality.png");
 }
 .CategoryIcon_Posture {
-  mask-image: url("../assets/CategoryIcon_Posture.png");
-  -webkit-mask-image: url("../assets/CategoryIcon_Posture.png");
+	mask-image: url("../assets/CategoryIcon_Posture.png");
+	-webkit-mask-image: url("../assets/CategoryIcon_Posture.png");
 }
 
 .FormSubcategories {  /* container for all subcategories */
-  /* as an item */
-  align-self: stretch;
-  /* as a container */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 16px;
 }
 
 .FormSubcategory {
-  /* as an item */
-  align-self: stretch;
-  /* as a container */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 8px;
 }
 
 .SubcategoryHeader {  /* right now same as CategoryHeader */
-  /* as a container */
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
 }
 
 .SubcategoryName {
-  /* as an item */
-  flex: 0 0 auto; /* no wrap */
-  /* font */
-  font-family: "Google Sans",Roboto,Arial,sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 120%;
-  letter-spacing: 0.01em;
-  color: #AAAAAA;
-  /* as a container */
-  display: inline-flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 2px;
+	/* as an item */
+	flex: 0 0 auto; /* no wrap */
+	/* font */
+	font-family: "Google Sans",Roboto,Arial,sans-serif;
+	font-style: normal;
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 120%;
+	letter-spacing: 0.01em;
+	color: var(--gray-dark);
+	/* as a container */
+	display: inline-flex;
+	flex-direction: row;
+	align-items: flex-start;
+	gap: 2px;
 }
 
 
 /* ExploreGallery */
 
 .ExploreGallery {
-  height: calc(100vh - 40px); /* minus height of Navbar */
-  width: 75vw; /* twin: FacetMenu width 25vw */
-  /* as an item */
-  flex-grow: 1;
-  /* as a container */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.Gallery {
-  overflow-y: scroll;
-  /* as a container */
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  padding: 24px 40px 40px;
-  gap: 24px;
+	height: calc(100vh - 40px); /* minus height of Navbar */
+	/* as an item */
+	flex-grow: 1;
+	/* as a container */
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	/* for masonry layout */
+	overflow-x: hidden;
+	min-width: calc(2 * var(--pic-width) + 24px + 2 * 40px); /* minimal two columns */
 }
 
 .ExplorePic {
-  max-width: 300px;
-  max-height: 200px;
-  /*max-width: 180px;
-  max-height: 135px;*/
-  object-fit: contain;
+	width: 100%;
+	/*max-width: var(--pic-width);
+	max-height: 200px;*/
+	object-fit: contain;
+	cursor: pointer;
 }
 .ExplorePic[src=""] {
-  display: none;
+	display: none;
+}
+.ExplorePic_selected {
+	outline: 4px solid var(--img-container-bg);
 }
 
 .ExploreGalleryHeader {
-  /* as an item */
-  align-self: stretch;
-  /* as a container */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 24px 40px;
-  gap: 16px;
-  border-bottom: 1px solid #CCCCCC;
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: 24px 40px;
+	gap: 16px;
+	border-bottom: 1px solid var(--gray-mid);
 }
 
 .AppliedFilters {
-  /* as a container */
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 16px;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	gap: 16px;
 }
 
 .AppliedFiltersList {
-  overflow-y: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-height: 72px;
-  /*overflow-y: scroll;*/
+	overflow-y: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-height: 72px;
+	/*overflow-y: scroll;*/
 }
 
 
 /* Facet */
 
 .FacetMenu {
-  /*position: absolute;
-  left: 0px;
-  top: 0px;*/
-  height: calc(100vh - 40px); /* minus height of Navbar */
-  width: 25vw; /* twin: ExploreGallery width 75vw */
-  max-width: 640px;
-  min-width: 400px;
-  border-right: 1px solid #CCCCCC; /* TODO: dropshadow */
-  /*box-shadow:
-    8px 0px 16px rgba(170, 170, 170, 0.16),
-    0px 0px 40px 8px rgba(204, 204, 204, 0.25);*/
-  /* as an item */
-  flex-grow: 0;
-  /* as a container (module layout) */
-  background-color: #FFFFFF;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+	height: calc(100vh - 40px); /* minus height of Navbar */
+	/*border-right: 1px solid var(--gray-mid);*/
+	box-shadow:
+		8px 0px 16px rgba(170, 170, 170, 0.16),
+		0px 0px 40px 8px rgba(204, 204, 204, 0.25);
+	/* as an item */
+	flex: 1 0 25vw;
+	max-width: 560px;
+	min-width: 400px;
+	/* as a container (module layout) */
+	background-color: #FFFFFF;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
 }
 
 .Facet {
-  overflow-y: scroll;
-  /* as an item */
-  align-self: stretch;
+	overflow-y: scroll;
+	/* as an item */
+	align-self: stretch;
+}
+
+
+/* ExploreDetails */
+
+.ExploreDetailsMenu {
+	height: calc(100vh - 40px); /* minus height of Navbar */
+	/*border-left: 1px solid var(--gray-mid);*/
+	box-shadow:
+		0px 8px 16px rgba(170, 170, 170, 0.16),
+		0px 0px 40px 8px rgba(204, 204, 204, 0.25);
+	/* as an item */
+	flex: 1 0 40vw;
+	max-width: 640px;
+	min-width: 480px;
+	/* as a container (module layout) */
+	background-color: #FFFFFF;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 32px;
+}
+
+.ExploreDetailsPic_container {
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	position: relative;
+	flex: 0 0 400px;
+	background: var(--img-container-bg);
+	border: 4px solid var(--img-container-bg);
+}
+
+.ExploreDetailsPic {
+	position: absolute;
+	max-width: 100%;
+	max-height: 100%;
+	transform: translate(-50%, -50%); top: 50%; left: 50%;
+}
+
+.ExploreDetailsPicCanvas {
+	position: absolute;
+	transform: translate(-50%, -50%); top: 50%; left: 50%;
+	z-index: 1;
+}
+
+.ExploreDetailsCloseBtn_container {
+	position: absolute;
+	z-index: 1;
+	cursor: pointer;
+	top: 8px;
+	left: 8px;
+	padding: 8px;
+	background-color: var(--img-container-bg);
+	border-radius: 20px;
+}
+
+.ExploreDetailsCloseBtn:hover {
+	filter: brightness(60%); /* darken upon hover */
+}
+
+.DetailsLabels_container {
+	/* as an item */
+	align-self: stretch;
+	flex-grow: 0;
+	/* as a container */
+	padding: 0px 24px;
+	overflow-y: scroll;
+}
+
+.DetailsLabels {
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	margin-bottom: 24px; /* make sure the last labels won't be stucked on the bottom of screen */
+	gap: 32px;
+}
+
+.DetailsCategory {
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 12px;
+}
+
+.DetailsCategoryIcon {
+	height: 18px;
+	width: 18px; /* height and width according to CategoryIcons@75%x */
+	background-color: var(--gray-dark);
+}
+.CategoryIcon_Location_small {
+	mask-image: url("../assets/CategoryIcon_Location@75%x.png");
+	-webkit-mask-image: url("../assets/CategoryIcon_Location@75%x.png");
+}
+.CategoryIcon_Spectators_small {
+	mask-image: url("../assets/CategoryIcon_Spectators@75%x.png");
+	-webkit-mask-image: url("../assets/CategoryIcon_Spectators@75%x.png");
+}
+.CategoryIcon_Demographic_small {
+	mask-image: url("../assets/CategoryIcon_Demographic@75%x.png");
+	-webkit-mask-image: url("../assets/CategoryIcon_Demographic@75%x.png");
+}
+.CategoryIcon_Modality_small {
+	mask-image: url("../assets/CategoryIcon_Modality@75%x.png");
+	-webkit-mask-image: url("../assets/CategoryIcon_Modality@75%x.png");
+}
+.CategoryIcon_Posture_small {
+	mask-image: url("../assets/CategoryIcon_Posture@75%x.png");
+	-webkit-mask-image: url("../assets/CategoryIcon_Posture@75%x.png");
+}
+
+.CollapsedMenu {
+	cursor: pointer;
+	height: calc(100vh - 40px); /* minus height of Navbar */
+	width: 40px;
+	flex-grow: 0;
+	/* as a container (module layout) */
+	background-color: var(--gray-bg);
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+	padding: 0 8px;
+	gap: 8px;
+}
+
+.CollapsedMenuText {
+	display: flex;
+	writing-mode: vertical-lr; /* reference: https://stackoverflow.com/questions/45787013/vertical-text-in-flexbox-layout */
+	writing-mode: tb-lr;
+	color: var(--gray-dark);
 }
 
 
 /* Navbar */
 
 .Navbar {
-  position: fixed;
-  left: 0px;
-  top: 0px;
-  height: 40px;
-  width: 100vw;
-  /* as a container */
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 0px;
-  gap: 64px;
-  background: #FFFFFF;
-  z-index: 10;
-  border-bottom: 1px solid #CCCCCC;
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	height: 40px;
+	width: 100vw;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	align-items: center;
+	padding: 0px;
+	gap: 64px;
+	background: #FFFFFF;
+	z-index: 10;
+	border-bottom: 1px solid var(--gray-mid);
 }
 
 .Navtab {
-  /* as an element */
-  flex-grow: 0;
-  /* as a container */
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 20px;
-  /* padding: 4px; */
-  /* font */
-  font-family: "Google Sans",Roboto,Arial,sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 18px;
-  line-height: 150%;
-  letter-spacing: 0.01em;
-  color: #000000;
-  text-decoration-line: none;
+	/* as an element */
+	flex-grow: 0;
+	/* as a container */
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	padding: 4px;
+	/* font */
+	font-family: "Google Sans",Roboto,Arial,sans-serif;
+	font-style: normal;
+	font-weight: 400;
+	font-size: 18px;
+	line-height: 150%;
+	letter-spacing: 0.01em;
+	color: var(--black);
+	text-decoration-line: none;
+
 }
 .Navtab.active {
-  font-weight: 700;
-  letter-spacing: 0.003em;
-  text-decoration-line: underline;
+	font-weight: 700;
+	letter-spacing: 0.003em;
+	text-decoration-line: underline;
 }
 
 /* About Page*/
@@ -1304,48 +1531,48 @@
 }
 
 .Intro {
-  margin-top: 250px;
-  display: flex;
-  position: relative;
-  height: 80px;
+	margin-top: 250px;
+	display: flex;
+	position: relative;
+	height: 80px;
 }
 
 .Intro img {
-  margin-top: 0px;
-  margin-left: 300px;
-  width: 150px;
-  height: auto;
-  align-self: center;
+	margin-top: 0px;
+	margin-left: var(--pic-width);
+	width: 150px;
+	height: auto;
+	align-self: center;
 }
 
 .Intro h5 {
-  align-self: flex-start;
-  margin-top: 25px;
-  margin-left: 50px;
-  font-size: 40px;
-  font-weight: bold;
+	align-self: flex-start;
+	margin-top: 25px;
+	margin-left: 50px;
+	font-size: 40px;
+	font-weight: bold;
 }
 
 .IntroText {
-  margin-top: -50px;
-  width: 50%;
-  line-height: 200%;
-  margin-left: auto;
-  margin-right: auto;
-  width: 55em;
+	margin-top: -50px;
+	width: 50%;
+	line-height: 200%;
+	margin-left: auto;
+	margin-right: auto;
+	width: 55em;
 }
 
 .Problems {
-  margin-top: 100px;
-  position: relative;
-  height: 1300px;
+	margin-top: 100px;
+	position: relative;
+	height: 1300px;
 }
 
 .Problems h5 {
-  margin-top: 200px;
-  margin-left: 300px;
-  font-size: 40px;
-  font-weight: bold;
+	margin-top: 200px;
+	margin-left: var(--pic-width);
+	font-size: 40px;
+	font-weight: bold;
 }
 
 .Box {
@@ -1362,59 +1589,59 @@
 }
 
 .Box p {
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 20px;
-  width: 40em;
-  line-height: 200%;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 20px;
+	width: 40em;
+	line-height: 200%;
 }
 
 .Sample {
-  margin-top: 0px;
-  display: flex;
-  position: relative;
-  flex-direction: column;
-  height: 80px;
+	margin-top: 0px;
+	display: flex;
+	position: relative;
+	flex-direction: column;
+	height: 80px;
 }
 
 /* Create two equal columns that floats next to each other */
 .column {
-  float:left;
-  flex: 25%;
-  padding: 10px;
+	float:left;
+	flex: 25%;
+	padding: 10px;
 }
 
 .column img {
-  margin-top: 20px;
+	margin-top: 20px;
 }
 
 /* Clear floats after the columns */
 .row {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 0 4px;
+	display: flex;
+	flex-wrap: wrap;
+	padding: 0 4px;
 }
 
 .Sample h5 {
-  align-self: flex-start;
-  margin-top: 25px;
-  margin-left: 100px;
-  font-size: 40px;
-  font-weight: bold;
+	align-self: flex-start;
+	margin-top: 25px;
+	margin-left: 100px;
+	font-size: 40px;
+	font-weight: bold;
 }
 
 .Team {
-  margin-top: 50px;
-  display: flex;
-  position: relative;
-  height: 474px;
+	margin-top: 50px;
+	display: flex;
+	position: relative;
+	height: 474px;
 }
 
 .Team h5 {
-  margin-left: 200px;
-  margin-top: 100px;
-  font-size: 45px;
-  font-weight: bold;
+	margin-left: 200px;
+	margin-top: 100px;
+	font-size: 45px;
+	font-weight: bold;
 }
 
 .Contributor {
@@ -1426,9 +1653,9 @@
 }
 
 .ContributorTitle{
-  margin-left: -25px;
-  font-size: 25px;
-  font-weight: bold;
+	margin-left: -25px;
+	font-size: 25px;
+	font-weight: bold;
 }
 
 .Contributor p {
@@ -1450,9 +1677,9 @@
 }
 
 .ImageTitle {
-  margin-left: 0px;
-  font-size: 25px;
-  font-weight: bold;
+	margin-left: 0px;
+	font-size: 25px;
+	font-weight: bold;
 }
 
 .Images p {
