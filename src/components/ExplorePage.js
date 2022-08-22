@@ -4,8 +4,16 @@ import './components.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Facet from './Facet';
 import ExploreGallery from './ExploreGallery';
+import ExploreDetails from './ExploreDetails';
 import { FilterStructure } from './components';
 import _, { map } from 'underscore';
+
+/* Assets: */
+import ArrowLeft from "../assets/ArrowLeft.png";
+import ArrowRight from "../assets/ArrowRight.png";
+import ExploreDetailsCloseBtn from "../assets/ExploreDetailsCloseBtn.png";
+
+
 
 export default function ExplorePage() {
 
@@ -127,21 +135,19 @@ export default function ExplorePage() {
 		//     })
 		//   })
 		// })
-		const db = getDatabase()
-		const dbRef = ref_db(db, 'images')
+		const db = getDatabase();
+		const dbRef = ref_db(db, 'images');
 		onValue(dbRef, (snapshot) => {
 		  const data = snapshot.val();
-		  let append = []
+		  let newImgList = [];
 		  for (const [imgKey, labels] of Object.entries(data)) {
-			append.push([imgKey, labels])
+				newImgList.push([imgKey, labels]);
 		  }
-		  setImageList(append);
+		  setImageList(newImgList);
 		})
 	}, [])
 
-	//console.log(imageList); //DEBUG
-
-/* Render */
+	/* Query from database for correct images */
 	useEffect(() => {
 		const db = getDatabase()
 		const dbRef = ref_db(db, 'images');
@@ -168,11 +174,34 @@ export default function ExplorePage() {
 		})
 	}, [searchData])
 
-	// Query from database for correct images:
+
+/* Click to view details of a picture */
+
+	const [pictureClicked, setPictureClicked] = useState(undefined);
+	console.log("pictureClicked ↓"); console.log(pictureClicked); //DEBUG
+
+	const click_picture = (labelData) => {
+
+		// If the current picture has been clicked twice, then close ExploreDetails.
+		if (pictureClicked && labelData.url === pictureClicked.url) {
+			setPictureClicked(undefined);
+		}
+
+		// Otherwise, open up (or expand) ExploreDetails by setting pictureClicked as the input labelData of the picture being clicked on.
+		// Facet panel will be pushed into collapsed state.
+		else {
+			setPictureClicked(labelData);
+		}
+	}
+
+	const close_exploredetails = () => {
+		setPictureClicked(undefined);
+	}
 
 
+/* Render */
 	return (
-		<div className="PageBox">
+		<div className="PageBox PageBox_Explore">
 			<Facet
 				setRange={setRange}
 				range={range}
@@ -187,7 +216,15 @@ export default function ExplorePage() {
 				imageList={imageList}
 				filterList={filterList}
 				remove_filter={remove_filter}
+				click_picture={click_picture}
+				pictureClicked={pictureClicked}
 			/>
+			{pictureClicked!==undefined ?
+				<ExploreDetails
+					pictureClicked={pictureClicked}
+					close_exploredetails={close_exploredetails}
+				/>
+			: null }
 		</div>
 	);
 }

@@ -24,6 +24,8 @@ export default function App() {
   const [formDataList, setFormDataList] = useState([]);
   const [completePercentages, setCompletePercentages] = useState([]);
   const [addedLabels, setAddedLabels] = useState([]);
+  const [picAnnotation, setPicAnnotation] = useState([]); // element structure: [ annotateStartX, annotateStartY, annotateEndX, annotateEndY ]
+
   // DEBUG
   useEffect(() => {
     console.log("addedPics list has changed.");
@@ -34,6 +36,9 @@ export default function App() {
   useEffect(() => {
     console.log("formDataList has been updated ↓"); console.log(formDataList);
   }, [formDataList])
+  useEffect(() => {
+    console.log("picAnnotation has been updated ↓"); console.log(picAnnotation);
+  }, [picAnnotation])
 
   /* Render */
   return (
@@ -54,6 +59,8 @@ export default function App() {
             setCompletePercentages={setCompletePercentages}
             addedLabels={addedLabels}
             setAddedLabels={setAddedLabels}
+            picAnnotation={picAnnotation}
+            setPicAnnotation={setPicAnnotation}
           />}
         />
         <Route path='/explore' exact element={<ExplorePage />} />
