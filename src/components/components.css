@@ -1428,7 +1428,7 @@
 	/* as a container */
 	display: flex;
 	flex-direction: row;
-	justify-content: center;
+	justify-content: flex-end;
 	align-items: center;
 	padding: 0px;
 	gap: 64px;
@@ -1454,6 +1454,7 @@
 	letter-spacing: 0.01em;
 	color: var(--black);
 	text-decoration-line: none;
+
 }
 .Navtab.active {
 	font-weight: 700;
@@ -1464,28 +1465,14 @@
 /* About Page*/
 
 .AboutPageBox {
-	background-color: #f0ecec;
+  background-color: #edeced;
 }
 
-.Home {
-	display: flex;
-	align-items: center;
-	justify-content: center
-}
-.Home img {
-	display: block;
-	margin-left: auto;
-	margin-top: 100px;
-	margin-right: 100px;
-	flex-basis: 40%;
-	width: 45%;
-}
-
-.Home h5 {
-	margin-left: 200px;
-	margin-top: 100px;
-	font-size: 45px;
-	font-weight: bold;
+.Stats {
+  margin-top: 0px;
+  display: flex;
+  position: relative;
+  height: 325px;
 }
 
 .Intro {
@@ -1534,16 +1521,16 @@
 }
 
 .Box {
-	-webkit-border-radius: 20px;
-	-moz-border-radius: 20px;
-	border-radius: 20px;
-	overflow: hidden;
-	width: 700px;
-	height: 350px;
-	margin-top: 50px;
-	margin-left: auto;
-	margin-right: auto;
-	background-color: #e0dcdc;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  border-radius: 20px;
+  overflow: hidden;
+  width: 700px;
+  height: 350px;
+  margin-top: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #edeced;
 }
 
 .Box p {
@@ -1602,19 +1589,12 @@
 	font-weight: bold;
 }
 
-.Contribution {
-	margin-top: 100px;
-	display: flex;
-	position: relative;
-	height: 325px;
-}
-
 .Contributor {
-	margin-top: 0px;
-	margin-left: 400px;
-	width: 150px;
-	height: auto;
-	align-self: center;
+  margin-top: 100px;
+  margin-left: 400px;
+  width: 150px;
+  height: auto;
+  align-self: center;
 }
 
 .ContributorTitle{
@@ -1624,16 +1604,16 @@
 }
 
 .Contributor h1 {
-	margin-left: 25px;
-	font-size: 45px;
+  margin-left: 25px;
+  font-size: 30px;
 }
 
 .Images {
-	margin-top: 0px;
-	margin-left: 150px;
-	width: 150px;
-	height: auto;
-	align-self: center;
+  margin-top: 100px;
+  margin-left: 150px;
+  width: 150px;
+  height: auto;
+  align-self: center;
 }
 
 .ImageTitle {
@@ -1643,16 +1623,16 @@
 }
 
 .Images h1 {
-	margin-left: 10px;
-	font-size: 45px;
+  margin-left: 10px;
+  font-size: 30px;
 }
 
 .Locations {
-	margin-top: 0px;
-	margin-left: 150px;
-	width: 150px;
-	height: auto;
-	align-self: center;
+  margin-top: 100px;
+  margin-left: 150px;
+  width: 150px;
+  height: auto;
+  align-self: center;
 }
 
 .LocationTitle {
@@ -1662,6 +1642,6 @@
 }
 
 .Locations h1 {
-	margin-left: 20px;
-	font-size: 45px;
+  margin-left: 20px;
+  font-size: 30px;
 }

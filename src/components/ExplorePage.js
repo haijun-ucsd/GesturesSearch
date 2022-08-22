@@ -6,6 +6,7 @@ import Facet from './Facet';
 import ExploreGallery from './ExploreGallery';
 import ExploreDetails from './ExploreDetails';
 import { FilterStructure } from './components';
+import _, { map } from 'underscore';
 
 /* Assets: */
 import ArrowLeft from "../assets/ArrowLeft.png";
@@ -118,10 +119,11 @@ export default function ExplorePage() {
 
 	const [imageList, setImageList] = useState([]); // list of currently shown pictures
 
-	const [searchData, setSearchData] = useState('');
+	const [searchData, setSearchData] = useState([""]);
 	const handleSearch = (input) => {
 		console.log('search input:', input);
-		setSearchData(input);
+		setSearchData(input.split(', ').map(item => item.trim()));
+		console.log('search data: ', searchData);
 	}
 
 	/* Update the gallery upon any change. */
@@ -151,15 +153,23 @@ export default function ExplorePage() {
 		const dbRef = ref_db(db, 'images');
 		onValue(dbRef, (snapshot) => {
 			const data = snapshot.val();
-			let filtered = [];
-			for (const [imgKey, labels] of Object.entries(data)) {
-				console.log(labels);
-				if (labels.location.in_outdoor === searchData) {
-					filtered.push([imgKey, labels]);
+			let filtered = []
+			for (const searchLabel of searchData) {
+				for (const [imgKey, labels] of Object.entries(data)) {
+					console.log(labels)
+					console.log(labels.location);
+					if (labels.location !== undefined && ((labels.location.in_outdoor !== undefined && String(labels.location.in_outdoor) === searchLabel) || 
+						(labels.location.architecture_component !== undefined && String(labels.location.architecture_component).includes(searchLabel)) || 
+						(labels.location.purpose !== undefined && String(labels.location.purpose).includes(searchLabel)) ||
+						(labels.posture !== undefined && String(labels.posture).includes(searchLabel)) ||
+						(labels.demographic.social_role !== undefined && String(labels.demographic.social_role).includes(searchLabel)))) {
+						filtered.push([imgKey, labels]);
+					}
 				}
 			}
+			console.log('filtered: ', filtered);
 			if (searchData !== '') {
-				setImageList(filtered);
+				setImageList(_.uniq(filtered, false, function (arr) {return arr[0];}));
 			}
 		})
 	}, [searchData])
