@@ -5,7 +5,7 @@ import useResizeAware from 'react-resize-aware';
 import "./components.css";
 //import { labels_data } from "./labels_data.js";
 import { LabelStructure, GalleryColumn_helper } from "./components";
-import PopUp from "./UploadPopUp";
+import UploadPopUp from "./UploadPopUp";
 
 /**
  * circular progress bar
@@ -79,6 +79,8 @@ export default function WaitingRoom(props) {
 		var urls_to_store = [...props.addedPicsUrl];
 		var forms_to_store = [...props.formDataList];
 		var percentages_to_store = [...props.completePercentages];
+		var added_labels_to_store = [...props.addedLabels];
+		var annotations_to_store = [...props.picAnnotation];
 		for (var i = 0; i < added_pics.length; i++) {
 			pics_to_store.push(added_pics[i]);
 			const newUrl = URL.createObjectURL(added_pics[i]);
@@ -86,12 +88,33 @@ export default function WaitingRoom(props) {
 			const newForm = {...LabelStructure, url: newUrl};
 			forms_to_store.push(newForm);
 			percentages_to_store.push(0);
+			added_labels_to_store.push("");
+			annotations_to_store.push([0,0,0,0]);
 		}
 		props.setAddedPics(pics_to_store);
 		props.setAddedPicsUrl(urls_to_store);
 		props.setFormDataList(forms_to_store);
 		props.setCompletePercentages(percentages_to_store);
+		props.setAddedLabels(added_labels_to_store);
+		props.setPicAnnotation(annotations_to_store);
 	};
+	useEffect(() => {
+		console.log("\n「");
+		console.log("addedPics ↓"); console.log(props.addedPics);
+		console.log("addedPicsUrl ↓"); console.log(props.addedPicsUrl);
+		console.log("formDataList ↓"); console.log(props.formDataList);
+		console.log("completePercentages ↓"); console.log(props.completePercentages);
+		console.log("addedLabels ↓"); console.log(props.addedLabels);
+		console.log("picAnnotation ↓"); console.log(props.picAnnotation);
+		console.log("」\n ");
+	}, [
+		props.addedPics,
+		props.addedPicsUrl,
+		props.formDataList,
+		props.completePercentages,
+		props.addedLabels,
+		props.picAnnotation
+	]); //DEBUG
 
 	// TODO: handle_remove_pic
 
@@ -315,15 +338,17 @@ export default function WaitingRoom(props) {
 				</div>
 			}
 			{(clickedUrl!="") ? (
-				<PopUp
+				<UploadPopUp
 					url={clickedUrl}
+					dataIndex={props.addedPicsUrl.findIndex(item => item===clickedUrl)}
 					closePop={closePop}
 					formDataList={props.formDataList}
 					setFormDataList={props.setFormDataList}
-					formDataIndex={props.addedPicsUrl.findIndex(item => item===clickedUrl)}
 					setCompletePercentages={props.setCompletePercentages}
 					completePercentages={props.completePercentages}
 					reprint_added_labels={reprint_added_labels}
+					picAnnotation={props.picAnnotation}
+        	setPicAnnotation={props.setPicAnnotation}
 				/>
 			) : null}
 		</div>

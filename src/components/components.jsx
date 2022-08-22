@@ -734,7 +734,7 @@ const GalleryColumn_helper = (GallerySize) => {
 	if (newNumCol < 2) {
 		newNumCol = 2;
 	}
-	console.log("GallerySize: [W " + GallerySize.width + ", H " + GallerySize.height + "], NumCol: " + newNumCol); //DEBUG
+	//console.log("GallerySize: [W " + GallerySize.width + ", H " + GallerySize.height + "], NumCol: " + newNumCol); //DEBUG
 	return newNumCol;
 }
 

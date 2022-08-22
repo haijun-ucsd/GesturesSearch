@@ -168,6 +168,7 @@ export default function ExplorePage() {
 /* Click to view details of a picture */
 
 	const [pictureClicked, setPictureClicked] = useState(undefined);
+	console.log("pictureClicked ↓"); console.log(pictureClicked); //DEBUG
 
 	const click_picture = (labelData) => {
 

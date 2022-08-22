@@ -19,6 +19,9 @@ import { LabelStructure } from "./components";
  *  - [formDataList, setFormDataList]
  *  - [completePercentages, setCompletePercentages]
  *  - [addedLabels, setAddedLabels]
+ *  - [picAnnotation, setPicAnnotation]
+ *
+ * TODO: clean up the code to combine the 6 hooks.
  */
 export default function UploadPage(props) {
 
@@ -55,6 +58,8 @@ export default function UploadPage(props) {
         props.setAddedPicsUrl(prev => { return (prev.filter((item) => item !== undefined)); });
         props.setFormDataList(prev => { return (prev.filter((item) => item !== undefined)); });
         props.setCompletePercentages(prev => { return (prev.filter((item) => item !== undefined)); });
+        props.setAddedLabels(prev => { return (prev.filter((item) => item !== undefined)); });
+        props.setPicAnnotation(prev => { return (prev.filter((item) => item !== undefined)); });
       }
     } else {
 
@@ -69,6 +74,8 @@ export default function UploadPage(props) {
       props.setAddedPicsUrl([]);
       props.setFormDataList([]);
       props.setCompletePercentages([]);
+      props.setAddedLabels([]);
+      props.setPicAnnotation([]);
     }
 
     // Alert successful upload.
@@ -87,6 +94,7 @@ export default function UploadPage(props) {
    *  https://firebase.google.com/docs/storage/web/upload-files
    *  https://stackoverflow.com/questions/46000360/use-of-then-in-reactjs
    *  https://stackoverflow.com/questions/38923644/firebase-update-vs-set
+   *  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify
    */
   const uploadImage = (idx) => {
     console.log("call uploadImage() on individual image at index " + idx); //DEBUG
@@ -105,14 +113,18 @@ export default function UploadPage(props) {
         //  2. get the labels associated with that image.
         console.log("upload image with labels at key: " + key); //DEBUG
         console.log("url: " + url); //DEBUG
-        let finalLabels = processData(props.formDataList[idx], url); // call processData to turn javascript object into json item.
+        let finalPicData = {
+          url: url,
+          ...props.formDataList[idx],
+          annotation: props.picAnnotation[idx],
+        };
         const db = getDatabase();
         const path = "images/" + key;
         set(
           ref_db(db, path),
-          finalLabels
+          finalPicData
         );
-        console.log("final labels ↓"); console.log(finalLabels); //DEBUG
+        console.log("final labels ↓"); console.log(finalPicData); //DEBUG
       });
     });
 
@@ -123,57 +135,8 @@ export default function UploadPage(props) {
     props.setAddedPicsUrl(prev => { let newList=[...prev]; newList[idx] = undefined; return (newList); });
     props.setFormDataList(prev => { let newList=[...prev]; newList[idx] = undefined; return (newList); });
     props.setCompletePercentages(prev => { let newList=[...prev]; newList[idx] = undefined; return (newList); });
-  };
-
-  /**
-   * processData
-   *
-   * Convert javascript object into json item.
-   * TODO: make this not hard-coded
-   */
-  const processData = (data, url) => {
-    const spectators_group = ["all", "density", "attentive"];
-    const modality_group = [
-      "head",
-      "eyes",
-      "mouth",
-      "facial_expression",
-      "arms",
-      "l_hand",
-      "r_hand",
-      "legs",
-      "feet",
-    ];
-    const demographic_group = ["age", "sex", "occupation"];
-    let finalLabels = {
-      url: "",
-      location: "",
-      spectators: {},
-      modality: {},
-      demographic: {},
-    };
-    for (let label in data) {
-      if (spectators_group.includes(label)) {
-        finalLabels["spectators"] = {
-          ...finalLabels["spectators"],
-          [label]: data[label],
-        };
-      } else if (modality_group.includes(label)) {
-        finalLabels["modality"] = {
-          ...finalLabels["modality"],
-          [label]: data[label],
-        };
-      } else if (demographic_group.includes(label)) {
-        finalLabels["demographic"] = {
-          ...finalLabels["demographic"],
-          [label]: data[label],
-        };
-      } else {
-        finalLabels[label] = data[label];
-      }
-    }
-    finalLabels["url"] = url;
-    return finalLabels;
+    props.setAddedLabels(prev => { let newList=[...prev]; newList[idx] = undefined; return (newList); });
+    props.setPicAnnotation(prev => { let newList=[...prev]; newList[idx] = undefined; return (newList); });
   };
 
 
@@ -251,6 +214,8 @@ export default function UploadPage(props) {
         setCompletePercentages={props.setCompletePercentages}
         addedLabels={props.addedLabels}
         setAddedLabels={props.setAddedLabels}
+        picAnnotation={props.picAnnotation}
+        setPicAnnotation={props.setPicAnnotation}
       />
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useState , useEffect, useLayoutEffect } from 'react';
+import React, { useState , useEffect, useRef, useLayoutEffect } from 'react';
 import './components.css';
 import { labels_data } from "./labels_data.js";
 //import { DescriptionHover } from './components';
@@ -17,7 +17,7 @@ import ExploreDetailsCloseBtn from "../assets/ExploreDetailsCloseBtn.png";
  * Structure: Image, Labels for each category
  *
  * parent props:
- *	- pictureClicked: includes URL and lael details
+ *	- pictureClicked: includes URL, label details, annotation coordinates.
  *	- close_exploredetails
  *
  * references:
@@ -29,11 +29,54 @@ import ExploreDetailsCloseBtn from "../assets/ExploreDetailsCloseBtn.png";
  */
 export default function ExploreDetails(props) {
 
+	/* Helpers for annotation */
+	const ClickedPic = useRef();
+	const ClickedPicCanvas = useRef();
+	const [canvasX, setCanvasX] = useState();
+	const [canvasY, setCanvasY] = useState();
+	const [canvasAnnotation, setCanvasAnnotation] = useState(undefined);
+
+	const load_canvas = () => {
+		const imgWidth = ClickedPic.current.offsetWidth;
+		const imgHeight = ClickedPic.current.offsetHeight;
+		setCanvasX(imgWidth);
+		setCanvasY(imgHeight);
+		setCanvasAnnotation(props.pictureClicked["annotation"]);
+
+		// DEBUG
+		console.log("loaded picture: [W " + imgWidth + ", H " + imgHeight + "], src: " + ClickedPic.current.src);
+		console.log("canvasAnnotation: [" + canvasAnnotation + "]");
+	}
+
+	const load_annotation = () => {
+		const cvs = ClickedPicCanvas.current;
+		const ctx = cvs.getContext('2d');
+		ctx.clearRect(0, 0, cvs.width, cvs.height); // clear canvas to reload
+		if (canvasAnnotation!==undefined) {
+			const imgWidth = ClickedPic.current.offsetWidth;
+			const imgHeight = ClickedPic.current.offsetHeight;
+			const TLX = canvasAnnotation[0] * imgWidth; // top-left X, convert back from percentage
+			const TLY = canvasAnnotation[1] * imgHeight; // top-left Y
+			const BRX = canvasAnnotation[2] * imgWidth; // bottom-right X
+			const BRY = canvasAnnotation[3] * imgHeight; // bottom-right Y
+			ctx.beginPath();
+			ctx.rect(TLX, TLY, (BRX-TLX), (BRY-TLY));
+			ctx.strokeStyle = "#FFFFFF"/*white*/; ctx.lineWidth = 6;
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.rect(TLX, TLY, (BRX-TLX), (BRY-TLY));
+			ctx.strokeStyle = "#ED5564"/*red*/; ctx.lineWidth = 4;
+			ctx.stroke();
+		}
+	};
+	useEffect(() => { load_canvas(); }, [ClickedPic.current, props.pictureClicked]); //TODO:???
+	useEffect(() => { load_annotation(); }, [canvasX, canvasY, canvasAnnotation]);
+
 	/* Render */
 	return (
 		<div className="ExploreDetailsMenu">
 			<div
-				className="ExploreDetailsCloseBtn_expanded"
+				className="ExploreDetailsCloseBtn_container"
 				onClick={props.close_exploredetails}
 			>
 				<img
@@ -45,6 +88,12 @@ export default function ExploreDetails(props) {
 				<img
 					className="ExploreDetailsPic"
 					src={props.pictureClicked.url}
+					ref={ClickedPic}
+				/>
+				<canvas
+					className="ExploreDetailsPicCanvas"
+					ref={ClickedPicCanvas}
+					width={canvasX || 0} height={canvasY || 0}
 				/>
 			</div>
 			<div className="DetailsLabels_container"><div className="DetailsLabels">
