@@ -823,12 +823,12 @@
   /* as an item */
   align-self: stretch;
   /* as a container */
-  background-color: #FFFFFF;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-end;
-  padding: 24px 40px;
+  padding: 40px 40px;
+  background-color: #F0ECEC;
 }
 
 .WaitingRoomControl_addpic {
@@ -1191,18 +1191,19 @@
   position: fixed;
   left: 0px;
   top: 0px;
-  height: 40px;
+  height: 50px;
   width: 100vw;
   /* as a container */
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 0px;
-  gap: 64px;
-  background: #FFFFFF;
+  padding-top: 15px;
+  padding-bottom: 50px;
+  gap: 200px;
+  background: #e26565;
   z-index: 10;
-  border-bottom: 1px solid #CCCCCC;
+  border-bottom: 0px solid #CCCCCC;
 }
 
 .Navtab {
@@ -1217,17 +1218,29 @@
   font-family: "Google Sans",Roboto,Arial,sans-serif;
   font-style: normal;
   font-weight: 400;
-  font-size: 18px;
+  font-size: 25px;
   line-height: 150%;
+  padding-top: 35px;
   letter-spacing: 0.01em;
-  color: #000000;
+  color: #ffffff;
   text-decoration-line: none;
+  /* text-shadow: 0 0px 5px rgba(37, 35, 35, 0.807); */
+  font: 900 25px Montserrat;
+  
 }
 .Navtab.active {
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.003em;
   text-decoration-line: underline;
+ 
 }
+.Navtab:hover {
+  color:rgb(255, 255, 255);
+  transform: scale(1.3);
+  transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.3);
+}
+
+
 
 /* About Page*/
 

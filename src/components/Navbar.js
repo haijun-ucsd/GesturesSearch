@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 import { NavLink } from "react-router-dom";
-import './components.css';
+import "./components.css";
 
 /**
  * references:
@@ -13,9 +13,15 @@ export default function Navbar() {
   return (
     <div>
       <nav className="Navbar">
-        <NavLink to="/" className="Navtab">About</NavLink>
-        <NavLink to="/upload" className="Navtab">Upload</NavLink>
-        <NavLink to="/explore" className="Navtab">Explore</NavLink>
+        <NavLink to="/" className="Navtab">
+          ABOUT
+        </NavLink>
+        <NavLink to="/upload" className="Navtab">
+          UPLOAD
+        </NavLink>
+        <NavLink to="/explore" className="Navtab">
+          EXPLORE
+        </NavLink>
       </nav>
     </div>
   );

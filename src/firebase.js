@@ -1,9 +1,9 @@
 // Import the functions you need from the SDKs you need
 // import firebase from './firebase';
-import firebase from 'firebase/compat/app';
+import firebase from "firebase/compat/app";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getStorage } from 'firebase/storage'
+import { getStorage } from "firebase/storage";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -17,11 +17,11 @@ const firebaseConfig = {
   storageBucket: "ubigesture.appspot.com",
   messagingSenderId: "530047324449",
   appId: "1:530047324449:web:e88c47175633d3920c6e60",
-  measurementId: "G-2EWNKH04ZV"
+  measurementId: "G-2EWNKH04ZV",
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const storage = getStorage(app);
-export {firebase, storage};
+export { firebase, storage };

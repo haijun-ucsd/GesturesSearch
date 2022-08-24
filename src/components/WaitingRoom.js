@@ -11,14 +11,13 @@ import PopUp from "./UploadPopUp";
  *  https://www.npmjs.com/package/react-circular-progressbar
  *  codegrepper.com/code-examples/javascript/import+%7B+CircularProgressbar%2C+buildStyles+%7D+from+%27react-circular-progressbar%27%3B
  */
-import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
-import 'react-circular-progressbar/dist/styles.css';
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 /* Assets: */
 import AddPicture from "../assets/AddPicture.png";
 import PublishPicture from "../assets/PublishPicture.png";
 import HintText_ArrowUp from "../assets/HintText_ArrowUp.png";
-
 
 /**
  * WaitingRoom
@@ -47,13 +46,11 @@ import HintText_ArrowUp from "../assets/HintText_ArrowUp.png";
  *  https://stackoverflow.com/questions/60134596/create-react-app-without-typescript-got-error-failed-to-load-parser-types
  *  https://stackoverflow.com/questions/52641492/how-to-get-the-index-of-selected-element-in-react-native-array
  *  https://stackoverflow.com/questions/9334636/how-to-create-a-dialog-with-ok-and-cancel-options
- * 
+ *
  * TODO: add zooming animation when opening and closing picture, to better indicate to the user which picture in the gallery is being or has been modified.
  */
 export default function WaitingRoom(props) {
-
-
-/* Adding and removing pictures in WaitingRoomGallery */
+  /* Adding and removing pictures in WaitingRoomGallery */
 
   /**
    * handle_add_pic
@@ -78,7 +75,7 @@ export default function WaitingRoom(props) {
       pics_to_store.push(added_pics[i]);
       const newUrl = URL.createObjectURL(added_pics[i]);
       urls_to_store.push(newUrl);
-      const newForm = {...LabelStructure, url: newUrl};
+      const newForm = { ...LabelStructure, url: newUrl };
       forms_to_store.push(newForm);
       percentages_to_store.push(0);
     }
@@ -90,18 +87,18 @@ export default function WaitingRoom(props) {
 
   // TODO: handle_remove_pic
 
-
-/* Viewing and labeling individual picture */
+  /* Viewing and labeling individual picture */
 
   /**
    * clickedUrl
    * Hook for which picture has been clicked on to be individually seen and labeled.
    */
   const [clickedUrl, setClickedUrl] = useState("");
-  const closePop = () => { setClickedUrl(""); }
+  const closePop = () => {
+    setClickedUrl("");
+  };
 
-
-/* Render */
+  /* Render */
   return (
     <div className="WaitingRoom">
       <div className="WaitingRoomControl">
@@ -120,11 +117,11 @@ export default function WaitingRoom(props) {
               style={{ display: "none" }}
             />
           </div>
-          {props.addedPics.length!==0 ?
+          {props.addedPics.length !== 0 ? (
             <div className="SubsectionName">
               Total {props.addedPics.length} pictures
             </div>
-          : null}
+          ) : null}
         </div>
         <div className="WaitingRoomControl_selectpic"></div>
         <div className="WaitingRoomControl_addpic">
@@ -141,7 +138,7 @@ export default function WaitingRoom(props) {
             >
               <img
                 src={PublishPicture}
-                style={{opacity: props.uploadDisabled ? "20%" : "100%"}}
+                style={{ opacity: props.uploadDisabled ? "20%" : "100%" }}
               />
               Publish
             </button>
@@ -149,16 +146,20 @@ export default function WaitingRoom(props) {
         </div>
       </div>
       <div className="WaitingRoomGallery">
-        {props.addedPics.length!==0 ?  // check for empty addedPics list. TODO: display tutorial if empty?
+        {props.addedPics.length !== 0 ? ( // check for empty addedPics list. TODO: display tutorial if empty?
           <>
             {props.addedPicsUrl.map((url, idx) => (
-              <div className="WaitingPic_container">
+              <div
+                key={`WaitingPic_container-${idx}`}
+                className="WaitingPic_container"
+              >
                 <div className="WaitingPicProgress">
                   <CircularProgressbar
                     value={props.completePercentages[idx]}
                     text={props.completePercentages[idx] + "%"}
                     strokeWidth={16}
-                    background backgroundPadding={4}
+                    background
+                    backgroundPadding={4}
                     styles={buildStyles({
                       strokeLinecap: "butt",
                       textSize: "24px",
@@ -185,20 +186,22 @@ export default function WaitingRoom(props) {
               </div>
             ))}
           </>
-        :
+        ) : (
           <div className="HintText">
             <img src={HintText_ArrowUp} />
             No picture added yet. Click here to start!
           </div>
-        }
+        )}
       </div>
-      {(clickedUrl!="") ? (
+      {clickedUrl != "" ? (
         <PopUp
           url={clickedUrl}
           closePop={closePop}
           formDataList={props.formDataList}
           setFormDataList={props.setFormDataList}
-          formDataIndex={props.addedPicsUrl.findIndex(item => item===clickedUrl)}
+          formDataIndex={props.addedPicsUrl.findIndex(
+            (item) => item === clickedUrl
+          )}
           setCompletePercentages={props.setCompletePercentages}
           completePercentages={props.completePercentages}
         />
