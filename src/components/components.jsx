@@ -378,7 +378,7 @@ function ExploreSearchBar(props) {
 					options={locationLabels}
 					sx={{ width: 300 }}
 					renderInput={
-						(params) => <TextField {...params} label="Location, Demographic, Posture..."/>
+						(params) => <TextField {...params} label="location, demographic, posture...(split with ',')"/>
 					}
 					onKeyPress= {(e, value) => {
 						if (e.key === 'Enter') {
