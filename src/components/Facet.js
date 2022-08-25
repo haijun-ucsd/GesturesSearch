@@ -146,18 +146,22 @@ export default function Facet(props) {
           setFacetList={props.setFacetList} // will only set "modality"
           setFilterList={props.setFilterList}
           remove_filter={props.remove_filter}
+          handleSearch={props.handleSearch}
         />
         <FacetPosture
           facetList={props.facetList}
           filter_change_handler={filter_change_handler}
+          handleSearch={props.handleSearch}
         />
         <FacetSpectators
           facetList={props.facetList}
           filter_change_handler={filter_change_handler}
+          handleSearch={props.handleSearch}
         />
         <FacetDemongraphic
           facetList={props.facetList}
           filter_change_handler={filter_change_handler}
+          handleSearch={props.handleSearch}
         />
       </div>
     </div>
