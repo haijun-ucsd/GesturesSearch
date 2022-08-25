@@ -22,7 +22,7 @@ export default function ExplorePage() {
 	 * range
 	 * Search range.
 	 * Default SearchRange: { Location, Demographic, Modality, Posture }
-	 * TODO: combine SearchRange and SearchRange_color variables into labels_list?
+	 * TODO: combine SearchRange and SearchRange_color variables into imgData_list?
 	 */
 	const SearchRange = ["location", "demographic", "modality", "posture"];
   const [range, setRange] = useState(SearchRange);  // range of categories to search within. //TODO: what if all categories are unchecked and range is none?
@@ -37,7 +37,7 @@ export default function ExplorePage() {
 	 * Structure of each filter item: { label, label_id, category, subcategory, color }
 	 */
 	const [filterList, setFilterList] = useState([]);
-	//const [filterList, setFilterList] = useState([ { label: "library", label_id: 0, category: "location", subcategory: "purpose", color: "#A0D568" }, { label: "hospital", label_id: 1, category: "location", subcategory: "purpose", color: "#A0D568" }, ]); //DEBUG
+	//const [filterList, setFilterList] = useState([ { label: "library", label_id: 0, category: "location", subcategory: "site", color: "#A0D568" }, { label: "hospital", label_id: 1, category: "location", subcategory: "site", color: "#A0D568" }, ]); //DEBUG
   // DEBUG
   useEffect(() => {
     console.log("updated filterList ↓"); console.log(filterList);
@@ -144,15 +144,10 @@ export default function ExplorePage() {
 		onValue(dbRef, (snapshot) => {
 		  const data = snapshot.val();
 		  let newImgList = [];
-		  for (const [imgKey, labels] of Object.entries(data)) {
-				newImgList.push([imgKey, labels]);
+		  for (const [imgKey, imgData] of Object.entries(data)) {
+				newImgList.push([imgKey, imgData]);
 		  }
-<<<<<<< HEAD
-		  console.log('inital images:', append)
-		  setImageList(append);
-=======
 		  setImageList(newImgList);
->>>>>>> a955660f77eb86beea4224e5079b4d5ae554ab0d
 		})
 	}, [])
 
@@ -162,7 +157,6 @@ export default function ExplorePage() {
 		const dbRef = ref_db(db, 'images');
 		onValue(dbRef, (snapshot) => {
 			const data = snapshot.val();
-<<<<<<< HEAD
 			let filtered = [];
 			let location = searchData.location;
 			let posture = searchData.posture.posture;
@@ -186,53 +180,39 @@ export default function ExplorePage() {
 			if ((searchData.demographic.sex).length > 0) {
 				sex = (searchData.demographic)[0];
 			}
-			console.log('search input:', location, posture, quantity, density, attentive, age, sex)
-			console.log('data:', data)
-			console.log(quantity, density, attentive, age, sex)
-			for (const [imgKey, labels] of Object.entries(data)) {
-				// console.log(labels.location.in_outdoor);
-				if ((labels.location.architecture_component).some(r => location.includes(r)) ||
-					(labels.location.purpose).some(r => location.includes(r)) ||
-					 location.includes(labels.location.in_outdoor) ||
-					 (labels.posture).some(r => posture.includes(r)) ||
-					 (labels.spectators.quantity) === quantity ||
-					 (labels.spectators.density) === density ||
-					 (labels.spectators.attentive) === String(attentive) ||
-					 (labels.demographic.age) === age ||
-					 (labels.demographic.sex) === sex) {
-					filtered.push([imgKey, labels]);
-=======
-			let filtered = []
-			for (const searchLabel of searchData) {
-				for (const [imgKey, labels] of Object.entries(data)) {
-					console.log(labels)
-					console.log(labels.location);
-					if (labels.location !== undefined && ((labels.location.in_outdoor !== undefined && String(labels.location.in_outdoor) === searchLabel) || 
-						(labels.location.architecture_component !== undefined && String(labels.location.architecture_component).includes(searchLabel)) || 
-						(labels.location.purpose !== undefined && String(labels.location.purpose).includes(searchLabel)) ||
-						(labels.posture !== undefined && String(labels.posture).includes(searchLabel)) ||
-						(labels.demographic.social_role !== undefined && String(labels.demographic.social_role).includes(searchLabel)))) {
-						filtered.push([imgKey, labels]);
-					}
->>>>>>> a955660f77eb86beea4224e5079b4d5ae554ab0d
+			console.log('search input:', location, posture, quantity, density, attentive, age, sex);
+			console.log('data:', data);
+			console.log(quantity, density, attentive, age, sex);
+			for (const [imgKey, imgData] of Object.entries(data)) {
+				// console.log(imgData.location.in_outdoor);
+				if ((imgData.location.archi_compo).some(r => location.includes(r)) ||
+					(imgData.location.site).some(r => location.includes(r)) ||
+					 location.includes(imgData.location.in_outdoor) ||
+					 (imgData.posture).some(r => posture.includes(r)) ||
+					 (imgData.spectators.quantity) === quantity ||
+					 (imgData.spectators.density) === density ||
+					 (imgData.spectators.attentive) === String(attentive) ||
+					 (imgData.demographic.age) === age ||
+					 (imgData.demographic.sex) === sex) {
+					filtered.push([imgKey, imgData]);
 				}
 			}
 			// for (const searchLabel of searchData) {
-			// 	for (const [imgKey, labels] of Object.entries(data)) {
-			// 		console.log(labels)
+			// 	for (const [imgKey, imgData] of Object.entries(data)) {
+			// 		console.log(imgData)
 			// 		console.log(imgKey);
-			// 		if (searchData['location'].includes(labels.location.in_outdoor) || 
-			// 			(labels.location.architecture_component !== undefined && String(labels.location.architecture_component).includes(searchLabel)) || 
-			// 			(labels.location.purpose !== undefined && String(labels.location.purpose).includes(searchLabel)) ||
-			// 			(labels.posture !== undefined && String(labels.posture).includes(searchLabel)) ||
-			// 			(labels.demographic.social_role !== undefined && String(labels.demographic.social_role).includes(searchLabel))) {
-			// 			filtered.push([imgKey, labels]);
+			// 		if (searchData['location'].includes(imgData.location.in_outdoor) || 
+			// 			(imgData.location.archi_compo !== undefined && String(imgData.location.archi_compo).includes(searchLabel)) || 
+			// 			(imgData.location.site !== undefined && String(imgData.location.site).includes(searchLabel)) ||
+			// 			(imgData.posture !== undefined && String(imgData.posture).includes(searchLabel)) ||
+			// 			(imgData.demographic.social_role !== undefined && String(imgData.demographic.social_role).includes(searchLabel))) {
+			// 			filtered.push([imgKey, imgData]);
 			// 		}
 			// 	}
 			// }
 			if (searchData === {}) {
-				for (const [imgKey, labels] of Object.entries(data)) {
-					filtered.push([imgKey, labels])
+				for (const [imgKey, imgData] of Object.entries(data)) {
+					filtered.push([imgKey, imgData])
 				}
 				console.log('inital:', filtered)
 				// setImageList(_.uniq(filtered, false, function (arr) {return arr[0];}));

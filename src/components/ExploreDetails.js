@@ -69,7 +69,7 @@ export default function ExploreDetails(props) {
 			ctx.stroke();
 		}
 	};
-	useEffect(() => { load_canvas(); }, [ClickedPic.current, props.pictureClicked]); //TODO:???
+	useEffect(() => { load_canvas(); }, [ClickedPic.current, props.pictureClicked]); // reload canvas everytime that the displayed picture changes
 	useEffect(() => { load_annotation(); }, [canvasX, canvasY, canvasAnnotation]);
 
 	/* Render */

@@ -85,7 +85,7 @@ function Gallery(props) {
 					}
 					key={data[0]}
 					src={data[1].url}
-					onClick={()=>props.click_picture(data[1])} // data[1] includes labels and imgUrl
+					onClick={()=>props.click_picture(data[1])} // data[1] includes imgUrl, labels, and annotation info
 				/>
 			)}
 		</Masonry>

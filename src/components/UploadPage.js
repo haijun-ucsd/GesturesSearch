@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 //import { Container, Row, Col, Button, InputGroup } from 'react-bootstrap';
 //import 'bootstrap/dist/css/bootstrap.min.css';
 import { storage } from "../firebase";
-import { getDatabase, onValue, ref as ref_db, set } from "firebase/database";
+import { getDatabase, onValue, ref as ref_db, set, child, orderByChild, get } from "firebase/database";
 import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
 import { v4 } from "uuid";
 import "./components.css";
@@ -103,27 +103,95 @@ export default function UploadPage(props) {
 		let key = v4(); // generate random key
 		const imageRef = ref(storage, `images/${key}`);
 		console.log("new key: " + key); //DEBUG
+		const db = getDatabase();
 
 		// Store picture to firebase.
 		uploadBytes(imageRef, props.addedPics[idx]).then((snapshot) => {
-			getDownloadURL(snapshot.ref).then((url) => {  
+			getDownloadURL(snapshot.ref).then((url) => {
 
-				// Store data to firebase realtime database.
-				console.log("upload image with labels at key: " + key); //DEBUG
-				console.log("url: " + url); //DEBUG
+				// 1. Store data to firebase realtime database under "images", data
+				//		includes form data, URL, annotation info.
+				console.log("Upload image, labels, and annotation.\nkey: " + key + "\n url: " + url); //DEBUG
 				let finalPicData = {
-					url: "",
+					url: url,
 					...props.formDataList[idx],
 					annotation: props.picAnnotation[idx],
 				};
-				finalPicData["url"] = url; // seems to somhow need to take url out here
-				const db = getDatabase();
-				const path = "images/" + key;
-				set(
-					ref_db(db, path),
-					finalPicData
-				);
-				console.log("final labels ↓"); console.log(finalPicData); //DEBUG
+				//finalPicData["url"] = url; // TODO: remove this line, should not need
+				const image_path = "images/" + key;
+				set(ref_db(db, image_path), finalPicData); // store finalPicData into the corresponding picture object under "image"
+				console.log("finalPicData ↓"); console.log(finalPicData); //DEBUG
+
+				// 2. Give a numeric id (finalPicIndex) for the picture, and use it to
+				//		store the picture under "labels" in firebase realtime database.
+				var finalPicIndex = 0;
+
+				// Generate index for each image by publishing order.
+				get(ref_db(db, "images")).then((snapshot) => {
+					let lastTimestamp = -1;
+					let lastImage = null; // helper to find the last image according tio timestamp
+					console.log("snapshot size:" + snapshot.size); //DEBUG
+					if (snapshot.size === 1) {
+						console.log("first image ever"); //DEBUG
+						set(ref_db(db, `images/${key}/index`), 0);
+						snapshot.forEach((child) => {
+							const thisImage = child.val();
+							lastImage = thisImage;
+						});
+					} else {
+						snapshot.forEach((child) => {
+							const thisImage = child.val();
+							console.log("thisImage.timestamp:" + thisImage.timestamp); //DEBUG
+							if (
+								thisImage.timestamp > lastTimestamp &&
+								thisImage.index !== undefined // looking for the second highest timestamp which is the last uploaded pic
+							) {
+								lastTimestamp = thisImage.timestamp;
+								lastImage = thisImage;
+							}
+						});
+						if (lastImage) {
+							//if lastImage exists
+							console.log("lastImage:" + lastImage); //DEBUG
+							set(ref_db(db, `images/${key}/index`), lastImage.index + 1); // set thisImage.index=lastImage.index+1
+							finalPicIndex = lastImage.index + 1;
+							console.log("finalPicIndex:" + finalPicIndex); //DEBUG
+						}
+					}
+
+					// Store index under the correct labels.
+					let formData = {...props.formDataList[idx]};
+					console.log("Append image index under corresponding labels."); //DEBUG
+					for (let category in formData) {
+						//console.log("category: " + category); //DEBUG
+
+						// Special case: posture. No subcategory layer.
+						if (category === "posture") {
+							formData["posture"].map(label => { // formData["posture"] guaranteed to be an array
+								//console.log("label: " + label); //DEBUG
+								const label_path = "labels/posture/" + label;
+								set(ref_db(db, label_path + "/" + finalPicIndex), { url: url }); // TODO: storing url as well for now, can remove if find it unnecessary.
+							});
+						}
+
+						// Default case.
+						else {
+							for (let subcategory in formData[category]) {
+								//console.log("subcategory: " + subcategory); //DEBUG
+								if (Array.isArray(formData[category][subcategory])) {
+									formData[category][subcategory].map(label => {
+										//console.log("label: " + label); //DEBUG
+										const label_path = "labels/" + category + "/" + subcategory + "/" + label;
+										set(ref_db(db, label_path + "/" + finalPicIndex), { url: url });
+									});
+								} else {
+									const label_path = "labels/" + category + "/" + subcategory + "/" + formData[category][subcategory];
+									set(ref_db(db, label_path + "/" + finalPicIndex), { url: url });
+								}
+							}
+						}
+					}
+				});
 			});
 		});
 
@@ -137,57 +205,6 @@ export default function UploadPage(props) {
 		props.setAddedLabels(prev => { let newList=[...prev]; newList[idx] = undefined; return (newList); });
 		props.setPicAnnotation(prev => { let newList=[...prev]; newList[idx] = undefined; return (newList); });
 	};
-
-	/**
-	 * processData
-	 *
-	 * Convert javascript object into json item.
-	 * TODO: make this not hard-coded
-	 */
-	// const processData = (data, url) => {
-	// 	const spectators_group = ["all", "density", "attentive"];
-	// 	const modality_group = [
-	// 		"head",
-	// 		"eyes",
-	// 		"mouth",
-	// 		"facial_expression",
-	// 		"arms",
-	// 		"l_hand",
-	// 		"r_hand",
-	// 		"legs",
-	// 		"feet",
-	// 	];
-	// 	const demographic_group = ["age", "sex", "occupation"];
-	// 	let finalLabels = {
-	// 		url: "",
-	// 		location: "",
-	// 		spectators: {},
-	// 		modality: {},
-	// 		demographic: {},
-	// 	};
-	// 	for (let label in data) {
-	// 		if (spectators_group.includes(label)) {
-	// 			finalLabels["spectators"] = {
-	// 				...finalLabels["spectators"],
-	// 				[label]: data[label],
-	// 			};
-	// 		} else if (modality_group.includes(label)) {
-	// 			finalLabels["modality"] = {
-	// 				...finalLabels["modality"],
-	// 				[label]: data[label],
-	// 			};
-	// 		} else if (demographic_group.includes(label)) {
-	// 			finalLabels["demographic"] = {
-	// 				...finalLabels["demographic"],
-	// 				[label]: data[label],
-	// 			};
-	// 		} else {
-	// 			finalLabels[label] = data[label];
-	// 		}
-	// 	}
-	// 	finalLabels["url"] = url;
-	// 	return finalLabels;
-	// };
 
 
 /* Validation & Progress */

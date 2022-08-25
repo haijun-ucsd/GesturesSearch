@@ -4,8 +4,8 @@ import React, { useState , useEffect, useLayoutEffect } from 'react';
 //import { ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage';
 //import { v4 } from 'uuid';
 import './components.css';
-import { labels_data } from "./labels_data.js";
-import { Filter, Checkbox, CheckLabel, ExploreSearchBar, AccordionSection } from './components';
+//import { labels_data } from "./labels_data.js";
+import { Filter, Checkbox, CheckLabel, ExploreSearchBar, AccordionSection, FetchLabelList_helper } from './components';
 import BodyComponent from './BodyComponent';
 
 /* Assets: */
@@ -138,7 +138,7 @@ export default function Facet(props) {
         setRange={props.setRange}
         onchange_handler={range_change_handler}
         filter_change_handler={filter_change_handler}
-        handleSearch={props.handleSearch}
+        //handleSearch={props.handleSearch}
       />
       <div className="Facet">
         <FacetModality
@@ -146,22 +146,22 @@ export default function Facet(props) {
           setFacetList={props.setFacetList} // will only set "modality"
           setFilterList={props.setFilterList}
           remove_filter={props.remove_filter}
-          handleSearch={props.handleSearch}
+          //handleSearch={props.handleSearch}
         />
         <FacetPosture
           facetList={props.facetList}
           filter_change_handler={filter_change_handler}
-          handleSearch={props.handleSearch}
+          //handleSearch={props.handleSearch}
         />
         <FacetSpectators
           facetList={props.facetList}
           filter_change_handler={filter_change_handler}
-          handleSearch={props.handleSearch}
+          //handleSearch={props.handleSearch}
         />
         <FacetDemongraphic
           facetList={props.facetList}
           filter_change_handler={filter_change_handler}
-          handleSearch={props.handleSearch}
+          //handleSearch={props.handleSearch}
         />
       </div>
     </div>
@@ -315,7 +315,7 @@ function FacetModality(props) {
  *  https://stackoverflow.com/questions/53114521/react-array-contains-method
  */
 function FacetPosture(props) {
-  const allPostures = ["sitting", "standing", "walking", "running", "jumping", "bending", "squatting", "kneeling", "climbing", "hanging", "lying", "backbending", "holding sth.", "grasping sth.", "operating sth.", "pulling sth.", "pushing sth.", "reaching for sth.", "pointing at sth.", "crossing arms", "raising arm(s)", "crossing legs", "raising leg(s)"];
+  const allPostures = FetchLabelList_helper("posture", undefined);
   const postureColor = "#AC92EB";
   return (
     <AccordionSection

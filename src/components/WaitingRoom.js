@@ -109,7 +109,7 @@ export default function WaitingRoom(props) {
 			}
 
 			urls_to_store.push(newUrl);
-			const newForm = {...LabelStructure, url: newUrl};
+			const newForm = {...LabelStructure};
 			forms_to_store.push(newForm);
 			percentages_to_store.push(0);
 			added_labels_to_store.push("");

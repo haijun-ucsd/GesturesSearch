@@ -24,8 +24,8 @@ export const labels_data = [
         ],
       },
       {
-        subcategory: "purpose",
-        subcategory_displaytext: "Purpose of the place",
+        subcategory: "site",
+        subcategory_displaytext: "Site",
         description:
           "A commonly used name of the place indicating the function that it is designed for. e.g. subway, gym, swimming pool, beach, hospital, parking lot",
         type: 2,
@@ -46,7 +46,7 @@ export const labels_data = [
         ],
       },
       {
-        subcategory: "architecture_component",
+        subcategory: "archi_compo",
         subcategory_displaytext: "Architecture component",
         description:
           "Architecural components that are in proximity to the subject or likely to influence their behaviors. \n e.g. at the entrance, in the corridor, in the waiting room, inside the pool",
