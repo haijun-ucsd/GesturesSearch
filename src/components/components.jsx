@@ -1,19 +1,12 @@
 import React, { useRef } from 'react';
 import ReactDOM from 'react-dom/client';
-import { getDatabase, onValue, ref as ref_db } from 'firebase/database';
+import { getDatabase, onValue, ref as ref_db, set, get } from 'firebase/database';
 import './components.css';
 import { labels_data } from "./labels_data.js";
 import { useState , useEffect } from 'react';
 import { Autocomplete, TextField } from '@mui/material';
 import Fuse from 'fuse.js';
 import useResizeAware from 'react-resize-aware';
-import {
-  getDatabase,
-  onValue,
-  ref as ref_db,
-  set,
-  get,
-} from "firebase/database";
 
 /* Assets: */
 import RemovableLabel_removebtn from "../assets/RemovableLabel_removebtn.png";
@@ -164,13 +157,15 @@ function CheckLabel(props) {
 
 /**
  * RemovableLabel
+ * 
+ * Usage: AppliedFilters, SearchableDropdown
  *
  * parent props:
  *	- label: string
  *	- color: string
  *	- category: string
  *	- subcategory: string
- *	- remove_filter()
+ *	- remove_filter(): optional one parameter to take in the label name
  * 
  * references:
  *	https://stackoverflow.com/questions/37644265/correct-path-for-img-on-react-js
@@ -192,7 +187,7 @@ function RemovableLabel(props) {
 				className="RemovableLabel_removebtn"
 				onClick={(e) => {
 					e.preventDefault();
-					props.remove_filter();
+					props.remove_filter(props.label);
 				}}
 			/>
 		</div>

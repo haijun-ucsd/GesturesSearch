@@ -21,6 +21,7 @@
 	--black: #000000;
 	--faded-black: #333333;
 	--gray-dark: #AAAAAA;
+	--gray-solid: #666666;
 	--gray-mid: #CCCCCC;
 	--gray-light: #EEEEEE;
 	--gray-bg: #F0ECEC;
@@ -259,7 +260,7 @@
 	width: 24px;
 	mask-image: url("../assets/Checkbox_blank.svg");
 	-webkit-mask-image: url("../assets/Checkbox_blank.svg");
-	background-color: var(--checkbox-color, #666666);  /* default color: gray */
+	background-color: var(--checkbox-color, var(--gray-solid));  /* default color: gray */
 }
 .Checkbox_default:checked::after {
 	mask-image: url("../assets/Checkbox_checked.svg");
@@ -291,7 +292,7 @@
 	width: 14px; /* height and width according to size of CheckLabel_checkmark.svg */
 	mask-image: url("../assets/CheckLabel_checkmark.svg");
 	-webkit-mask-image: url("../assets/CheckLabel_checkmark.svg");
-	background-color: var(--checkbox-color, #666666);  /* default color: gray */
+	background-color: var(--checkbox-color, var(--gray-solid));  /* default color: gray */
 }
 
 .Checkbox_spectrum_container { /* should have ≥2 children elements in this flex */
@@ -1303,6 +1304,32 @@
 	overflow-y: scroll;
 	/* as an item */
 	align-self: stretch;
+}
+
+.FacetAttentiveSlider {
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	position: relative;
+	margin: 8px;
+}
+.FacetAttentiveSlider_rail {
+	content: "";
+	position: absolute;
+	border-bottom: 2px solid var(--gray-mid);
+	height: 0px;
+	transform: translateY(-50%);
+	left: 0px; right: 0px;
+}
+.FacetAttentiveSlider_track {
+	content: "";
+	color: ;
+	position: absolute;
+	border-bottom: 2px solid var(--gray-solid);
+	height: 0px;
+	transform: translateY(-50%);
+	left: 0px; right: 0px; /*default*/
 }
 
 

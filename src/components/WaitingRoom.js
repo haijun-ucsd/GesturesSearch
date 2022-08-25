@@ -59,18 +59,6 @@ import ZeroProgressAddLabel from "../assets/ZeroProgressAddLabel.png";
  * TODO: add zooming animation when opening and closing picture, to better indicate to the user which picture in the gallery is being or has been modified.
  */
 export default function WaitingRoom(props) {
-  /* Adding and removing pictures in WaitingRoomGallery */
-
-  /**
-   * handle_add_pic
-   * To help store the pictures and initialize URLs for them while using add-pic-btn.
-   */
-  const handle_add_pic = (e) => {
-    // Check for existence of event.target.files.
-    if (!e.target.files) {
-      return;
-    }
-    console.log("Valid new pictures set ↓ , refresh waiting room."); //DUBUG
 
 /* Adding and removing pictures in WaitingRoomGallery */
 
@@ -106,14 +94,16 @@ export default function WaitingRoom(props) {
 				added_pics[i].type.toLowerCase() === "image/heic"
 				|| added_pics[i].name.includes(".heic")
 			)) {
-				heic2any({ blob: added_pics[i], toType: "image/jpg", quality: 1 }).then(
-	        (newPic) => {
-	        	console.log(newPic);
-	        	newUrl = URL.createObjectURL(newPic);
-	        	//console.log("HERERERE: " + newUrl);
-	        }
-	      );
-			} else {
+				// heic2any({ blob: added_pics[i], toType: "image/jpg", quality: 1 }).then(
+				// 	(newPic) => {
+				// 		console.log(newPic);
+				// 		newUrl = URL.createObjectURL(newPic);
+				// 	}
+				// );
+			}
+
+			// Other common format cases.
+			else {
 				console.log(added_pics[i]);
 				newUrl = URL.createObjectURL(added_pics[i]);
 			}
@@ -165,105 +155,105 @@ export default function WaitingRoom(props) {
 	const [clickedUrl, setClickedUrl] = useState("");
 	const closePop = () => { setClickedUrl(""); }
 
-  // TODO: handle_remove_pic
+	// TODO: handle_remove_pic
 
 
 /* Displaying progress and added labels */
 
-  /**
-   * reprint_added_labels
-   *
-   * Return a text that lists out all added labels
-   * @param idx: Index of formDataList to fetch added labels from
-   *
-   * references:
-   *  https://www.codegrepper.com/code-examples/javascript/how+to+check+if+something+is+an+array+javascript
-   *  https://www.codegrepper.com/code-examples/javascript/remove+last+character+from+a+string+in+react
-   */
-  const reprint_added_labels = (idx, data) => {
-    let added_labels_string = "Added labels: \n";
-    for (let category in data) {
-      // Ignored case: url.
-      if (category === "url") {
-        continue;
-      }
+	/**
+	 * reprint_added_labels
+	 *
+	 * Return a text that lists out all added labels
+	 * @param idx: Index of formDataList to fetch added labels from
+	 *
+	 * references:
+	 *  https://www.codegrepper.com/code-examples/javascript/how+to+check+if+something+is+an+array+javascript
+	 *  https://www.codegrepper.com/code-examples/javascript/remove+last+character+from+a+string+in+react
+	 */
+	const reprint_added_labels = (idx, data) => {
+		let added_labels_string = "Added labels: \n";
+		for (let category in data) {
+			// Ignored case: url.
+			if (category === "url") {
+				continue;
+			}
 
-      // Special case: posture, no subcategory in formData.
-      if (category === "posture") {
-        if (data[category].length !== 0) {
-          added_labels_string += "• Postures: ";
-          for (let i = 0; i < data[category].length; i++) {
-            added_labels_string += data[category][i] + ", ";
-          }
-          added_labels_string += "\n";
-        }
-      }
+			// Special case: posture, no subcategory in formData.
+			if (category === "posture") {
+				if (data[category].length !== 0) {
+					added_labels_string += "• Postures: ";
+					for (let i = 0; i < data[category].length; i++) {
+						added_labels_string += data[category][i] + ", ";
+					}
+					added_labels_string += "\n";
+				}
+			}
 
-      // Special case modality: only record occupied modalities.
-      else if (category === "modality") {
-        let occupied_modalities = "";
-        for (let bodypart in data[category]) {
-          if (data[category][bodypart] === false) {
-            occupied_modalities += bodypart + ", ";
-          }
-        }
-        if (occupied_modalities === "") {
-          added_labels_string += "• All modalities available, \n";
-        } else {
-          added_labels_string +=
-            "• Occupied modalities: " + occupied_modalities + "\n";
-        }
-      }
+			// Special case modality: only record occupied modalities.
+			else if (category === "modality") {
+				let occupied_modalities = "";
+				for (let bodypart in data[category]) {
+					if (data[category][bodypart] === false) {
+						occupied_modalities += bodypart + ", ";
+					}
+				}
+				if (occupied_modalities === "") {
+					added_labels_string += "• All modalities available, \n";
+				} else {
+					added_labels_string +=
+						"• Occupied modalities: " + occupied_modalities + "\n";
+				}
+			}
 
-      // Default case.
-      else {
-        let empty_flag = true; // whether all subcategories of this category are emoty. If empty, won't include this category in addedLabels.
-        let category_added_labels = "";
-        for (let subcategory in data[category]) {
-          let subcategory_content = data[category][subcategory];
-          if (Array.isArray(subcategory_content)) {
-            if (subcategory_content.length !== 0) {
-              empty_flag = false; // turn off empty_flag if any subcategory is not empty
-              for (let i = 0; i < subcategory_content.length; i++) {
-                category_added_labels += subcategory_content[i] + ", ";
-              }
-            }
-          } else {
-            // not array
-            if (subcategory_content !== "") {
-              empty_flag = false;
-              category_added_labels += subcategory_content + ", ";
-            }
-          }
-        }
-        if (empty_flag === false) {
-          added_labels_string +=
-            "• " + // append bullet point
-            (category.charAt(0).toUpperCase() + category.slice(1)) + // capitalize first letter
-            ": " +
-            category_added_labels +
-            "\n";
-        }
-      }
-    }
+			// Default case.
+			else {
+				let empty_flag = true; // whether all subcategories of this category are emoty. If empty, won't include this category in addedLabels.
+				let category_added_labels = "";
+				for (let subcategory in data[category]) {
+					let subcategory_content = data[category][subcategory];
+					if (Array.isArray(subcategory_content)) {
+						if (subcategory_content.length !== 0) {
+							empty_flag = false; // turn off empty_flag if any subcategory is not empty
+							for (let i = 0; i < subcategory_content.length; i++) {
+								category_added_labels += subcategory_content[i] + ", ";
+							}
+						}
+					} else {
+						// not array
+						if (subcategory_content !== "") {
+							empty_flag = false;
+							category_added_labels += subcategory_content + ", ";
+						}
+					}
+				}
+				if (empty_flag === false) {
+					added_labels_string +=
+						"• " + // append bullet point
+						(category.charAt(0).toUpperCase() + category.slice(1)) + // capitalize first letter
+						": " +
+						category_added_labels +
+						"\n";
+				}
+			}
+		}
 
-    added_labels_string = added_labels_string.slice(0, -3); // cut off the extra ", \n" at the end
-    console.log("added_labels_string ↓\n" + added_labels_string); //DEBUG
-    props.setAddedLabels((prev) => {
-      let newAddedLabels = [...prev];
-      newAddedLabels[idx] = added_labels_string;
-      return newAddedLabels;
-    });
-  };
+		added_labels_string = added_labels_string.slice(0, -3); // cut off the extra ", \n" at the end
+		console.log("added_labels_string ↓\n" + added_labels_string); //DEBUG
+		props.setAddedLabels((prev) => {
+			let newAddedLabels = [...prev];
+			newAddedLabels[idx] = added_labels_string;
+			return newAddedLabels;
+		});
+	};
 
-  /* Render */
+	/* Render */
 
-  /* resize helpers */
-  const [GalleryResizeListener, GallerySize] = useResizeAware(); // custom hook "react-resize-aware"
-  const [galleryNumCol, setGalleryNumCol] = useState(4); // 4 columns by default
-  useEffect(() => {
-    setGalleryNumCol(GalleryColumn_helper(GallerySize));
-  }, [GallerySize]);
+	/* resize helpers */
+	const [GalleryResizeListener, GallerySize] = useResizeAware(); // custom hook "react-resize-aware"
+	const [galleryNumCol, setGalleryNumCol] = useState(4); // 4 columns by default
+	useEffect(() => {
+		setGalleryNumCol(GalleryColumn_helper(GallerySize));
+	}, [GallerySize]);
 
 	return (
 		<div className="WaitingRoom">
@@ -278,7 +268,7 @@ export default function WaitingRoom(props) {
 							id="add-pic-btn"
 							type="file"
 							multiple
-              accept="image/*"
+							accept="image/*"
 							//accept="image/*, .heic"
 							onChange={handle_add_pic}
 							style={{ display: "none" }}

@@ -1,0 +1,79 @@
+// Update date: 8-25
+
+{
+	"location": {
+		"in_outdoor": {
+			"indoor": {},
+			"outdoor": {},
+		},
+		"site": {
+			"hospital": {},
+		},
+		"archi_compo": {
+			"entrance": {},
+		},
+	},
+
+	"spectators": {
+		"attentive": [
+			{},
+		],
+		"density": {
+			"sparse": {},
+		},
+		"quantity": {
+			"small": {},
+		},
+	},
+
+	"demographic": {
+		"age": {
+			"young adult": {},
+			},
+		},
+		"sex": {
+			"female": {},
+		},
+		"social_role": {
+			"patient": {},
+		},
+	},
+
+	"modality": {
+		"eyes": {
+			"true": {},
+		},
+		"facial_expression": {
+			"false": {},
+		},
+		"feet": {
+			"true": {},
+		},
+		"head": {
+			"true": {},
+		},
+		"l_arm": {
+			"true": {},
+		},
+		"l_hand": {
+			"true": {},
+		},
+		"legs": {
+			"false": {},
+		},
+		"r_arm": {
+			"true": {},
+		},
+		"r_hand": {
+			"false": {},
+		},
+		"voice": {
+			"true": {},
+		},
+	},
+
+	"posture": {
+		"crossing legs": {},
+		"sitting": {},
+	},
+},
