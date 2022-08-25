@@ -69,7 +69,7 @@ export default function ExploreDetails(props) {
 			ctx.stroke();
 		}
 	};
-	useEffect(() => { load_canvas(); }, [ClickedPic.current, props.pictureClicked]); //TODO:???
+	useEffect(() => { load_canvas(); }, [ClickedPic.current, props.pictureClicked]); // reload canvas everytime that the displayed picture changes
 	useEffect(() => { load_annotation(); }, [canvasX, canvasY, canvasAnnotation]);
 
 	/* Render */
@@ -116,10 +116,12 @@ export default function ExploreDetails(props) {
 						</div>
 						<div className="LabelList">
 							{(() => {
+
 								// Special case: spectators. Need to include subcategory names to avoid confusion)
 								if (categoryobj.category === "spectators") {
+									const spectators_data_arr = Object.entries(props.pictureClicked["spectators"]);
 									return (
-										<>{Object.entries(props.pictureClicked["spectators"]).map(([subcategory,label]) =>
+										<>{spectators_data_arr.map(([subcategory,label]) =>
 											<div
 												className="Label"
 												style={{
@@ -138,11 +140,16 @@ export default function ExploreDetails(props) {
 										)}</>
 									);
 								}
+
 								// Special case: modality. Only show available ones.
 								else if (categoryobj.category === "modality") {
+									const modality_data_arr = props.pictureClicked["modality"];
+									console.log("\n\n\n"); console.log(modality_data_arr);
 									let available_modalities = [];
-									Object.entries(props.pictureClicked["modality"]).map(([subcategory,label]) => {
-										if (label===true) { available_modalities.push(subcategory); }
+									categoryobj.subcategories.map((subcategoryobj) => {
+										if (modality_data_arr[subcategoryobj.subcategory] === true) {
+											available_modalities.push(subcategoryobj.subcategory_displaytext);
+										}
 									});
 									return (
 										<>{available_modalities.map(bodypart =>
@@ -159,10 +166,12 @@ export default function ExploreDetails(props) {
 										)}</>
 									);
 								}
+
 								// Default case.
 								else {
+									const data_arr = Object.entries(props.pictureClicked[categoryobj.category]);
 									return (
-										Object.entries(props.pictureClicked[categoryobj.category]).map(([subcategory,label]) => {
+										data_arr.map(([subcategory,label]) => {
 											if (Array.isArray(props.pictureClicked[categoryobj.category][subcategory])===true) {
 												return (
 													<>{props.pictureClicked[categoryobj.category][subcategory].map((label) =>

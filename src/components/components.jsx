@@ -1,17 +1,12 @@
 import React, { useRef } from 'react';
 import ReactDOM from 'react-dom/client';
+import { getDatabase, onValue, ref as ref_db, set, get } from 'firebase/database';
 import './components.css';
 import { labels_data } from "./labels_data.js";
 import { useState , useEffect } from 'react';
 import { Autocomplete, TextField } from '@mui/material';
+import Fuse from 'fuse.js';
 import useResizeAware from 'react-resize-aware';
-import {
-  getDatabase,
-  onValue,
-  ref as ref_db,
-  set,
-  get,
-} from "firebase/database";
 
 /* Assets: */
 import RemovableLabel_removebtn from "../assets/RemovableLabel_removebtn.png";
@@ -162,13 +157,15 @@ function CheckLabel(props) {
 
 /**
  * RemovableLabel
+ * 
+ * Usage: AppliedFilters, SearchableDropdown
  *
  * parent props:
  *	- label: string
  *	- color: string
  *	- category: string
  *	- subcategory: string
- *	- remove_filter()
+ *	- remove_filter(): optional one parameter to take in the label name
  * 
  * references:
  *	https://stackoverflow.com/questions/37644265/correct-path-for-img-on-react-js
@@ -188,7 +185,10 @@ function RemovableLabel(props) {
 			<input
 				type="image" src={RemovableLabel_removebtn}
 				className="RemovableLabel_removebtn"
-				onClick={() => props.remove_filter(props.label)}
+				onClick={(e) => {
+					e.preventDefault();
+					props.remove_filter(props.label);
+				}}
 			/>
 		</div>
 	);
@@ -294,7 +294,7 @@ function Checkbox(props) {
  * ExploreSearchBar
  * 
  * parent props:
- *	- search_handler(searText, ...): whatever function to perform at the current search bar.
+ *	- search_handler(searchText, ...): whatever function to perform at the current search bar.
  *	- searchResults: a list of labels as resulted from the search.
  *	- id: ref, id and name for this search bar, forwarded from parent.
  *
@@ -391,8 +391,20 @@ function ExploreSearchBar(props) {
 						}
 					}}
 				/>
+				{searchText.length > 0 ?
+					<input
+						type="image" src={NoBtn}
+						className="SearchBar_clearbtn"
+						onClick={(e) => { // clear input field
+							e.preventDefault();
+							setSearchText('');
+							setSubmittedSearchText('');
+						}}
+					/>
+				: null }
 				<input
 					type="image" src={SearchBtn}	// <input type="image"> defines an image as a submit button
+					className="SearchBar_searchbtn"
 					onClick={(e) => {
 						e.preventDefault();
 						setSubmittedSearchText(searchText);
@@ -406,22 +418,23 @@ function ExploreSearchBar(props) {
 /**
  * SearchableDropdown
  * 
+ * Usage: used in LabelsForm during upload.
+ * 
  * parent props:
  *	- selectedLabels: a list of labels selected in this SearchableDropdown.
  *	- id: id to be used for SearchBar.
  *	- color
  *	- category
- *	- subcategory
+ *	- subcategory: optional.
  *	- label_change_handler()
  *	- label_remove_handler()
- *	- searchResults: a list of labels as resulted from the search.
- *	- labelsList (TODO: remove once search is implemented?)
  * 
  * Searchable drop-down in Upload page. Will do:
  *	1. Provide labels according input,
  *	2. Allow for adding new label, especially when no result found.
  * 
  * references:
+ *	https://fusejs.io/demo.html
  *	https://stackoverflow.com/questions/39817007/focus-next-input-once-reaching-maxlength-value-in-react-without-jquery-and-accep
  *	https://reactjs.org/docs/forwarding-refs.html
  *	https://stackoverflow.com/questions/42017401/how-to-focus-a-input-field-which-is-located-in-a-child-component
@@ -431,29 +444,95 @@ function ExploreSearchBar(props) {
  *	https://www.geeksforgeeks.org/is-setstate-method-async/#:~:text=setState()%20async%20Issue%3A%20If,debugging%20issues%20in%20your%20code.
  *	https://stackoverflow.com/questions/63364282/react-only-display-items-which-fully-fit-within-flex-box-and-dynamically-deter
  *	https://www.robinwieruch.de/react-custom-hook-check-if-overflow/
+ *	https://stackoverflow.com/questions/32553158/detect-click-outside-react-component
+ *	https://stackoverflow.com/questions/50431477/react-js-how-to-call-a-method-after-another-method-is-fully-executed
  */
 function SearchableDropdown(props) {
-	const [expanded, setExpanded] = useState(false);
 
-	const [searchText, setSearchText] = useState('');
+	/* UI state */
+
+	// Whether the dropdown is expanded.
+	const [expanded, setExpanded] = useState(false);
 	// DEBUG
 	useEffect(() => {
-		console.log("searchText is: " + searchText);
+		console.log("dropdown '" + props.id + "' expanded state is reset: " + expanded);
+	}, [expanded]);
+
+	// Jump to focus on search bar while expanding.
+	const searchbarRef = useRef();
+	const focus_on_searchbar = (() => {
+		if (expanded==true) {
+			console.log("SearchableDropdown clicked, find corresponding search bar ↓"); console.log(searchbarRef.current); //DEBUG
+			searchbarRef.current.focus(); // there is a setFocus() function in the SearchBar component to set focus on the search bar input field
+		}
+	});
+	useEffect(() => {	// cannot put this into onClick of dropdown because setState is asynchronous
+		focus_on_searchbar();
+	}, [expanded]);
+
+	// Helper to collapse the dropdown and clear the input field.
+	const collapse_dropdown = () => {
+		setExpanded(false);
+		setSearchText('');
+	}
+
+	// Collapse dropdown upon clicking outside of this component.
+	const dropdownRef = useRef();
+	const click_outside_handler = (e) => {
+		//e.preventDefault();
+		if (
+			dropdownRef.current
+			&& document.contains(e.target) // need this to avoid unwanted trigger
+			&& !dropdownRef.current.contains(e.target)
+		) {
+			collapse_dropdown();
+		}
+	}
+	useEffect(() => {
+		document.addEventListener("click", click_outside_handler);
+		return (() => { document.removeEventListener("click", click_outside_handler); }); // unbind eventlistener on clean up
+	}, [dropdownRef]);
+
+
+	/* Content of search */
+
+	const searchRange = FetchLabelList_helper(props.category, props.subcategory);
+	const minMatchCharLength = 2; // ignore single character matches. to allow, set to 1
+	const fuzzy_search_helper = new Fuse( // use the Fuse.js library to perform fuzzy search
+		searchRange,
+		{
+			isCaseSensitive: false,
+			shouldSort: true,
+			minMatchCharLength: minMatchCharLength,
+			threshold: 0.2, // 0 = perfect match, 1 = match anything
+			ignoreLocation: true, // doesn't matter where in the string the pattern appears
+			ignoreFieldNorm: true, // doesn't matter how many terms there are, should match whenever the query term exists
+		}
+	);
+
+	// Real-time search text while typing.
+	const [searchText, setSearchText] = useState('');
+	useEffect(() => {
+		//console.log("searchText is: " + searchText); //DEBUG
+		get_search_result(); // get search result dynamically instead of only upon hitting search
 	}, [searchText]);
 
-	const [submittedSearchText, setSubmittedSearchText] = useState('');
-	// DEBUG
-	useEffect(() => {
-		console.log("submittedSearchText is: " + submittedSearchText);
-	}, [submittedSearchText]);
+	// Label list that is the result of search.
+	// When list is empty yet input >= 2 characters, trigger add_customized_label().
+	const [searchResultList, setSearchResultList] = useState([]);
 
-	const [customizedLabel, setCustomizedLabel] = useState('');
-	// DEBUG
-	useEffect(() => {
-		console.log("customizedLabel is: " + customizedLabel);
-	}, [customizedLabel]);
-	const addCustomizedLabel = () => {
-		const newLabel = customizedLabel; // take snapshot of current entered label
+	const get_search_result = () => {
+		const submittedSearchText = searchText; // take a snapshot of the current searchText upon submission
+		//console.log("search '" + submittedSearchText + "' in range ↓ "); console.log(searchRange); //DEBUG
+		const newSearchResult =
+			fuzzy_search_helper.search(submittedSearchText) // structure of Fuse result: [{item: "XXX" (label name), refIndex: N (index in searchRange)}, ...]
+			.map((item) => item.item );
+		console.log("newSearchResult ↓"); console.log(newSearchResult); //DEBUG
+		setSearchResultList(newSearchResult);
+	}
+
+	const add_customized_label = () => { // trigger when no search result is found
+		const newLabel = searchText; // take snapshot of current entered label
 		if (!(props.selectedLabels.some(item => item===newLabel))) { // check for existence
 			props.label_add_handler(newLabel, props.category, props.subcategory);
 			set(ref_db(db, "Label/unreviewed/"+ props.category + props.subcategory), {
@@ -462,57 +541,25 @@ function SearchableDropdown(props) {
 		} else {
 			alert("Label '" + newLabel + "'is already selected.");
 		}
-		setCustomizedLabel(''); // clear CustomizeLabel field
+		setSearchText(''); // clear input field
 	}
 
-	/* Jump to focus on search bar while expanding */
-	const searchbarRef = useRef();
-	const focusOnSearchbar = (() => {
-		if (expanded==true) {
-			console.log("SearchableDropdown clicked, find corresponding search bar ↓"); console.log(searchbarRef.current); //DEBUG
-			searchbarRef.current.focus(); // there is a setFocus() function in the SearchBar component to set focus on the search bar input field
-		}
-	});
-	useEffect(() => {	// cannot put this into onClick of dropdown because setState is asynchronous
-		focusOnSearchbar();
-	}, [expanded]);
+	const clear_search_input_field = () => {
+		setSearchText('');
+		setSearchResultList([]);
+	}
+
 
 	/* Render */
 	return (
-		<div className="SearchableDropdown">
-			{expanded ?
+		<div
+			className="SearchableDropdown"
+			ref={dropdownRef}
+		>
+			{(expanded==false) ?
 				<>
 					<input
-						className="SearchableDropdown_expandbtn"
-						type="image" src={ArrowUp_tiny} 
-						onClick={(e) => {
-							e.preventDefault();
-							setExpanded(false);
-						}}
-					/>
-					<div
-						className="SDSelectedLabelList_expanded"
-						onClick={(e) => {
-							//e.preventDefault();
-							focusOnSearchbar();
-						}}
-					>
-						{props.selectedLabels.map((item) =>
-							<RemovableLabel
-								//key={XX}
-								label={item}
-								color={props.color}
-								category={props.category}
-								subcategory={props.subcategory}
-								remove_filter={(e) => props.label_remove_handler(item, props.category, props.subcategory)}
-							/>
-						)}
-					</div>
-				</>
-			:
-				<>
-					<input
-						className="SearchableDropdown_expandbtn"
+						className="SearchableDropdown_ecbtn"
 						type="image" src={ArrowDown_tiny} 
 						onClick={(e) => {
 							e.preventDefault();
@@ -523,7 +570,7 @@ function SearchableDropdown(props) {
 						className="SDSelectedLabelList_collapsed"
 						onClick={(e) => {
 							//e.preventDefault();
-							setExpanded(true); // this includes focusOnSearchbar() by using useEffect
+							setExpanded(true); // this includes focus_on_searchbar() by using useEffect
 						}}
 					>
 						{props.selectedLabels.map((item) =>
@@ -533,7 +580,36 @@ function SearchableDropdown(props) {
 								color={props.color}
 								category={props.category}
 								subcategory={props.subcategory}
-								remove_filter={(e) => props.label_remove_handler(item, props.category, props.subcategory)}
+								remove_filter={() => props.label_remove_handler(item, props.category, props.subcategory)}
+							/>
+						)}
+					</div>
+				</>
+			:
+				<>
+					<input
+						className="SearchableDropdown_ecbtn"
+						type="image" src={ArrowUp_tiny} 
+						onClick={(e) => {
+							e.preventDefault();
+							collapse_dropdown();
+						}}
+					/>
+					<div
+						className="SDSelectedLabelList_expanded"
+						onClick={(e) => {
+							//e.preventDefault();
+							focus_on_searchbar();
+						}}
+					>
+						{props.selectedLabels.map((item) =>
+							<RemovableLabel
+								//key={XX}
+								label={item}
+								color={props.color}
+								category={props.category}
+								subcategory={props.subcategory}
+								remove_filter={() => props.label_remove_handler(item, props.category, props.subcategory)}
 							/>
 						) /*TODO: "& N more" when there are too many selected labels*/}
 					</div>
@@ -555,98 +631,74 @@ function SearchableDropdown(props) {
 							onChange={(e) => {
 								setSearchText(e.target.value);
 							}}
-							/*onKeyDown={(e) => {	// pressing ENTER == clicking search icon
+							onKeyDown={(e) => {	// pressing ENTER == clicking search icon
 								if (e.key==='Enter') {
-									setSubmittedSearchText(searchText);
-									//props.search_handler(searchText, ...);
+									e.preventDefault(); // seems to need this to avoid collpasing
+									get_search_result();
 								}
-							}}*/
+							}}
 						/>
-						<input
-							type="image" src={SearchBtn}	// <input type="image"> defines an image as a submit button
-							disabled	// TODO: remove when search is implemented
-							/*onClick={(e) => {
-								e.preventDefault();
-								setSubmittedSearchText(searchText);
-								//props.search_handler(searchText, ...);
-							}}*/
-						/>
-					</div>
-					{/* search result */
-					/*(() => {
-						if (submittedSearchText=='') {
-							return null;
-						} else {
-							if (searchResults=='') {
-								return (
-									<p className="HintText">
-										No result is found.
-									</p>
-								);
-							} else {	// normal case
-								return (
-									<div className="LabelList">
-										searchResults.map((item) => {});
-									</div>
-								);
-							}
-						}
-					})*/
-					/* TODO: abandon once the actual search is implemented */
-					<div className="LabelList">
-						{props.labelsList.map((label) => {
-							if (!(props.selectedLabels.some(item => item===label.label))) {
-								return (
-									<CheckLabel
-										value={label.label}
-										color={props.color}
-										key={label.label_id}
-										category={props.category}
-										subcategory={props.subcategory}
-										onchange_handler={props.label_change_handler}
-									/>
-								);
-							}
-						})}
-					</div>
-					/* TODO: after selecting a label, clear search bar and fold the dropdown */}
-				</div>
-			</div>
-			<div
-				className="CustomizeLabel_container"
-				style={{display: expanded ? "flex" : "none",}}
-			>
-				<div className="HintText">couldn't find proper label? customize one:</div>
-				<div className="CustomizeLabel">
-					<input
-						type="text"
-						className="CustomizeLabel_field"
-						placeholder=""
-						value={customizedLabel}
-						onChange={(e) => {
-							setCustomizedLabel(e.target.value);
-						}}
-						onKeyDown={(e) => {	// pressing ENTER == clicking search icon
-							if (e.key==='Enter') { addCustomizedLabel(); }
-						}}
-					/>
-					{customizedLabel!=='' ?
-						<>
-							<input
-								type="image" src={YesBtn}
-								onClick={(e) => {
-									e.preventDefault();
-									addCustomizedLabel();
-								}}
-							/>
+						{searchText.length > 0 ?
 							<input
 								type="image" src={NoBtn}
+								className="SearchBar_clearbtn"
 								onClick={(e) => {
 									e.preventDefault();
-									setCustomizedLabel('');
+									clear_search_input_field();
 								}}
 							/>
-						</>
+						: null }
+						<input
+							type="image" src={SearchBtn}
+							className="SearchBar_searchbtn"
+							onClick={(e) => {
+								e.preventDefault();
+								get_search_result();
+							}}
+						/>
+					</div>
+					{searchText.length >= minMatchCharLength ?
+						<>{searchResultList.length !== 0 ?
+							<div className="LabelList">
+								{searchResultList.map((label) => {
+									if (!(props.selectedLabels.some(item => item===label))) {
+										return (
+											<CheckLabel
+												value={label}
+												color={props.color}
+												//key={label.refIndex}
+												category={props.category}
+												subcategory={props.subcategory}
+												onchange_handler={(e, checked, categoryname, subcategoryname) => { // TODO: better way?
+													props.label_change_handler(e, checked, categoryname, subcategoryname);
+													clear_search_input_field();
+												}}
+											/>
+										);
+									}
+								})}
+							</div>
+						:
+							<>
+								<div className="SearchBar_noresult HintText">
+									No existing label found.
+								</div>
+								<div className="CustomizeLabel_container">
+									<div className="CustomizeLabel_hint HintText">
+										Save "{searchText}" as customize label?
+									</div>
+									<btn
+										className="Btn_small"
+										onClick={(e) => {
+											e.preventDefault();
+											add_customized_label();
+										}}
+									>
+										<img src={YesBtn} />
+									</btn>
+								</div>
+							</>
+						}</>
 					: null }
 				</div>
 			</div>
@@ -730,9 +782,9 @@ function AccordionSection(props) {
  *		useEffect(() => GalleryColumn_helper(GallerySize), [GallerySize]);
  *	- This function should be modified together with the "--pic-width" variable in components.css.
  *		Calculation is currently based on the following:
- *			40 = margins on left and right. 24 = gap. 300 = picture width.
- *			∵ GallerySize.width = 40*2 + 24*(x-1) + (300*x)  =>  galleryColNum = Math.floor(x)
- *			∴ galleryColNum = Math.floor((GallerySize.width-56)/324)
+ *			40 = margins on left and right. 24 = gap. 200 = picture width.
+ *			∵ GallerySize.width = 40*2 + 24*(x-1) + (200*x)  =>  galleryColNum = Math.floor(x)
+ *			∴ galleryColNum = Math.floor((GallerySize.width-56)/224)
  *			Min number of columns is 2.
  *
  * Why is this function here?
@@ -740,12 +792,38 @@ function AccordionSection(props) {
  *	So this function only needs to be defined once here and can be used in multiple galleries.
  */
 const GalleryColumn_helper = (GallerySize) => {
-	let newNumCol = Math.floor((GallerySize.width-56)/324);
+	let newNumCol = Math.floor((GallerySize.width-56)/224);
 	if (newNumCol < 2) {
 		newNumCol = 2;
 	}
 	//console.log("GallerySize: [W " + GallerySize.width + ", H " + GallerySize.height + "], NumCol: " + newNumCol); //DEBUG
 	return newNumCol;
+}
+
+
+/**
+ * FetchLabelList_helper
+ * 
+ * To help get the list of existing labels under a given path (category + subcategory if appliable) of firebase.
+ * 
+ * @param category
+ * @param subcategory: Optional. If undefined, will look only in the category level.
+ * @return label list under labels/category/subcategory.
+ */
+const FetchLabelList_helper = (category, subcategory) => {
+	const db = getDatabase();
+	let newLabelList = [];
+	let path = "labels/" + category;
+	if (subcategory !== undefined) { path = path + "/" + subcategory; }
+	const labelsRef = ref_db(db, path);
+	onValue(labelsRef, (snapshot) => {
+		const labels = snapshot.val();
+		for (let label in labels) {
+			newLabelList.push(label);
+		}
+	})
+	//console.log("newLabelList fetched ↓ "); console.log(newLabelList); //DEBUG
+	return newLabelList;
 }
 
 
@@ -787,11 +865,11 @@ const GalleryColumn_helper = (GallerySize) => {
  *	https://medium.com/@alifabdullah/never-confuse-json-and-javascript-object-ever-again-7c32f4c071ad
  */
 const LabelStructure = Object.freeze({
-	url: "",
+	//url: "",
 	location: {
 		in_outdoor: "",
-		purpose: [],
-		architecture_component: [],
+		site: [],
+		archi_compo: [],
 	},
 	spectators: {
 		quantity: "",
@@ -851,4 +929,4 @@ const FilterStructure = Object.freeze({
 	},
 })
 
-export { LabelStructure, FilterStructure, CheckLabel, RemovableLabel, Checkbox, DescriptionHover, ExploreSearchBar, SearchableDropdown, AccordionSection, GalleryColumn_helper };
+export { LabelStructure, FilterStructure, CheckLabel, RemovableLabel, Checkbox, DescriptionHover, ExploreSearchBar, SearchableDropdown, AccordionSection, GalleryColumn_helper, FetchLabelList_helper };
