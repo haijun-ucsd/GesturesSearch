@@ -153,64 +153,69 @@ export default function ExplorePage() {
 			let filtered = [];
 			for (const [imgKey, labels] of Object.entries(data)) {
 				//match labels in searchbar query
-				if (searchData[0].length !== 0){
-					for (const searchLabel of searchData) {
-						if (labels.location.in_outdoor === searchLabel || 
-							(labels.location.architecture_component !== undefined && String(labels.location.architecture_component).includes(searchLabel)) || 
-							(labels.location.purpose !== undefined && String(labels.location.purpose).includes(searchLabel)) ||
-							(labels.posture !== undefined && String(labels.posture).includes(searchLabel)) ||
-							(labels.demographic.sex !== undefined && labels.demographic.sex === searchLabel) ||
-							(labels.demographic.age !== undefined && labels.demographic.age === searchLabel) ||
-							(labels.demographic.social_role !== undefined && String(labels.demographic.social_role).includes(searchLabel))) {
-							filtered.push([imgKey, labels]);
+				if (searchData[0].length === 0 && filterList[0] === undefined) {
+					filtered.push([imgKey, labels]);
+				} else {
+					if (searchData[0].length !== 0){
+						for (const searchLabel of searchData) {
+							if (labels.location.in_outdoor === searchLabel || 
+								(labels.location.architecture_component !== undefined && String(labels.location.architecture_component).includes(searchLabel)) || 
+								(labels.location.purpose !== undefined && String(labels.location.purpose).includes(searchLabel)) ||
+								(labels.posture !== undefined && String(labels.posture).includes(searchLabel)) ||
+								(labels.demographic.sex !== undefined && labels.demographic.sex === searchLabel) ||
+								(labels.demographic.age !== undefined && labels.demographic.age === searchLabel) ||
+								(labels.demographic.social_role !== undefined && String(labels.demographic.social_role).includes(searchLabel))) {
+								filtered.push([imgKey, labels]);
+							}
 						}
 					}
-				}
-
-				//match labels in facet
-				if (filterList !== []){
-					for (const facetLabel of filterList) {
-						switch (facetLabel.category) {
-							case 'posture':
-								if (labels.posture !== undefined && String(labels.posture).includes(facetLabel.label)) {
-									filtered.push([imgKey, labels]);
-								}
-								break;
-							case 'demographic':
-								if (facetLabel.subcategory === "age") {
-									if (labels.demographic.age !== undefined && labels.demographic.age === facetLabel.label) {
+	
+					//match labels in facet
+					if (filterList[0] !== undefined){
+						for (const facetLabel of filterList) {
+							switch (facetLabel.category) {
+								case 'posture':
+									if (labels.posture !== undefined && String(labels.posture).includes(facetLabel.label)) {
 										filtered.push([imgKey, labels]);
 									}
-								} else if (facetLabel.subcategory === "sex") {
-									if (labels.demographic.sex !== undefined && labels.demographic.sex === facetLabel.label) {
+									break;
+								case 'demographic':
+									if (facetLabel.subcategory === "age") {
+										if (labels.demographic.age !== undefined && labels.demographic.age === facetLabel.label) {
+											filtered.push([imgKey, labels]);
+										}
+									} else if (facetLabel.subcategory === "sex") {
+										if (labels.demographic.sex !== undefined && labels.demographic.sex === facetLabel.label) {
+											filtered.push([imgKey, labels]);
+										}
+									}
+									break;
+								case 'modality':
+									var avail = facetLabel.label.split(' ')[facetLabel.label.split(' ').length - 1];
+									console.log('here!!! ', labels.modality[facetLabel.subcategory], Boolean(avail === 'available'));
+									if (labels.modality[facetLabel.subcategory] === Boolean(avail === 'available')) {
 										filtered.push([imgKey, labels]);
 									}
-								}
-								break;
-							case 'modality':
-								var avail = facetLabel.label.split(' ')[1];
-								if (labels.modality[facetLabel.subcategory] === Boolean(avail === 'available')) {
-									filtered.push([imgKey, labels]);
-								}
-								break;
-							case 'spectators':
-								var value = facetLabel.label.split(' ')[2];
-								if (facetLabel.subcategory === "quantity") {
-									if (labels.spectators.quantity === value) {
-										filtered.push([imgKey, labels]);
+									break;
+								case 'spectators':
+									var value = facetLabel.label.split(' ')[2];
+									if (facetLabel.subcategory === "quantity") {
+										if (labels.spectators.quantity === value) {
+											filtered.push([imgKey, labels]);
+										}
+									} else if (facetLabel.subcategory === "density") {
+										if (labels.spectators.density === value) {
+											filtered.push([imgKey, labels]);
+										}
+									} else {
+										if (labels.spectators.attentive === value) {
+											filtered.push([imgKey, labels]);
+										}
 									}
-								} else if (facetLabel.subcategory === "density") {
-									if (labels.spectators.density === value) {
-										filtered.push([imgKey, labels]);
-									}
-								} else {
-									if (labels.spectators.attentive === value) {
-										filtered.push([imgKey, labels]);
-									}
-								}
-								break;
-							default:
-								console.log("undefined range");
+									break;
+								default:
+									console.log("undefined range");
+							}
 						}
 					}
 				}
@@ -218,8 +223,11 @@ export default function ExplorePage() {
 			if (filtered.length !== 0) {
 				setImageList(_.uniq(filtered, false, function (arr) {return arr[0];}));
 				console.log('filtered: ', _.uniq(filtered, false, function (arr) {return arr[0];}));
+			} else if (searchData[0].length === 0 && filterList[0] === undefined) {
+				console.log('all!');
 			} else {
 				setImageList(filtered);
+				console.log('rendering filtered!');
 			}
 		})
 	}, [searchData, filterList])
