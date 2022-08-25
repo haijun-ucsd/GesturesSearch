@@ -158,9 +158,10 @@ export default function ExplorePage() {
 				} else {
 					if (searchData[0].length !== 0){
 						for (const searchLabel of searchData) {
+							console.log(labels.demographic);
 							if (labels.location.in_outdoor === searchLabel || 
-								(labels.location.architecture_component !== undefined && String(labels.location.architecture_component).includes(searchLabel)) || 
-								(labels.location.purpose !== undefined && String(labels.location.purpose).includes(searchLabel)) ||
+								(labels.location.archi_compo !== undefined && String(labels.location.archi_compo).includes(searchLabel)) || 
+								(labels.location.site !== undefined && String(labels.location.site).includes(searchLabel)) ||
 								(labels.posture !== undefined && String(labels.posture).includes(searchLabel)) ||
 								(labels.demographic.sex !== undefined && labels.demographic.sex === searchLabel) ||
 								(labels.demographic.age !== undefined && labels.demographic.age === searchLabel) ||
