@@ -9,10 +9,9 @@ import "./components.css";
 import WaitingRoom from "./WaitingRoom";
 import { LabelStructure } from "./components";
 
-
 /**
  * UploadPage
- * 
+ *
  * hooks stored at App level:
  *  - [addedPics, setAddedPics]
  *  - [addedPicsUrl, setAddedPicsUrl]
@@ -24,8 +23,7 @@ import { LabelStructure } from "./components";
  * TODO: clean up the code to combine the 6 hooks.
  */
 export default function UploadPage(props) {
-
-/* To handle upload */
+  /* To handle upload */
 
 	/**
 	 * uploadImages
@@ -207,7 +205,7 @@ export default function UploadPage(props) {
 	};
 
 
-/* Validation & Progress */
+  /* Validation & Progress */
 
 	const [uploadDisabled, setUploadDisabled] = useState(true);
 	// DEBUG

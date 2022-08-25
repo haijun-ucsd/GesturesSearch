@@ -7,6 +7,13 @@ import { useState , useEffect } from 'react';
 import { Autocomplete, TextField } from '@mui/material';
 import Fuse from 'fuse.js';
 import useResizeAware from 'react-resize-aware';
+import {
+  getDatabase,
+  onValue,
+  ref as ref_db,
+  set,
+  get,
+} from "firebase/database";
 
 /* Assets: */
 import RemovableLabel_removebtn from "../assets/RemovableLabel_removebtn.png";
@@ -19,7 +26,7 @@ import ArrowUp_tiny from "../assets/ArrowUp_tiny.png";
 import ArrowDown_tiny from "../assets/ArrowDown_tiny.png";
 
 
-
+const db = getDatabase();
 /**
  * Label
  *
@@ -533,6 +540,9 @@ function SearchableDropdown(props) {
 		const newLabel = searchText; // take snapshot of current entered label
 		if (!(props.selectedLabels.some(item => item===newLabel))) { // check for existence
 			props.label_add_handler(newLabel, props.category, props.subcategory);
+			set(ref_db(db, "Label/unreviewed/"+ props.category + props.subcategory), {
+				label: newLabel,
+			  }); //store the customized label to firebase unreviewed folder
 		} else {
 			alert("Label '" + newLabel + "'is already selected.");
 		}
@@ -889,6 +899,7 @@ const LabelStructure = Object.freeze({
 		feet: true,
 	},
 	posture: [],
+	timestamp: Math.floor(Date.now() / 1000),
 })
 
 /**
