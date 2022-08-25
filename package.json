@@ -13,6 +13,7 @@
     "colcade": "^0.2.0",
     "firebase": "^9.9.1",
     "firebase-tools": "^11.4.2",
+    "heic2any": "^0.0.3",
     "react": "^18.2.0",
     "react-bootstrap": "^2.4.0",
     "react-circular-progressbar": "^2.1.0",
@@ -26,6 +27,7 @@
     "scrollreveal": "^4.0.9",
     "simple-reveal": "^0.6.0",
     "styled-components": "^5.3.5",
+    "underscore": "^1.13.4",
     "uuid": "^8.3.2",
     "web-vitals": "^2.1.4"
   },

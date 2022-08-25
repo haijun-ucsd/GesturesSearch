@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import Masonry from 'react-masonry-css'
 import useResizeAware from 'react-resize-aware';
+import heic2any from "heic2any";
 import "./components.css";
 //import { labels_data } from "./labels_data.js";
 import { LabelStructure, GalleryColumn_helper } from "./components";
@@ -10,8 +11,8 @@ import UploadPopUp from "./UploadPopUp";
 /**
  * circular progress bar
  * references:
- *  https://www.npmjs.com/package/react-circular-progressbar
- *  codegrepper.com/code-examples/javascript/import+%7B+CircularProgressbar%2C+buildStyles+%7D+from+%27react-circular-progressbar%27%3B
+ *	https://www.npmjs.com/package/react-circular-progressbar
+ *	codegrepper.com/code-examples/javascript/import+%7B+CircularProgressbar%2C+buildStyles+%7D+from+%27react-circular-progressbar%27%3B
  */
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
@@ -29,29 +30,32 @@ import ZeroProgressAddLabel from "../assets/ZeroProgressAddLabel.png";
  * Waiting room for pictures to be labeled before being uploaded to filebase.
  *
  * parent props:
- *  - uploadDisabled: Whether to disable the upload btn.
- *  - uploadImages(): Method to upload images.
- *  - addedPics: All added pictures in the waitingroom gallery.
- *  - setAddedPics(): To update addedPics.
- *  - addedPicsUrl: URLs of all added pictures in the waitingroom gallery.
- *  - setAddedPicsUrl(): To update addedPicsUrl.
- *  - formDataList: List of all formDatas corrsponding to each picture.
- *  - setFormDataList(): To update formDataList.
- *  - completePercentages: For progress bar and validation.
- *  - setCompletePercentages(): To update completePercentages.
- *  - addedLabels: Strings of added labels to display upon hovering the progress.
- *  - setAddedLabels(): To update addedLabels.
+ *	- uploadDisabled: Whether to disable the upload btn.
+ *	- uploadImages(): Method to upload images.
+ *	- addedPics: All added pictures in the waitingroom gallery.
+ *	- setAddedPics(): To update addedPics.
+ *	- addedPicsUrl: URLs of all added pictures in the waitingroom gallery.
+ *	- setAddedPicsUrl(): To update addedPicsUrl.
+ *	- formDataList: List of all formDatas corrsponding to each picture.
+ *	- setFormDataList(): To update formDataList.
+ *	- completePercentages: For progress bar and validation.
+ *	- setCompletePercentages(): To update completePercentages.
+ *	- addedLabels: Strings of added labels to display upon hovering the progress.
+ *	- setAddedLabels(): To update addedLabels.
  *
  * references:
- *  https://stackoverflow.com/questions/33766085/how-to-avoid-extra-wrapping-div-in-react
- *  https://stackoverflow.com/questions/43992427/how-to-display-a-image-selected-from-input-type-file-in-reactjs
- *  https://stackoverflow.com/questions/68491348/react-checking-if-an-image-source-url-is-empty-then-return-a-different-url
- *  https://stackoverflow.com/questions/15922344/hide-image-if-src-is-empty
- *  https://levelup.gitconnected.com/how-to-implement-multiple-file-uploads-in-react-4cdcaadd0f6e
- *  https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept
- *  https://stackoverflow.com/questions/60134596/create-react-app-without-typescript-got-error-failed-to-load-parser-types
- *  https://stackoverflow.com/questions/52641492/how-to-get-the-index-of-selected-element-in-react-native-array
- *  https://stackoverflow.com/questions/9334636/how-to-create-a-dialog-with-ok-and-cancel-options
+ *	https://stackoverflow.com/questions/33766085/how-to-avoid-extra-wrapping-div-in-react
+ *	https://stackoverflow.com/questions/43992427/how-to-display-a-image-selected-from-input-type-file-in-reactjs
+ *	https://stackoverflow.com/questions/68491348/react-checking-if-an-image-source-url-is-empty-then-return-a-different-url
+ *	https://stackoverflow.com/questions/15922344/hide-image-if-src-is-empty
+ *	https://levelup.gitconnected.com/how-to-implement-multiple-file-uploads-in-react-4cdcaadd0f6e
+ *	https://stackoverflow.com/questions/57127365/make-html5-filereader-working-with-heic-files
+ *	https://stackoverflow.com/questions/59227281/is-there-a-way-to-upload-an-image-heic-file-on-my-wysiwyg-editor-without-any-i
+ *	https://codesandbox.io/s/kmdh7?file=/src/index.js
+ *	https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept
+ *	https://stackoverflow.com/questions/60134596/create-react-app-without-typescript-got-error-failed-to-load-parser-types
+ *	https://stackoverflow.com/questions/52641492/how-to-get-the-index-of-selected-element-in-react-native-array
+ *	https://stackoverflow.com/questions/9334636/how-to-create-a-dialog-with-ok-and-cancel-options
  * 
  * TODO: add zooming animation when opening and closing picture, to better indicate to the user which picture in the gallery is being or has been modified.
  */
@@ -65,6 +69,7 @@ export default function WaitingRoom(props) {
 	 * To help store the pictures and initialize URLs for them while using add-pic-btn.
 	 */
 	const handle_add_pic = (e) => {
+
 		// Check for existence of event.target.files.
 		if (!e.target.files) {
 			return;
@@ -72,8 +77,8 @@ export default function WaitingRoom(props) {
 		console.log("Valid new pictures set ↓ , refresh waiting room."); //DUBUG
 
 		// Loop through all images to append to:
-		//  1. append to the current picture list,
-		//  2. create URLs and store them sequentially.
+		//	1. append to the current picture list,
+		//	2. create URLs and store them sequentially.
 		const added_pics = e.target.files;
 		var pics_to_store = [...props.addedPics];
 		var urls_to_store = [...props.addedPicsUrl];
@@ -81,9 +86,28 @@ export default function WaitingRoom(props) {
 		var percentages_to_store = [...props.completePercentages];
 		var added_labels_to_store = [...props.addedLabels];
 		var annotations_to_store = [...props.picAnnotation];
+
 		for (var i = 0; i < added_pics.length; i++) {
 			pics_to_store.push(added_pics[i]);
-			const newUrl = URL.createObjectURL(added_pics[i]);
+			let newUrl = "";
+
+			// Convert .heic to .jpg for proper display
+			if (added_pics[i] && (
+				added_pics[i].type.toLowerCase() === "image/heic"
+				|| added_pics[i].name.includes(".heic")
+			)) {
+				heic2any({ blob: added_pics[i], toType: "image/jpg", quality: 1 }).then(
+	        (newPic) => {
+	        	console.log(newPic);
+	        	newUrl = URL.createObjectURL(newPic);
+	        	//console.log("HERERERE: " + newUrl);
+	        }
+	      );
+			} else {
+				console.log(added_pics[i]);
+				newUrl = URL.createObjectURL(added_pics[i]);
+			}
+
 			urls_to_store.push(newUrl);
 			const newForm = {...LabelStructure, url: newUrl};
 			forms_to_store.push(newForm);
@@ -91,6 +115,7 @@ export default function WaitingRoom(props) {
 			added_labels_to_store.push("");
 			annotations_to_store.push([0,0,0,0]);
 		}
+
 		props.setAddedPics(pics_to_store);
 		props.setAddedPicsUrl(urls_to_store);
 		props.setFormDataList(forms_to_store);
@@ -98,6 +123,8 @@ export default function WaitingRoom(props) {
 		props.setAddedLabels(added_labels_to_store);
 		props.setPicAnnotation(annotations_to_store);
 	};
+
+	// DEBUG
 	useEffect(() => {
 		console.log("\n「");
 		console.log("addedPics ↓"); console.log(props.addedPics);
@@ -114,7 +141,7 @@ export default function WaitingRoom(props) {
 		props.completePercentages,
 		props.addedLabels,
 		props.picAnnotation
-	]); //DEBUG
+	]);
 
 	// TODO: handle_remove_pic
 
@@ -138,8 +165,8 @@ export default function WaitingRoom(props) {
 	 * @param idx: Index of formDataList to fetch added labels from
 	 *
 	 * references:
-	 *  https://www.codegrepper.com/code-examples/javascript/how+to+check+if+something+is+an+array+javascript
-	 *  https://www.codegrepper.com/code-examples/javascript/remove+last+character+from+a+string+in+react
+	 *	https://www.codegrepper.com/code-examples/javascript/how+to+check+if+something+is+an+array+javascript
+	 *	https://www.codegrepper.com/code-examples/javascript/remove+last+character+from+a+string+in+react
 	 */
 	const reprint_added_labels = (idx, data) => {
 		let added_labels_string = "Added labels: \n";
@@ -236,7 +263,7 @@ export default function WaitingRoom(props) {
 							id="add-pic-btn"
 							type="file"
 							multiple
-							accept="image/*" // TODO: cannot accept heic yet, possible workaround: https://stackoverflow.com/questions/57127365/make-html5-filereader-working-with-heic-files
+							accept="image/*, .heic"
 							onChange={handle_add_pic}
 							style={{ display: "none" }}
 						/>
@@ -348,7 +375,7 @@ export default function WaitingRoom(props) {
 					completePercentages={props.completePercentages}
 					reprint_added_labels={reprint_added_labels}
 					picAnnotation={props.picAnnotation}
-        	setPicAnnotation={props.setPicAnnotation}
+					setPicAnnotation={props.setPicAnnotation}
 				/>
 			) : null}
 		</div>

@@ -31,6 +31,8 @@ import EditPicIcon from "../assets/EditPicIcon.png";
  *  https://stackoverflow.com/questions/35537229/how-can-i-update-the-parents-state-in-react
  *  https://stackoverflow.com/questions/43040721/how-to-update-nested-state-properties-in-react
  *  https://stackoverflow.com/questions/57798841/react-setting-state-for-deeply-nested-objects-w-hooks
+ *
+ * TODO: fetch labels from firebase instead of labels_data
  */
 export default function LabelsForm(props) {
 

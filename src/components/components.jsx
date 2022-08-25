@@ -720,9 +720,9 @@ function AccordionSection(props) {
  *		useEffect(() => GalleryColumn_helper(GallerySize), [GallerySize]);
  *	- This function should be modified together with the "--pic-width" variable in components.css.
  *		Calculation is currently based on the following:
- *			40 = margins on left and right. 24 = gap. 300 = picture width.
- *			∵ GallerySize.width = 40*2 + 24*(x-1) + (300*x)  =>  galleryColNum = Math.floor(x)
- *			∴ galleryColNum = Math.floor((GallerySize.width-56)/324)
+ *			40 = margins on left and right. 24 = gap. 200 = picture width.
+ *			∵ GallerySize.width = 40*2 + 24*(x-1) + (200*x)  =>  galleryColNum = Math.floor(x)
+ *			∴ galleryColNum = Math.floor((GallerySize.width-56)/224)
  *			Min number of columns is 2.
  *
  * Why is this function here?
@@ -730,7 +730,7 @@ function AccordionSection(props) {
  *	So this function only needs to be defined once here and can be used in multiple galleries.
  */
 const GalleryColumn_helper = (GallerySize) => {
-	let newNumCol = Math.floor((GallerySize.width-56)/324);
+	let newNumCol = Math.floor((GallerySize.width-56)/224);
 	if (newNumCol < 2) {
 		newNumCol = 2;
 	}

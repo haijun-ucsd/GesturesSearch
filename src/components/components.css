@@ -23,7 +23,7 @@
 	--gray-mid: #CCCCCC;
 	--gray-light: #EEEEEE;
 	--gray-bg: #F0ECEC;
-	--pic-width: 300px; /* value should be changed together along the "GalleryColumn_helper" function in components.js. */
+	--pic-width: 200px; /* value should be changed together along the "GalleryColumn_helper" function in components.js. */
 }
 
 
@@ -1071,7 +1071,7 @@
 	overflow-y: scroll;
 	width: 40%;
 	max-width: 640px;
-	min-width: 560px;
+	min-width: 400px;
 	max-height: 100%;
 	border-left: 1px solid var(--gray-mid); /* TODO: dropshadow */
 	/* as an item */
@@ -1261,9 +1261,9 @@
 		8px 0px 16px rgba(170, 170, 170, 0.16),
 		0px 0px 40px 8px rgba(204, 204, 204, 0.25);
 	/* as an item */
-	flex: 1 0 25vw;
-	max-width: 560px;
-	min-width: 400px;
+	flex: 1 0 20vw;
+	max-width: 400px;
+	min-width: 320px;
 	/* as a container (module layout) */
 	background-color: #FFFFFF;
 	display: flex;
@@ -1287,9 +1287,9 @@
 		0px 8px 16px rgba(170, 170, 170, 0.16),
 		0px 0px 40px 8px rgba(204, 204, 204, 0.25);
 	/* as an item */
-	flex: 1 0 40vw;
+	flex: 1 0 30vw;
 	max-width: 640px;
-	min-width: 480px;
+	min-width: 320px;
 	/* as a container (module layout) */
 	background-color: #FFFFFF;
 	position: relative;
@@ -1430,7 +1430,7 @@
 	flex-direction: row;
 	justify-content: flex-end;
 	align-items: center;
-	padding: 0px;
+	padding: 0px 40px;
 	gap: 64px;
 	background: #FFFFFF;
 	z-index: 10;
