@@ -147,12 +147,7 @@ export default function ExplorePage() {
 		  for (const [imgKey, labels] of Object.entries(data)) {
 				newImgList.push([imgKey, labels]);
 		  }
-<<<<<<< HEAD
-		  console.log('inital images:', append)
-		  setImageList(append);
-=======
 		  setImageList(newImgList);
->>>>>>> a955660f77eb86beea4224e5079b4d5ae554ab0d
 		})
 	}, [])
 
@@ -162,7 +157,6 @@ export default function ExplorePage() {
 		const dbRef = ref_db(db, 'images');
 		onValue(dbRef, (snapshot) => {
 			const data = snapshot.val();
-<<<<<<< HEAD
 			let filtered = [];
 			let location = searchData.location;
 			let posture = searchData.posture.posture;
@@ -201,20 +195,6 @@ export default function ExplorePage() {
 					 (labels.demographic.age) === age ||
 					 (labels.demographic.sex) === sex) {
 					filtered.push([imgKey, labels]);
-=======
-			let filtered = []
-			for (const searchLabel of searchData) {
-				for (const [imgKey, labels] of Object.entries(data)) {
-					console.log(labels)
-					console.log(labels.location);
-					if (labels.location !== undefined && ((labels.location.in_outdoor !== undefined && String(labels.location.in_outdoor) === searchLabel) || 
-						(labels.location.architecture_component !== undefined && String(labels.location.architecture_component).includes(searchLabel)) || 
-						(labels.location.purpose !== undefined && String(labels.location.purpose).includes(searchLabel)) ||
-						(labels.posture !== undefined && String(labels.posture).includes(searchLabel)) ||
-						(labels.demographic.social_role !== undefined && String(labels.demographic.social_role).includes(searchLabel)))) {
-						filtered.push([imgKey, labels]);
-					}
->>>>>>> a955660f77eb86beea4224e5079b4d5ae554ab0d
 				}
 			}
 			// for (const searchLabel of searchData) {
