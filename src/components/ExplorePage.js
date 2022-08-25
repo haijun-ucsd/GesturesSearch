@@ -218,6 +218,8 @@ export default function ExplorePage() {
 			if (filtered.length !== 0) {
 				setImageList(_.uniq(filtered, false, function (arr) {return arr[0];}));
 				console.log('filtered: ', _.uniq(filtered, false, function (arr) {return arr[0];}));
+			} else {
+				setImageList(filtered);
 			}
 		})
 	}, [searchData, filterList])
