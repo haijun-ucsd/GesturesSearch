@@ -19,7 +19,7 @@ import BodyComponent from './BodyComponent';
  *
  * Facet menu for users to search and filter pictures at will on the Explore page.
  * 
- * Structure: ExploreSearch, {Modality, Posture, Spectators, Demongraphic}
+ * Structure: ExploreSearch, { Modality, Posture, Spectators, Demongraphic }
  * Each Facet Module is too different from each other to be rendered together in a loop,
  * so they are made into separate components at the end of this file.
  *
@@ -133,14 +133,14 @@ export default function Facet(props) {
   /* Render */
   return (
     <div className="FacetMenu">
+      <ExploreSearch
+        range={props.range}
+        setRange={props.setRange}
+        onchange_handler={range_change_handler}
+        filter_change_handler={filter_change_handler}
+        handleSearch={props.handleSearch}
+      />
       <div className="Facet">
-        <ExploreSearch
-          range={props.range}
-          setRange={props.setRange}
-          onchange_handler={range_change_handler}
-          filter_change_handler={filter_change_handler}
-          handleSearch={props.handleSearch}
-        />
         <FacetModality
           facetList={props.facetList}
           setFacetList={props.setFacetList} // will only set "modality"
