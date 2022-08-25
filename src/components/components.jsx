@@ -157,13 +157,15 @@ function CheckLabel(props) {
 
 /**
  * RemovableLabel
+ * 
+ * Usage: AppliedFilters, SearchableDropdown
  *
  * parent props:
  *	- label: string
  *	- color: string
  *	- category: string
  *	- subcategory: string
- *	- remove_filter()
+ *	- remove_filter(): optional one parameter to take in the label name
  * 
  * references:
  *	https://stackoverflow.com/questions/37644265/correct-path-for-img-on-react-js
@@ -185,7 +187,7 @@ function RemovableLabel(props) {
 				className="RemovableLabel_removebtn"
 				onClick={(e) => {
 					e.preventDefault();
-					props.remove_filter();
+					props.remove_filter(props.label);
 				}}
 			/>
 		</div>

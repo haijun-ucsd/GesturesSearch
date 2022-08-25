@@ -67,9 +67,7 @@ export default function ExplorePage() {
    */
   const remove_filter = (label) => {
 
-    let filterToRemove = filterList.find(
-    	(item) => item.label === label
-    );
+    let filterToRemove = filterList.find((item) => item.label === label);
     let category = filterToRemove.category;
     let subcategory = filterToRemove.subcategory;
 
