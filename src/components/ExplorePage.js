@@ -10,7 +10,6 @@ import _, { map } from 'underscore';
 export default function ExplorePage() {
 
 /* Filters from Facet (search & filters) */
-
 	/**
 	 * range
 	 * Search range.
@@ -111,10 +110,15 @@ export default function ExplorePage() {
 
 	const [imageList, setImageList] = useState([]); // list of currently shown pictures
 
-	const [searchData, setSearchData] = useState([""]);
+	const [searchData, setSearchData] = useState({});
 	const handleSearch = (input) => {
-		console.log('search input:', input);
-		setSearchData(input.split(', ').map(item => item.trim()));
+		// console.log('search input:', input);
+		// console.log('facet-list from handleSearch:', facetList);
+		let obj = {...facetList}
+		obj['location'] = input.split(', ').map(item => item.trim())
+		setSearchData(obj);
+		// console.log('facet-list from handleSearch:', facetList);
+		// console.log('search + facet: ', obj);
 		console.log('search data: ', searchData);
 	}
 
@@ -135,6 +139,7 @@ export default function ExplorePage() {
 		  for (const [imgKey, labels] of Object.entries(data)) {
 			append.push([imgKey, labels])
 		  }
+		  console.log('inital images:', append)
 		  setImageList(append);
 		})
 	}, [])
@@ -147,24 +152,67 @@ export default function ExplorePage() {
 		const dbRef = ref_db(db, 'images');
 		onValue(dbRef, (snapshot) => {
 			const data = snapshot.val();
-			let filtered = []
-			for (const searchLabel of searchData) {
-				for (const [imgKey, labels] of Object.entries(data)) {
-					console.log(labels)
-					console.log(imgKey);
-					if (labels.location.in_outdoor === searchLabel || 
-						(labels.location.architecture_component !== undefined && String(labels.location.architecture_component).includes(searchLabel)) || 
-						(labels.location.purpose !== undefined && String(labels.location.purpose).includes(searchLabel)) ||
-						(labels.posture !== undefined && String(labels.posture).includes(searchLabel)) ||
-						(labels.demographic.social_role !== undefined && String(labels.demographic.social_role).includes(searchLabel))) {
-						filtered.push([imgKey, labels]);
-					}
+			let filtered = [];
+			let location = searchData.location;
+			let posture = searchData.posture.posture;
+			let quantity = ''
+			if ((searchData.spectators.quantity).length > 0) {
+				quantity = ((searchData.spectators.quantity)[0].split(':'))[1].trim();
+			}
+			let density = ''
+			if ((searchData.spectators.density).length > 0) {
+				density = ((searchData.spectators.density)[0].split(':'))[1].trim();
+			}
+			let attentive = ''
+			if ((searchData.spectators.attentive).length > 0) {
+				attentive = ((searchData.spectators.attentive)[0].split(':'))[1].trim();
+			}
+			let age = ''
+			if ((searchData.demographic.age).length > 0) {
+				age = (searchData.demographic.age)[0];
+			}
+			let sex = ''
+			if ((searchData.demographic.sex).length > 0) {
+				sex = (searchData.demographic)[0];
+			}
+			console.log('search input:', location, posture, quantity, density, attentive, age, sex)
+			console.log('data:', data)
+			console.log(quantity, density, attentive, age, sex)
+			for (const [imgKey, labels] of Object.entries(data)) {
+				// console.log(labels.location.in_outdoor);
+				if ((labels.location.architecture_component).some(r => location.includes(r)) ||
+					(labels.location.purpose).some(r => location.includes(r)) ||
+					 location.includes(labels.location.in_outdoor) ||
+					 (labels.posture).some(r => posture.includes(r)) ||
+					 (labels.spectators.quantity) === quantity ||
+					 (labels.spectators.density) === density ||
+					 (labels.spectators.attentive) === String(attentive) ||
+					 (labels.demographic.age) === age ||
+					 (labels.demographic.sex) === sex) {
+					filtered.push([imgKey, labels]);
 				}
 			}
-			console.log('filtered: ', filtered);
-			if (searchData !== '') {
-				setImageList(_.uniq(filtered, false, function (arr) {return arr[0];}));
+			// for (const searchLabel of searchData) {
+			// 	for (const [imgKey, labels] of Object.entries(data)) {
+			// 		console.log(labels)
+			// 		console.log(imgKey);
+			// 		if (searchData['location'].includes(labels.location.in_outdoor) || 
+			// 			(labels.location.architecture_component !== undefined && String(labels.location.architecture_component).includes(searchLabel)) || 
+			// 			(labels.location.purpose !== undefined && String(labels.location.purpose).includes(searchLabel)) ||
+			// 			(labels.posture !== undefined && String(labels.posture).includes(searchLabel)) ||
+			// 			(labels.demographic.social_role !== undefined && String(labels.demographic.social_role).includes(searchLabel))) {
+			// 			filtered.push([imgKey, labels]);
+			// 		}
+			// 	}
+			// }
+			if (searchData === {}) {
+				for (const [imgKey, labels] of Object.entries(data)) {
+					filtered.push([imgKey, labels])
+				}
+				console.log('inital:', filtered)
+				// setImageList(_.uniq(filtered, false, function (arr) {return arr[0];}));
 			}
+			setImageList(filtered);
 		})
 	}, [searchData])
 

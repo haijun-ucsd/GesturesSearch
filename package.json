@@ -23,6 +23,7 @@
     "scrollreveal": "^4.0.9",
     "simple-reveal": "^0.6.0",
     "styled-components": "^5.3.5",
+    "underscore": "^1.13.4",
     "uuid": "^8.3.2",
     "web-vitals": "^2.1.4"
   },
