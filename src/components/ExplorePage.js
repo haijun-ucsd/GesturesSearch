@@ -1,12 +1,12 @@
-import React, { useState , useEffect } from 'react';
-import { getDatabase, onValue, ref as ref_db, set } from 'firebase/database';
-import './components.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Facet from './Facet';
-import ExploreGallery from './ExploreGallery';
+import React, { useState, useEffect } from "react";
+import { getDatabase, onValue, ref as ref_db, set } from "firebase/database";
+import "./components.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Facet from "./Facet";
+import ExploreGallery from "./ExploreGallery";
 import ExploreDetails from "./ExploreDetails";
-import { FilterStructure } from './components';
-import _, { map } from 'underscore';
+import { FilterStructure } from "./components";
+import _, { map } from "underscore";
 
 /* Assets: */
 import ArrowLeft from "../assets/ArrowLeft.png";
@@ -14,33 +14,33 @@ import ArrowRight from "../assets/ArrowRight.png";
 import ExploreDetailsCloseBtn from "../assets/ExploreDetailsCloseBtn.png";
 
 export default function ExplorePage() {
-	/* Filters from Facet (search & filters) */
-	/**
-	 * range
-	 * Search range.
-	 * Default SearchRange: { Location, Demographic, Modality, Posture }
-	 * TODO: combine SearchRange and SearchRange_color variables into labels_list?
-	 */
+  /* Filters from Facet (search & filters) */
+  /**
+   * range
+   * Search range.
+   * Default SearchRange: { Location, Demographic, Modality, Posture }
+   * TODO: combine SearchRange and SearchRange_color variables into labels_list?
+   */
   const SearchRange = ["location", "demographic", "modality", "posture"];
-  const [range, setRange] = useState(SearchRange);  // range of categories to search within. //TODO: what if all categories are unchecked and range is none?
+  const [range, setRange] = useState(SearchRange); // range of categories to search within. //TODO: what if all categories are unchecked and range is none?
   // DEBUG
   useEffect(() => {
-    console.log("updated search range ↓"); 
-	console.log(range);
-  }, [range])
+    console.log("updated search range ↓");
+    console.log(range);
+  }, [range]);
 
-	/**
-	 * filterList
-	 * List of currently applied filters.
-	 * Structure of each filter item: { label, label_id, category, subcategory, color }
-	 */
-	const [filterList, setFilterList] = useState([]);
-	//const [filterList, setFilterList] = useState([ { label: "library", label_id: 0, category: "location", subcategory: "purpose", color: "#A0D568" }, { label: "hospital", label_id: 1, category: "location", subcategory: "purpose", color: "#A0D568" }, ]); //DEBUG
+  /**
+   * filterList
+   * List of currently applied filters.
+   * Structure of each filter item: { label, label_id, category, subcategory, color }
+   */
+  const [filterList, setFilterList] = useState([]);
+  //const [filterList, setFilterList] = useState([ { label: "library", label_id: 0, category: "location", subcategory: "purpose", color: "#A0D568" }, { label: "hospital", label_id: 1, category: "location", subcategory: "purpose", color: "#A0D568" }, ]); //DEBUG
   // DEBUG
   useEffect(() => {
-    console.log("updated filterList ↓"); 
-	console.log(filterList);
-  }, [filterList])
+    console.log("updated filterList ↓");
+    console.log(filterList);
+  }, [filterList]);
 
   /**
    * facetList
@@ -50,13 +50,13 @@ export default function ExplorePage() {
   const [facetList, setFacetList] = useState(FilterStructure);
   // DEBUG
   useEffect(() => {
-    console.log("updated facetList ↓"); 
-	console.log(facetList);
-  }, [facetList])
+    console.log("updated facetList ↓");
+    console.log(facetList);
+  }, [facetList]);
 
   /**
    * remove_filter
-   * 
+   *
    * To specifically remove an applied filter.
    *
    * @param label: Value of the element to remove.
@@ -66,7 +66,6 @@ export default function ExplorePage() {
    *  https://stackoverflow.com/questions/35338961/how-to-remove-the-li-element-on-click-from-the-list-in-reactjs
    */
   const remove_filter = (label) => {
-
     let filterToRemove = filterList.find((item) => item.label === label);
     let category = filterToRemove.category;
     let subcategory = filterToRemove.subcategory;
@@ -74,28 +73,30 @@ export default function ExplorePage() {
     // Reset facetList to update the corresponding facet section.
     // Special case: Modality.
     if (category === "modality") {
-    	setFacetList(prev => {
-	      return ({
-	        ...prev,
-	        [category]: {
-	          ...prev[category],
-	          [subcategory]: "any", // subcategory in Modality = body part
-	        },
-	      });
-	    });
+      setFacetList((prev) => {
+        return {
+          ...prev,
+          [category]: {
+            ...prev[category],
+            [subcategory]: "any", // subcategory in Modality = body part
+          },
+        };
+      });
     } else {
-	    setFacetList(prev => {
-	      let newSubcategoryList = prev[category][subcategory].filter((item) => item !== label);
-	      console.log("newSubcategoryList: " + newSubcategoryList); //DEBUG
-	      return ({
-	        ...prev,
-	        [category]: {
-	          ...prev[category],
-	          [subcategory]: newSubcategoryList,
-	        },
-	      });
-	    });
-  	}
+      setFacetList((prev) => {
+        let newSubcategoryList = prev[category][subcategory].filter(
+          (item) => item !== label
+        );
+        console.log("newSubcategoryList: " + newSubcategoryList); //DEBUG
+        return {
+          ...prev,
+          [category]: {
+            ...prev[category],
+            [subcategory]: newSubcategoryList,
+          },
+        };
+      });
+    }
 
     // Reset filterList to remove the current filter from AppliedFilter.
     setFilterList (prev => {
@@ -107,12 +108,11 @@ export default function ExplorePage() {
 
     // TODO: Update gallery.
     //console.log("removing succeeds, gallery updated."); //DEBUG
-  }
+  };
 
+  /* Gallery (pictures) */
 
-/* Gallery (pictures) */
-
-	const [imageList, setImageList] = useState([]); // list of currently shown pictures
+  const [imageList, setImageList] = useState([]); // list of currently shown pictures
 
 	const [searchData, setSearchData] = useState([""]);
 	const handleSearch = (input) => {
@@ -218,26 +218,54 @@ export default function ExplorePage() {
 		})
 	}, [searchData], [filterList])
 
-	// Query from database for correct images:
+  /* Click to view details of a picture */
+  const [pictureClicked, setPictureClicked] = useState(undefined);
+  console.log("pictureClicked ↓");
+  console.log(pictureClicked); //DEBUG
 
+  const click_picture = (labelData) => {
+    // If the current picture has been clicked twice, then close ExploreDetails.
+    if (pictureClicked && labelData.url === pictureClicked.url) {
+      setPictureClicked(undefined);
+    }
 
-	return (
-		<div className="PageBox">
-			<Facet
-				setRange={setRange}
-				range={range}
-				setFilterList={setFilterList}
-				remove_filter={remove_filter}
-				filterList={filterList}
-				setFacetList={setFacetList}
-				facetList={facetList}
-				handleSearch={handleSearch}
-			/>
-			<ExploreGallery
-				imageList={imageList}
-				filterList={filterList}
-				remove_filter={remove_filter}
-			/>
-		</div>
-	);
+    // Otherwise, open up (or expand) ExploreDetails by setting pictureClicked as the input labelData of the picture being clicked on.
+    // Facet panel will be pushed into collapsed state.
+    else {
+      setPictureClicked(labelData);
+    }
+  };
+
+  const close_exploredetails = () => {
+    setPictureClicked(undefined);
+  };
+
+  /* Render */
+  return (
+    <div className="PageBox PageBox_Explore">
+      <Facet
+        setRange={setRange}
+        range={range}
+        setFilterList={setFilterList}
+        remove_filter={remove_filter}
+        filterList={filterList}
+        setFacetList={setFacetList}
+        facetList={facetList}
+        handleSearch={handleSearch}
+      />
+      <ExploreGallery
+        imageList={imageList}
+        filterList={filterList}
+        remove_filter={remove_filter}
+        click_picture={click_picture}
+        pictureClicked={pictureClicked}
+      />
+      {pictureClicked !== undefined ? (
+        <ExploreDetails
+          pictureClicked={pictureClicked}
+          close_exploredetails={close_exploredetails}
+        />
+      ) : null}
+    </div>
+  );
 }
