@@ -41,6 +41,7 @@ export default function ExplorePage() {
   useEffect(() => {
     console.log("updated filterList ↓");
     console.log(filterList);
+
   }, [filterList]);
 
   /**
@@ -219,7 +220,7 @@ export default function ExplorePage() {
 				console.log('filtered: ', _.uniq(filtered, false, function (arr) {return arr[0];}));
 			}
 		})
-	}, [searchData], [filterList])
+	}, [searchData, filterList])
 
   /* Click to view details of a picture */
   const [pictureClicked, setPictureClicked] = useState(undefined);
