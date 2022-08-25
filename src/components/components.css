@@ -3,6 +3,7 @@
  *  https://gist.github.com/lopspower/03fb1cc0ac9f32ef38f4
  *  https://stackoverflow.com/questions/15831657/creating-css-global-variables-stylesheet-theme-management
  *  https://stackoverflow.com/questions/40010597/how-do-i-apply-opacity-to-a-css-color-variable
+ *	https://www.w3schools.com/cssref/sel_attribute_value.asp
  */
 
 
@@ -23,7 +24,7 @@
 	--gray-mid: #CCCCCC;
 	--gray-light: #EEEEEE;
 	--gray-bg: #F0ECEC;
-	--pic-width: 300px; /* value should be changed together along the "GalleryColumn_helper" function in components.js. */
+	--pic-width: 200px; /* value should be changed together along the "GalleryColumn_helper" function in components.js. */
 }
 
 
@@ -154,13 +155,20 @@
 	padding: 8px 16px;
 	gap: 8px;
 }
+.Btn_primary:not(:disabled):hover {
+	background: var(--gray-bg);
+	box-shadow: none;
+}
+.Btn_primary:disabled {
+	box-shadow: none;
+}
 
 .Btn_secondary {
 	border: 1px solid var(--gray-mid);
 	border-radius: 8px;
-	filter:
-		drop-shadow(0px 4px 8px rgba(170, 170, 170, 0.16))
-		drop-shadow(0px 0px 16px rgba(170, 170, 170, 0.08));
+	box-shadow:
+		0px 4px 8px rgba(170, 170, 170, 0.16),
+		0px 0px 16px rgba(170, 170, 170, 0.08);
 	cursor: pointer;
 	/* as a container */
 	display: inline-flex;
@@ -170,13 +178,20 @@
 	padding: 8px 16px;
 	gap: 8px;
 }
+.Btn_secondary:not(:disabled):hover {
+	background: var(--gray-bg);
+	box-shadow: none;
+}
+.Btn_secondary:disabled {
+	box-shadow: none;
+}
 
 .Btn_small {
 	border: 1px solid var(--gray-mid);
 	border-radius: 8px;
-	filter:
-		drop-shadow(0px 4px 8px rgba(170, 170, 170, 0.16))
-		drop-shadow(0px 0px 16px rgba(170, 170, 170, 0.08));
+	box-shadow:
+		0px 4px 8px rgba(170, 170, 170, 0.16),
+		0px 0px 16px rgba(170, 170, 170, 0.08);
 	cursor: pointer;
 	/* as a container */
 	display: inline-flex;
@@ -184,6 +199,13 @@
 	justify-content: center;
 	align-items: center;
 	padding: 4px;
+}
+.Btn_small:not(:disabled):hover {
+	background: var(--gray-bg);
+	box-shadow: none;
+}
+.Btn_small:disabled {
+	box-shadow: none;
 }
 
 
@@ -333,7 +355,7 @@
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
-	padding: 8px 12px 8px 16px;
+	padding: 8px 12px;
 	gap: 8px;
 	background: #FFFFFF;
 	border: 1px solid var(--gray-mid);
@@ -347,6 +369,14 @@
 	flex: 1;
 }
 
+.SearchBar_clearbtn:hover {
+	filter: brightness(60%);
+}
+
+.SearchBar_searchbtn:hover {
+	filter: invert(40%); /* brighten black img */
+}
+
 .SearchBar_container {
 	/* as an item */
 	align-self: stretch;
@@ -355,6 +385,15 @@
 	flex-direction: column;
 	align-items: flex-start;
 	gap: 16px;
+}
+
+.SearchBar_noresult {
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	align-items: flex-start;
+	padding: 4px;
 }
 
 .SearchRange_expanded {
@@ -433,7 +472,7 @@
 	border-radius: 8px;
 }
 
-.SearchableDropdown_expandbtn {
+.SearchableDropdown_ecbtn { /* expand-collapse btn */
 	position: absolute;
 	top: 10px; /* ((28 + 2 * 8) - 24) / 2 = 10 */
 	right: 4px;
@@ -468,24 +507,7 @@
 	gap: 8px;
 	border: none;
 	outline: none;
-}
-
-.CustomizeLabel {
-	/* as a container */
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 16px;
-}
-
-.CustomizeLabel_field {
-	width: 240px;
-	height: 32px;
-	padding: 8px;
-	background: #FFFFFF;
-	border: 1px solid var(--gray-mid);
-	border-radius: 8px;
-	outline: none;
+	margin-right: 24px; /* arrow btn width 24 */
 }
 
 .CustomizeLabel_container {
@@ -493,11 +515,16 @@
 	align-self: stretch;
 	/* as a container */
 	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	padding-top: 8px;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	padding: 8px 4px 0px;
 	border-top: 1px solid var(--gray-mid);
-	gap: 8px;
+	gap: 16px;
+}
+
+.CustomizeLabel_hint { /* to help break too long words into multiple lines */
+	overflow-wrap: anywhere;
 }
 
 
@@ -535,6 +562,7 @@
 	position: relative;
 	height: 250px;
 	width: 250px;
+	margin-left: -46.5px; /*TODO*/
 }
 
 /* reference: https://stackoverflow.com/questions/6300635/how-to-make-an-element-transparent-to-clicks-but-still-visible */
@@ -1071,7 +1099,7 @@
 	overflow-y: scroll;
 	width: 40%;
 	max-width: 640px;
-	min-width: 560px;
+	min-width: 400px;
 	max-height: 100%;
 	border-left: 1px solid var(--gray-mid); /* TODO: dropshadow */
 	/* as an item */
@@ -1261,9 +1289,9 @@
 		8px 0px 16px rgba(170, 170, 170, 0.16),
 		0px 0px 40px 8px rgba(204, 204, 204, 0.25);
 	/* as an item */
-	flex: 1 0 25vw;
-	max-width: 560px;
-	min-width: 400px;
+	flex: 1 0 20vw;
+	max-width: 400px;
+	min-width: 320px;
 	/* as a container (module layout) */
 	background-color: #FFFFFF;
 	display: flex;
@@ -1287,9 +1315,9 @@
 		0px 8px 16px rgba(170, 170, 170, 0.16),
 		0px 0px 40px 8px rgba(204, 204, 204, 0.25);
 	/* as an item */
-	flex: 1 0 40vw;
+	flex: 1 0 30vw;
 	max-width: 640px;
-	min-width: 480px;
+	min-width: 320px;
 	/* as a container (module layout) */
 	background-color: #FFFFFF;
 	position: relative;
@@ -1334,7 +1362,7 @@
 }
 
 .ExploreDetailsCloseBtn:hover {
-	filter: brightness(60%); /* darken upon hover */
+	filter: invert(40%); /* brighten black img upon hover */
 }
 
 .DetailsLabels_container {
@@ -1430,7 +1458,7 @@
 	flex-direction: row;
 	justify-content: flex-end;
 	align-items: center;
-	padding: 0px;
+	padding: 0px 40px;
 	gap: 64px;
 	background: #FFFFFF;
 	z-index: 10;

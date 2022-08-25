@@ -19,6 +19,8 @@
     "d3": "^4.13.0",
     "firebase": "^9.9.1",
     "firebase-tools": "^11.4.2",
+    "fuse.js": "^6.6.2",
+    "heic2any": "^0.0.3",
     "node-sass": "^7.0.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.4.0",

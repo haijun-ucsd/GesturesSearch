@@ -14,28 +14,29 @@ import ArrowRight from "../assets/ArrowRight.png";
 import ExploreDetailsCloseBtn from "../assets/ExploreDetailsCloseBtn.png";
 
 export default function ExplorePage() {
-  /* Filters from Facet (search & filters) */
-  /**
-   * range
-   * Search range.
-   * Default SearchRange: { Location, Demographic, Modality, Posture }
-   * TODO: combine SearchRange and SearchRange_color variables into labels_list?
-   */
-  const SearchRange = ["location", "demographic", "modality", "posture"];
-  const [range, setRange] = useState(SearchRange); // range of categories to search within. //TODO: what if all categories are unchecked and range is none?
+
+/* Filters from Facet (search & filters) */
+	/**
+	 * range
+	 * Search range.
+	 * Default SearchRange: { Location, Demographic, Modality, Posture }
+	 * TODO: combine SearchRange and SearchRange_color variables into imgData_list?
+	 */
+	const SearchRange = ["location", "demographic", "modality", "posture"];
+  const [range, setRange] = useState(SearchRange);  // range of categories to search within. //TODO: what if all categories are unchecked and range is none?
   // DEBUG
   useEffect(() => {
     console.log("updated search range ↓");
     console.log(range);
   }, [range]);
 
-  /**
-   * filterList
-   * List of currently applied filters.
-   * Structure of each filter item: { label, label_id, category, subcategory, color }
-   */
-  const [filterList, setFilterList] = useState([]);
-  //const [filterList, setFilterList] = useState([ { label: "library", label_id: 0, category: "location", subcategory: "purpose", color: "#A0D568" }, { label: "hospital", label_id: 1, category: "location", subcategory: "purpose", color: "#A0D568" }, ]); //DEBUG
+	/**
+	 * filterList
+	 * List of currently applied filters.
+	 * Structure of each filter item: { label, label_id, category, subcategory, color }
+	 */
+	const [filterList, setFilterList] = useState([]);
+	//const [filterList, setFilterList] = useState([ { label: "library", label_id: 0, category: "location", subcategory: "site", color: "#A0D568" }, { label: "hospital", label_id: 1, category: "location", subcategory: "site", color: "#A0D568" }, ]); //DEBUG
   // DEBUG
   useEffect(() => {
     console.log("updated filterList ↓");
@@ -134,9 +135,9 @@ export default function ExplorePage() {
 		const dbRef = ref_db(db, 'images')
 		onValue(dbRef, (snapshot) => {
 		  const data = snapshot.val();
-		  let newImgList = []
-		  for (const [imgKey, labels] of Object.entries(data)) {
-			newImgList.push([imgKey, labels])
+		  let newImgList = [];
+		  for (const [imgKey, imgData] of Object.entries(data)) {
+				newImgList.push([imgKey, imgData]);
 		  }
 		  setImageList(newImgList);
 		})
