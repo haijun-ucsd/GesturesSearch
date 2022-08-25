@@ -142,7 +142,7 @@ export default function ExplorePage() {
 		})
 	}, [])
 
-/* Render */
+/* Search */
 	useEffect(() => {
 		const db = getDatabase()
 		const dbRef = ref_db(db, 'images');

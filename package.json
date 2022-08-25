@@ -16,6 +16,7 @@
     "bootstrap": "^5.2.0",
     "chart.js": "^1.1.1",
     "colcade": "^0.2.0",
+    "compressorjs": "^1.1.1",
     "d3": "^4.13.0",
     "firebase": "^9.9.1",
     "firebase-tools": "^11.4.2",
