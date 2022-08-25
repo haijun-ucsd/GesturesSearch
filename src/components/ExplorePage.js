@@ -4,7 +4,7 @@ import './components.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Facet from './Facet';
 import ExploreGallery from './ExploreGallery';
-import ExploreDetails from './ExploreDetails';
+import ExploreDetails from "./ExploreDetails";
 import { FilterStructure } from './components';
 import _, { map } from 'underscore';
 
@@ -13,22 +13,20 @@ import ArrowLeft from "../assets/ArrowLeft.png";
 import ArrowRight from "../assets/ArrowRight.png";
 import ExploreDetailsCloseBtn from "../assets/ExploreDetailsCloseBtn.png";
 
-
-
 export default function ExplorePage() {
-
-/* Filters from Facet (search & filters) */
+	/* Filters from Facet (search & filters) */
 	/**
 	 * range
 	 * Search range.
 	 * Default SearchRange: { Location, Demographic, Modality, Posture }
 	 * TODO: combine SearchRange and SearchRange_color variables into labels_list?
 	 */
-	const SearchRange = ["location", "demographic", "modality", "posture"];
+  const SearchRange = ["location", "demographic", "modality", "posture"];
   const [range, setRange] = useState(SearchRange);  // range of categories to search within. //TODO: what if all categories are unchecked and range is none?
   // DEBUG
   useEffect(() => {
-    console.log("updated search range ↓"); console.log(range);
+    console.log("updated search range ↓"); 
+	console.log(range);
   }, [range])
 
 	/**
@@ -40,7 +38,8 @@ export default function ExplorePage() {
 	//const [filterList, setFilterList] = useState([ { label: "library", label_id: 0, category: "location", subcategory: "purpose", color: "#A0D568" }, { label: "hospital", label_id: 1, category: "location", subcategory: "purpose", color: "#A0D568" }, ]); //DEBUG
   // DEBUG
   useEffect(() => {
-    console.log("updated filterList ↓"); console.log(filterList);
+    console.log("updated filterList ↓"); 
+	console.log(filterList);
   }, [filterList])
 
   /**
@@ -51,7 +50,8 @@ export default function ExplorePage() {
   const [facetList, setFacetList] = useState(FilterStructure);
   // DEBUG
   useEffect(() => {
-    console.log("updated facetList ↓"); console.log(facetList);
+    console.log("updated facetList ↓"); 
+	console.log(facetList);
   }, [facetList])
 
   /**
@@ -67,9 +67,7 @@ export default function ExplorePage() {
    */
   const remove_filter = (label) => {
 
-    let filterToRemove = filterList.find(
-    	(item) => item.label === label
-    );
+    let filterToRemove = filterList.find((item) => item.label === label);
     let category = filterToRemove.category;
     let subcategory = filterToRemove.subcategory;
 
@@ -101,9 +99,7 @@ export default function ExplorePage() {
 
     // Reset filterList to remove the current filter from AppliedFilter.
     setFilterList (prev => {
-      let newFilterList = prev.filter(
-        (item) => item.label !== label
-      );
+      let newFilterList = prev.filter((item) => item.label !== label);
       return newFilterList;
     });
 
@@ -118,15 +114,10 @@ export default function ExplorePage() {
 
 	const [imageList, setImageList] = useState([]); // list of currently shown pictures
 
-	const [searchData, setSearchData] = useState({});
+	const [searchData, setSearchData] = useState([""]);
 	const handleSearch = (input) => {
-		// console.log('search input:', input);
-		// console.log('facet-list from handleSearch:', facetList);
-		let obj = {...facetList}
-		obj['location'] = input.split(', ').map(item => item.trim())
-		setSearchData(obj);
-		// console.log('facet-list from handleSearch:', facetList);
-		// console.log('search + facet: ', obj);
+		console.log('search input:', input);
+		setSearchData(input.split(', ').map(item => item.trim()));
 		console.log('search data: ', searchData);
 	}
 
@@ -139,116 +130,99 @@ export default function ExplorePage() {
 		//     })
 		//   })
 		// })
-		const db = getDatabase();
-		const dbRef = ref_db(db, 'images');
+		const db = getDatabase()
+		const dbRef = ref_db(db, 'images')
 		onValue(dbRef, (snapshot) => {
 		  const data = snapshot.val();
-		  let newImgList = [];
+		  let newImgList = []
 		  for (const [imgKey, labels] of Object.entries(data)) {
-				newImgList.push([imgKey, labels]);
+			newImgList.push([imgKey, labels])
 		  }
 		  setImageList(newImgList);
 		})
 	}, [])
 
-	/* Query from database for correct images */
+/* Render */
 	useEffect(() => {
 		const db = getDatabase()
 		const dbRef = ref_db(db, 'images');
 		onValue(dbRef, (snapshot) => {
 			const data = snapshot.val();
 			let filtered = [];
-			let location = searchData.location;
-			let posture = searchData.posture.posture;
-			let quantity = ''
-			if ((searchData.spectators.quantity).length > 0) {
-				quantity = ((searchData.spectators.quantity)[0].split(':'))[1].trim();
-			}
-			let density = ''
-			if ((searchData.spectators.density).length > 0) {
-				density = ((searchData.spectators.density)[0].split(':'))[1].trim();
-			}
-			let attentive = ''
-			if ((searchData.spectators.attentive).length > 0) {
-				attentive = ((searchData.spectators.attentive)[0].split(':'))[1].trim();
-			}
-			let age = ''
-			if ((searchData.demographic.age).length > 0) {
-				age = (searchData.demographic.age)[0];
-			}
-			let sex = ''
-			if ((searchData.demographic.sex).length > 0) {
-				sex = (searchData.demographic)[0];
-			}
-			console.log('search input:', location, posture, quantity, density, attentive, age, sex)
-			console.log('data:', data)
-			console.log(quantity, density, attentive, age, sex)
 			for (const [imgKey, labels] of Object.entries(data)) {
-				// console.log(labels.location.in_outdoor);
-				if ((labels.location.architecture_component).some(r => location.includes(r)) ||
-					(labels.location.purpose).some(r => location.includes(r)) ||
-					 location.includes(labels.location.in_outdoor) ||
-					 (labels.posture).some(r => posture.includes(r)) ||
-					 (labels.spectators.quantity) === quantity ||
-					 (labels.spectators.density) === density ||
-					 (labels.spectators.attentive) === String(attentive) ||
-					 (labels.demographic.age) === age ||
-					 (labels.demographic.sex) === sex) {
-					filtered.push([imgKey, labels]);
+				//match labels in searchbar query
+				if (searchData[0].length !== 0){
+					for (const searchLabel of searchData) {
+						if (labels.location.in_outdoor === searchLabel || 
+							(labels.location.architecture_component !== undefined && String(labels.location.architecture_component).includes(searchLabel)) || 
+							(labels.location.purpose !== undefined && String(labels.location.purpose).includes(searchLabel)) ||
+							(labels.posture !== undefined && String(labels.posture).includes(searchLabel)) ||
+							(labels.demographic.social_role !== undefined && String(labels.demographic.social_role).includes(searchLabel))) {
+							filtered.push([imgKey, labels]);
+						}
+					}
+				}
+
+				//match labels in facet
+				if (filterList !== []){
+					for (const facetLabel of filterList) {
+						switch (facetLabel.category) {
+							case 'posture':
+								if (labels.posture !== undefined && String(labels.posture).includes(facetLabel.label)) {
+									filtered.push([imgKey, labels]);
+								}
+								break;
+							case 'demographic':
+								if (facetLabel.subcategory === "age") {
+									if (labels.demographic.age !== undefined && labels.demographic.age === facetLabel.label) {
+										filtered.push([imgKey, labels]);
+									}
+								} else if (facetLabel.subcategory === "sex") {
+									if (labels.demographic.sex !== undefined && labels.demographic.sex === facetLabel.label) {
+										filtered.push([imgKey, labels]);
+									}
+								}
+								break;
+							case 'modality':
+								var avail = facetLabel.label.split(' ')[1];
+								if (labels.modality[facetLabel.subcategory] === Boolean(avail === 'available')) {
+									filtered.push([imgKey, labels]);
+								}
+								break;
+							case 'spectators':
+								var value = facetLabel.label.split(' ')[2];
+								if (facetLabel.subcategory === "quantity") {
+									if (labels.spectators.quantity === value) {
+										filtered.push([imgKey, labels]);
+									}
+								} else if (facetLabel.subcategory === "density") {
+									if (labels.spectators.density === value) {
+										filtered.push([imgKey, labels]);
+									}
+								} else {
+									if (labels.spectators.attentive === value) {
+										filtered.push([imgKey, labels]);
+									}
+								}
+								break;
+							default:
+								console.log("undefined range");
+						}
+					}
 				}
 			}
-			// for (const searchLabel of searchData) {
-			// 	for (const [imgKey, labels] of Object.entries(data)) {
-			// 		console.log(labels)
-			// 		console.log(imgKey);
-			// 		if (searchData['location'].includes(labels.location.in_outdoor) || 
-			// 			(labels.location.architecture_component !== undefined && String(labels.location.architecture_component).includes(searchLabel)) || 
-			// 			(labels.location.purpose !== undefined && String(labels.location.purpose).includes(searchLabel)) ||
-			// 			(labels.posture !== undefined && String(labels.posture).includes(searchLabel)) ||
-			// 			(labels.demographic.social_role !== undefined && String(labels.demographic.social_role).includes(searchLabel))) {
-			// 			filtered.push([imgKey, labels]);
-			// 		}
-			// 	}
-			// }
-			if (searchData === {}) {
-				for (const [imgKey, labels] of Object.entries(data)) {
-					filtered.push([imgKey, labels])
-				}
-				console.log('inital:', filtered)
-				// setImageList(_.uniq(filtered, false, function (arr) {return arr[0];}));
+			if (filtered.length !== 0) {
+				setImageList(_.uniq(filtered, false, function (arr) {return arr[0];}));
+				console.log('filtered: ', _.uniq(filtered, false, function (arr) {return arr[0];}));
 			}
-			setImageList(filtered);
 		})
-	}, [searchData])
+	}, [searchData], [filterList])
+
+	// Query from database for correct images:
 
 
-/* Click to view details of a picture */
-
-	const [pictureClicked, setPictureClicked] = useState(undefined);
-	console.log("pictureClicked ↓"); console.log(pictureClicked); //DEBUG
-
-	const click_picture = (labelData) => {
-
-		// If the current picture has been clicked twice, then close ExploreDetails.
-		if (pictureClicked && labelData.url === pictureClicked.url) {
-			setPictureClicked(undefined);
-		}
-
-		// Otherwise, open up (or expand) ExploreDetails by setting pictureClicked as the input labelData of the picture being clicked on.
-		// Facet panel will be pushed into collapsed state.
-		else {
-			setPictureClicked(labelData);
-		}
-	}
-
-	const close_exploredetails = () => {
-		setPictureClicked(undefined);
-	}
-
-
-/* Render */
 	return (
-		<div className="PageBox PageBox_Explore">
+		<div className="PageBox">
 			<Facet
 				setRange={setRange}
 				range={range}
@@ -263,15 +237,7 @@ export default function ExplorePage() {
 				imageList={imageList}
 				filterList={filterList}
 				remove_filter={remove_filter}
-				click_picture={click_picture}
-				pictureClicked={pictureClicked}
 			/>
-			{pictureClicked!==undefined ?
-				<ExploreDetails
-					pictureClicked={pictureClicked}
-					close_exploredetails={close_exploredetails}
-				/>
-			: null }
 		</div>
 	);
 }
