@@ -157,6 +157,8 @@ export default function ExplorePage() {
 							(labels.location.architecture_component !== undefined && String(labels.location.architecture_component).includes(searchLabel)) || 
 							(labels.location.purpose !== undefined && String(labels.location.purpose).includes(searchLabel)) ||
 							(labels.posture !== undefined && String(labels.posture).includes(searchLabel)) ||
+							(labels.demographic.sex !== undefined && labels.demographic.sex === searchLabel) ||
+							(labels.demographic.age !== undefined && labels.demographic.age === searchLabel) ||
 							(labels.demographic.social_role !== undefined && String(labels.demographic.social_role).includes(searchLabel))) {
 							filtered.push([imgKey, labels]);
 						}
