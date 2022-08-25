@@ -3,7 +3,7 @@ import React, { useState , useEffect, useLayoutEffect } from 'react';
 //import { getDatabase, onValue, ref as ref_db, set } from 'firebase/database';
 //import { ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage';
 //import { v4 } from 'uuid';
-import Slider, { Range } from 'rc-slider';
+//import Slider, { Range } from 'rc-slider';
 import './components.css';
 import { labels_data } from "./labels_data.js";
 import { Filter, Checkbox, CheckLabel, ExploreSearchBar, AccordionSection, FetchLabelList_helper } from './components';
@@ -369,10 +369,10 @@ function FacetSpectators(props) {
 	const spectatorsColor = "#FFCE54";
 
 	// Attentive slider helper
-	const Slider = require('rc-slider');
-	const { createSliderWithTooltip } = Slider;
-	const Range = createSliderWithTooltip(Slider.Range);
-	const [attentiveRange, setAttentiveRange] = useState([0, 9]); // default as full range
+	// const Slider = require('rc-slider');
+	// const { createSliderWithTooltip } = Slider;
+	// const Range = createSliderWithTooltip(Slider.Range);
+	// const [attentiveRange, setAttentiveRange] = useState([0, 9]); // default as full range
 
 	// Render
 	return (
@@ -427,7 +427,8 @@ function FacetSpectators(props) {
 							Attentive
 						</div>
 					</div>
-{/*						{allAttentives.map((item) =>
+					<div className="Checkbox_spectrum_container">
+						{allAttentives.map((item) =>
 							<Checkbox
 								spectrumBox={true}
 								value={item}
@@ -436,9 +437,10 @@ function FacetSpectators(props) {
 								checkedState={props.facetList.spectators.attentive.some(i => i===("attentive spectators: " + item))}
 								onchange_handler={() => props.filter_change_handler(("attentive spectators: " + item), 0, "spectators", "attentive", spectatorsColor)} // TODO: label_id?
 							/>
-						)}*/}
-						<Range />
-{/*					<div class="FacetAttentiveSlider">
+						)}
+					</div>
+					{/*<Range />*/}
+					{/*<div class="FacetAttentiveSlider">
 						<div class="FacetAttentiveSlider_rail"></div>
 						<div class="FacetAttentiveSlider_track rc-slider-track-1"></div>
 						<div class="FacetAttentiveSlider_step">

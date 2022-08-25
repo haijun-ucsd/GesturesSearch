@@ -1,19 +1,12 @@
 import React, { useRef } from 'react';
 import ReactDOM from 'react-dom/client';
-import { getDatabase, onValue, ref as ref_db } from 'firebase/database';
+import { getDatabase, onValue, ref as ref_db, set, get } from 'firebase/database';
 import './components.css';
 import { labels_data } from "./labels_data.js";
 import { useState , useEffect } from 'react';
 import { Autocomplete, TextField } from '@mui/material';
 import Fuse from 'fuse.js';
 import useResizeAware from 'react-resize-aware';
-import {
-  getDatabase,
-  onValue,
-  ref as ref_db,
-  set,
-  get,
-} from "firebase/database";
 
 /* Assets: */
 import RemovableLabel_removebtn from "../assets/RemovableLabel_removebtn.png";
