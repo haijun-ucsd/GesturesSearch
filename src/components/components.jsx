@@ -18,8 +18,10 @@ import ArrowDown_primary from "../assets/ArrowDown_primary.png";
 import ArrowUp_tiny from "../assets/ArrowUp_tiny.png";
 import ArrowDown_tiny from "../assets/ArrowDown_tiny.png";
 
-
 const db = getDatabase();
+
+
+
 /**
  * Label
  *
@@ -462,7 +464,7 @@ function SearchableDropdown(props) {
 	const searchbarRef = useRef();
 	const focus_on_searchbar = (() => {
 		if (expanded==true) {
-			console.log("SearchableDropdown clicked, find corresponding search bar ↓"); console.log(searchbarRef.current); //DEBUG
+			console.log("SearchableDropdown clicked, find corresponding search bar:", searchbarRef.current); //DEBUG
 			searchbarRef.current.focus(); // there is a setFocus() function in the SearchBar component to set focus on the search bar input field
 		}
 	});
@@ -523,11 +525,11 @@ function SearchableDropdown(props) {
 
 	const get_search_result = () => {
 		const submittedSearchText = searchText; // take a snapshot of the current searchText upon submission
-		//console.log("search '" + submittedSearchText + "' in range ↓ "); console.log(searchRange); //DEBUG
+		//console.log("search '" + submittedSearchText + "' in range : ", searchRange); //DEBUG
 		const newSearchResult =
 			fuzzy_search_helper.search(submittedSearchText) // structure of Fuse result: [{item: "XXX" (label name), refIndex: N (index in searchRange)}, ...]
 			.map((item) => item.item );
-		console.log("newSearchResult ↓"); console.log(newSearchResult); //DEBUG
+		console.log("newSearchResult:", newSearchResult); //DEBUG
 		setSearchResultList(newSearchResult);
 	}
 
@@ -822,7 +824,7 @@ const FetchLabelList_helper = (category, subcategory) => {
 			newLabelList.push(label);
 		}
 	})
-	//console.log("newLabelList fetched ↓ "); console.log(newLabelList); //DEBUG
+	//console.log("newLabelList fetched : ", newLabelList); //DEBUG
 	return newLabelList;
 }
 

@@ -74,6 +74,7 @@ function Gallery(props) {
 		<Masonry
 			breakpointCols={{default: galleryNumCol}}
 			className="Gallery"
+			style={{justifyContent: (galleryNumCol >= props.imageList.length) ? "left" : "center"}}
 			columnClassName="GalleryColumn"
 		>
 			{GalleryResizeListener}

@@ -29,15 +29,15 @@ export default function App() {
   // DEBUG
   useEffect(() => {
     console.log("addedPics list has changed.");
-    console.log("current addedPics list ↓"); console.log(addedPics);
-    console.log("current addedPicsUrl list ↓"); console.log(addedPicsUrl);
-    console.log("current formDataList list ↓"); console.log(formDataList);
+    console.log("current addedPics list:", addedPics);
+    console.log("current addedPicsUrl list:", addedPicsUrl);
+    console.log("current formDataList list:", formDataList);
   }, [addedPics]);
   useEffect(() => {
-    console.log("formDataList has been updated ↓"); console.log(formDataList);
+    console.log("formDataList has been updated:", formDataList);
   }, [formDataList])
   useEffect(() => {
-    console.log("picAnnotation has been updated ↓"); console.log(picAnnotation);
+    console.log("picAnnotation has been updated:", picAnnotation);
   }, [picAnnotation])
 
   /* Render */

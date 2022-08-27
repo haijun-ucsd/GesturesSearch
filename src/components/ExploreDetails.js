@@ -144,7 +144,6 @@ export default function ExploreDetails(props) {
 								// Special case: modality. Only show available ones.
 								else if (categoryobj.category === "modality") {
 									const modality_data_arr = props.pictureClicked["modality"];
-									console.log("\n\n\n"); console.log(modality_data_arr);
 									let available_modalities = [];
 									categoryobj.subcategories.map((subcategoryobj) => {
 										if (modality_data_arr[subcategoryobj.subcategory] === true) {
