@@ -8,7 +8,8 @@ import { labels_data } from "./labels_data.js";
 import BodyComponent from './BodyComponent';
 
 /* Assets: */
-import PopUpCloseBtn from "../assets/PopUpCloseBtn.png";
+//import PopUpCloseBtn from "../assets/PopUpCloseBtn.png";
+import YesBtn from "../assets/YesBtn.png";
 import EditPicIcon from "../assets/EditPicIcon.png";
 
 
@@ -69,7 +70,7 @@ export default function UploadPopUp(props) {
 							(!Array.isArray(formData[category][subcategory]))
 							&& formData[category][subcategory] !== ""
 						)) {
-							console.log("Required field '" + subcategory + "' is filled ↓"); console.log(formData[category][subcategory]); //DEBUG
+							console.log("Required field '" + subcategory + "' is filled:", formData[category][subcategory]); //DEBUG
 							percentage += 17; // 100/6≈17
 						}
 					}
@@ -81,7 +82,7 @@ export default function UploadPopUp(props) {
 						(!Array.isArray(formData[category]))
 						&& formData[category] !== ""
 					)) {
-						console.log("Required field '" + category + "' is filled ↓"); console.log(formData[category]); //DEBUG
+						console.log("Required field '" + category + "' is filled:", formData[category]); //DEBUG
 						percentage += 16;
 					}
 				}
@@ -99,7 +100,7 @@ export default function UploadPopUp(props) {
 						(!Array.isArray(formData[category][subcategory]))
 						&& formData[category][subcategory] !== ""
 					)) {
-						console.log("Optional field '" + subcategory + "' is filled ↓"); console.log(formData[category][subcategory]); //DEBUG
+						console.log("Optional field '" + subcategory + "' is filled:", formData[category][subcategory]); //DEBUG
 						console.log(formData);
 						percentage += 1;
 					}
@@ -142,8 +143,8 @@ export default function UploadPopUp(props) {
 	const [formData, setFormData] = useState(props.formDataList[props.dataIndex]);
 	// DEBUG
 	useEffect(() => {
-		console.log("updated formData ↓"); console.log(formData);
-		//console.log("current formDataList ↓"); console.log(props.formDataList);
+		console.log("updated formData:", formData);
+		//console.log("current formDataList:", props.formDataList);
 	}, [formData]);
 
 	/**
@@ -206,21 +207,21 @@ export default function UploadPopUp(props) {
 			if (checked) {
 				// Add label.
 				setFormData((prev) => {
-					console.log("before change: posture >> ↓");
+					console.log("before change: posture >> ");
 					console.log(prev["posture"]); //DEBUG
 					let newArr = [...prev["posture"], e.target.value];
 					let newFormData = {
 						...prev,
 						["posture"]: newArr,
 					};
-					console.log("after change: posture >> ↓");
+					console.log("after change: posture >> ");
 					console.log(newFormData["posture"]); //DEBUG
 					return newFormData;
 				});
 			} else {
 				// Remove label.
 				setFormData((prev) => {
-					console.log("before change: posture >> ↓");
+					console.log("before change: posture >> ");
 					console.log(prev["posture"]); //DEBUG
 					let newArr = prev["posture"].filter(
 						(item) => item !== e.target.value
@@ -229,7 +230,7 @@ export default function UploadPopUp(props) {
 						...prev,
 						["posture"]: newArr,
 					};
-					console.log("after change: posture >> ↓");
+					console.log("after change: posture >> ");
 					console.log(newFormData["posture"]); //DEBUG
 					return newFormData;
 				});
@@ -241,7 +242,7 @@ export default function UploadPopUp(props) {
 			if (checked) {
 				// Add label.
 				setFormData((prev) => {
-					console.log("before change: " + categoryname + " >> " + subcategoryname + " >> ↓"); console.log(prev[categoryname][subcategoryname]); //DEBUG
+					console.log("before change: " + categoryname + " >> " + subcategoryname + " >> ", prev[categoryname][subcategoryname]); //DEBUG
 					let newArr = [...prev[categoryname][subcategoryname], e.target.value];
 					let newFormData = {
 						...prev,
@@ -250,13 +251,13 @@ export default function UploadPopUp(props) {
 							[subcategoryname]: newArr,
 						},
 					};
-					console.log("after change: " + categoryname + " >> " + subcategoryname + " >> ↓"); console.log(newFormData[categoryname][subcategoryname]); //DEBUG
+					console.log("after change: " + categoryname + " >> " + subcategoryname + " >> ", newFormData[categoryname][subcategoryname]); //DEBUG
 					return newFormData;
 				});
 			} else {
 				// Remove label.
 				setFormData((prev) => {
-					console.log("before change: " + categoryname + " >> " + subcategoryname + " >> ↓"); console.log(prev[categoryname][subcategoryname]); //DEBUG
+					console.log("before change: " + categoryname + " >> " + subcategoryname + " >> ", prev[categoryname][subcategoryname]); //DEBUG
 					let newArr = prev[categoryname][subcategoryname].filter(
 						(item) => item !== e.target.value
 					);
@@ -267,7 +268,7 @@ export default function UploadPopUp(props) {
 							[subcategoryname]: newArr,
 						},
 					};
-					console.log("after change: " + categoryname + " >> " + subcategoryname + " >> ↓"); console.log(newFormData[categoryname][subcategoryname]); //DEBUG
+					console.log("after change: " + categoryname + " >> " + subcategoryname + " >> ", newFormData[categoryname][subcategoryname]); //DEBUG
 					return newFormData;
 				});
 			}
@@ -279,13 +280,13 @@ export default function UploadPopUp(props) {
 		// Special case: posture. No subcatrgory layer when storing.
 		if (categoryname === "posture") {
 			setFormData((prev) => {
-				console.log("before change (add): posture >> ↓"); console.log(prev["posture"]); //DEBUG
+				console.log("before change (add): posture >> ", prev["posture"]); //DEBUG
 				let newArr = [...prev["posture"], label];
 				let newFormData = {
 					...prev,
 					["posture"]: newArr,
 				};
-				console.log("after change (add): posture >> ↓"); console.log(newFormData["posture"]); //DEBUG
+				console.log("after change (add): posture >> ", newFormData["posture"]); //DEBUG
 				return newFormData;
 			});
 		}
@@ -293,7 +294,7 @@ export default function UploadPopUp(props) {
 		// Default case.
 		else {
 			setFormData((prev) => {
-				console.log("before change (add): " + categoryname + " >> " + subcategoryname + " >> ↓"); console.log(prev[categoryname][subcategoryname]); //DEBUG
+				console.log("before change (add): " + categoryname + " >> " + subcategoryname + " >> ", prev[categoryname][subcategoryname]); //DEBUG
 				let newArr = [...prev[categoryname][subcategoryname], label];
 				let newFormData = {
 					...prev,
@@ -302,7 +303,7 @@ export default function UploadPopUp(props) {
 						[subcategoryname]: newArr,
 					},
 				};
-				console.log("after change (add): " + categoryname + " >> " + subcategoryname + " >> ↓"); console.log(newFormData[categoryname][subcategoryname]); //DEBUG
+				console.log("after change (add): " + categoryname + " >> " + subcategoryname + " >> ", newFormData[categoryname][subcategoryname]); //DEBUG
 				return newFormData;
 			});
 		}
@@ -313,7 +314,7 @@ export default function UploadPopUp(props) {
 		// Special case: posture. No subcatrgory layer when storing.
 		if (categoryname === "posture") {
 			setFormData((prev) => {
-				console.log("before change (remove): posture >> ↓"); console.log(prev["posture"]); //DEBUG
+				console.log("before change (remove): posture >> ", prev["posture"]); //DEBUG
 				let newArr = prev["posture"].filter(
 					(item) => item !== label
 				);
@@ -321,7 +322,7 @@ export default function UploadPopUp(props) {
 					...prev,
 					["posture"]: newArr,
 				};
-				console.log("after change (remove): posture >> ↓"); console.log(newFormData["posture"]); //DEBUG
+				console.log("after change (remove): posture >> ", newFormData["posture"]); //DEBUG
 				return newFormData;
 			});
 		}
@@ -329,7 +330,7 @@ export default function UploadPopUp(props) {
 		// Default case.
 		else {
 			setFormData((prev) => {
-				console.log("before change (remove): " + categoryname + " >> " + subcategoryname + " >> ↓"); console.log(prev[categoryname][subcategoryname]); //DEBUG
+				console.log("before change (remove): " + categoryname + " >> " + subcategoryname + " >> ", prev[categoryname][subcategoryname]); //DEBUG
 				let newArr = prev[categoryname][subcategoryname].filter(
 					(item) => item !== label
 				);
@@ -340,7 +341,7 @@ export default function UploadPopUp(props) {
 						[subcategoryname]: newArr,
 					},
 				};
-				console.log("after change (remove): " + categoryname + " >> " + subcategoryname + " >> ↓"); console.log(newFormData[categoryname][subcategoryname]); //DEBUG
+				console.log("after change (remove): " + categoryname + " >> " + subcategoryname + " >> ", newFormData[categoryname][subcategoryname]); //DEBUG
 				return newFormData;
 			});
 		}
@@ -511,11 +512,13 @@ export default function UploadPopUp(props) {
 						clear_annotation={clear_annotation}
 					/>
 				</div>
-				<input
-					className="PopUpClose"
-					type="image" src={PopUpCloseBtn} 
+				<btn
+					className="PopUpClose Btn_primary"
 					onClick={close_pop_and_save}
-				/>
+				>
+					<img src={YesBtn} />
+					Save
+				</btn>
 			</div>
 		</div>
 	);
@@ -757,7 +760,7 @@ function LabelsForm(props) {
 
 			// Type 3 → human figure
 			case 3:
-				//console.log("is formData updated? ↓"); console.log(props.formData); //DEBUG
+				//console.log("is formData updated?:", props.formData); //DEBUG
 				return (
 					<div className="SubcategoryName ModalityDisplay_state">
 						{subcategory.subcategory_displaytext} : <span>
