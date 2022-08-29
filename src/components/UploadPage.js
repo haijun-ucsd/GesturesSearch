@@ -8,6 +8,7 @@ import { v4 } from "uuid";
 import "./components.css";
 import WaitingRoom from "./WaitingRoom";
 import { LabelStructure } from "./components";
+import Compressor from 'compressorjs';
 
 /**
  * UploadPage
@@ -103,95 +104,107 @@ export default function UploadPage(props) {
 		console.log("new key: " + key); //DEBUG
 		const db = getDatabase();
 
-		// Store picture to firebase.
-		uploadBytes(imageRef, props.addedPics[idx]).then((snapshot) => {
-			getDownloadURL(snapshot.ref).then((url) => {
+    new Compressor(props.addedPics[idx], {
+      quality: 0.6,
+  
+      mimeType: "image/jpeg",
+      convertSize: 1000000,
+      // The compression process is asynchronous,
+      // which means you have to access the `result` in the `success` hook function.
+      success(result) {
+        props.addedPics[idx] = result;
+            // Store picture to firebase.
+        uploadBytes(imageRef, result).then((snapshot) => {
+          console.log("compressed result: ", props.addedPics[idx]);
+          getDownloadURL(snapshot.ref).then((url) => {
 
-				// 1. Store data to firebase realtime database under "images", data
-				//		includes form data, URL, annotation info.
-				console.log("Upload image, labels, and annotation.\nkey: " + key + "\n url: " + url); //DEBUG
-				let finalPicData = {
-					url: url,
-					...props.formDataList[idx],
-					annotation: props.picAnnotation[idx],
-				};
-				//finalPicData["url"] = url; // TODO: remove this line, should not need
-				const image_path = "images/" + key;
-				set(ref_db(db, image_path), finalPicData); // store finalPicData into the corresponding picture object under "image"
-				console.log("finalPicData ↓"); console.log(finalPicData); //DEBUG
+            // 1. Store data to firebase realtime database under "images", data
+            //		includes form data, URL, annotation info.
+            console.log("Upload image, labels, and annotation.\nkey: " + key + "\n url: " + url); //DEBUG
+            let finalPicData = {
+              url: url,
+              ...props.formDataList[idx],
+              annotation: props.picAnnotation[idx],
+            };
+            //finalPicData["url"] = url; // TODO: remove this line, should not need
+            const image_path = "images/" + key;
+            set(ref_db(db, image_path), finalPicData); // store finalPicData into the corresponding picture object under "image"
+            console.log("finalPicData ↓"); console.log(finalPicData); //DEBUG
 
-				// 2. Give a numeric id (finalPicIndex) for the picture, and use it to
-				//		store the picture under "labels" in firebase realtime database.
-				var finalPicIndex = 0;
+            // 2. Give a numeric id (finalPicIndex) for the picture, and use it to
+            //		store the picture under "labels" in firebase realtime database.
+            var finalPicIndex = 0;
 
-				// Generate index for each image by publishing order.
-				get(ref_db(db, "images")).then((snapshot) => {
-					let lastTimestamp = -1;
-					let lastImage = null; // helper to find the last image according tio timestamp
-					console.log("snapshot size:" + snapshot.size); //DEBUG
-					if (snapshot.size === 1) {
-						console.log("first image ever"); //DEBUG
-						set(ref_db(db, `images/${key}/index`), 0);
-						snapshot.forEach((child) => {
-							const thisImage = child.val();
-							lastImage = thisImage;
-						});
-					} else {
-						snapshot.forEach((child) => {
-							const thisImage = child.val();
-							console.log("thisImage.timestamp:" + thisImage.timestamp); //DEBUG
-							if (
-								thisImage.timestamp > lastTimestamp &&
-								thisImage.index !== undefined // looking for the second highest timestamp which is the last uploaded pic
-							) {
-								lastTimestamp = thisImage.timestamp;
-								lastImage = thisImage;
-							}
-						});
-						if (lastImage) {
-							//if lastImage exists
-							console.log("lastImage:" + lastImage); //DEBUG
-							set(ref_db(db, `images/${key}/index`), lastImage.index + 1); // set thisImage.index=lastImage.index+1
-							finalPicIndex = lastImage.index + 1;
-							console.log("finalPicIndex:" + finalPicIndex); //DEBUG
-						}
-					}
+            // Generate index for each image by publishing order.
+            get(ref_db(db, "images")).then((snapshot) => {
+              let lastTimestamp = -1;
+              let lastImage = null; // helper to find the last image according tio timestamp
+              console.log("snapshot size:" + snapshot.size); //DEBUG
+              if (snapshot.size === 1) {
+                console.log("first image ever"); //DEBUG
+                set(ref_db(db, `images/${key}/index`), 0);
+                snapshot.forEach((child) => {
+                  const thisImage = child.val();
+                  lastImage = thisImage;
+                });
+              } else {
+                snapshot.forEach((child) => {
+                  const thisImage = child.val();
+                  console.log("thisImage.timestamp:" + thisImage.timestamp); //DEBUG
+                  if (
+                    thisImage.timestamp > lastTimestamp &&
+                    thisImage.index !== undefined // looking for the second highest timestamp which is the last uploaded pic
+                  ) {
+                    lastTimestamp = thisImage.timestamp;
+                    lastImage = thisImage;
+                  }
+                });
+                if (lastImage) {
+                  //if lastImage exists
+                  console.log("lastImage:" + lastImage); //DEBUG
+                  set(ref_db(db, `images/${key}/index`), lastImage.index + 1); // set thisImage.index=lastImage.index+1
+                  finalPicIndex = lastImage.index + 1;
+                  console.log("finalPicIndex:" + finalPicIndex); //DEBUG
+                }
+              }
 
-					// Store index under the correct labels.
-					let formData = {...props.formDataList[idx]};
-					console.log("Append image index under corresponding labels."); //DEBUG
-					for (let category in formData) {
-						//console.log("category: " + category); //DEBUG
+              // Store index under the correct labels.
+              let formData = {...props.formDataList[idx]};
+              console.log("Append image index under corresponding labels."); //DEBUG
+              for (let category in formData) {
+                //console.log("category: " + category); //DEBUG
 
-						// Special case: posture. No subcategory layer.
-						if (category === "posture") {
-							formData["posture"].map(label => { // formData["posture"] guaranteed to be an array
-								//console.log("label: " + label); //DEBUG
-								const label_path = "labels/posture/" + label;
-								set(ref_db(db, label_path + "/" + finalPicIndex), { url: url }); // TODO: storing url as well for now, can remove if find it unnecessary.
-							});
-						}
+                // Special case: posture. No subcategory layer.
+                if (category === "posture") {
+                  formData["posture"].map(label => { // formData["posture"] guaranteed to be an array
+                    //console.log("label: " + label); //DEBUG
+                    const label_path = "labels/posture/" + label;
+                    set(ref_db(db, label_path + "/" + finalPicIndex), { url: url }); // TODO: storing url as well for now, can remove if find it unnecessary.
+                  });
+                }
 
-						// Default case.
-						else {
-							for (let subcategory in formData[category]) {
-								//console.log("subcategory: " + subcategory); //DEBUG
-								if (Array.isArray(formData[category][subcategory])) {
-									formData[category][subcategory].map(label => {
-										//console.log("label: " + label); //DEBUG
-										const label_path = "labels/" + category + "/" + subcategory + "/" + label;
-										set(ref_db(db, label_path + "/" + finalPicIndex), { url: url });
-									});
-								} else {
-									const label_path = "labels/" + category + "/" + subcategory + "/" + formData[category][subcategory];
-									set(ref_db(db, label_path + "/" + finalPicIndex), { url: url });
-								}
-							}
-						}
-					}
-				});
-			});
-		});
+                // Default case.
+                else {
+                  for (let subcategory in formData[category]) {
+                    //console.log("subcategory: " + subcategory); //DEBUG
+                    if (Array.isArray(formData[category][subcategory])) {
+                      formData[category][subcategory].map(label => {
+                        //console.log("label: " + label); //DEBUG
+                        const label_path = "labels/" + category + "/" + subcategory + "/" + label;
+                        set(ref_db(db, label_path + "/" + finalPicIndex), { url: url });
+                      });
+                    } else {
+                      const label_path = "labels/" + category + "/" + subcategory + "/" + formData[category][subcategory];
+                      set(ref_db(db, label_path + "/" + finalPicIndex), { url: url });
+                    }
+                  }
+                }
+              }
+            });
+          });
+        });
+      },
+    });
 
 		// Prepare to clear the uploaded picture.
 		// For now, maintain a tombstone at the index to facilitate the upload loop.
