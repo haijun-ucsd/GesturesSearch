@@ -26,7 +26,7 @@ export default function ExplorePage() {
   const [range, setRange] = useState(SearchRange);  // range of categories to search within. //TODO: what if all categories are unchecked and range is none?
   // DEBUG
   useEffect(() => {
-    console.log("updated search range ↓");
+    console.log("updated search range:");
     console.log(range);
   }, [range]);
 
@@ -39,7 +39,7 @@ export default function ExplorePage() {
 	//const [filterList, setFilterList] = useState([ { label: "library", label_id: 0, category: "location", subcategory: "site", color: "#A0D568" }, { label: "hospital", label_id: 1, category: "location", subcategory: "site", color: "#A0D568" }, ]); //DEBUG
   // DEBUG
   useEffect(() => {
-    console.log("updated filterList ↓");
+    console.log("updated filterList:");
     console.log(filterList);
 
   }, [filterList]);
@@ -52,7 +52,7 @@ export default function ExplorePage() {
   const [facetList, setFacetList] = useState(FilterStructure);
   // DEBUG
   useEffect(() => {
-    console.log("updated facetList ↓");
+    console.log("updated facetList:");
     console.log(facetList);
   }, [facetList]);
 
@@ -235,7 +235,7 @@ export default function ExplorePage() {
 
   /* Click to view details of a picture */
   const [pictureClicked, setPictureClicked] = useState(undefined);
-  console.log("pictureClicked ↓");
+  console.log("pictureClicked:");
   console.log(pictureClicked); //DEBUG
 
   const click_picture = (labelData) => {

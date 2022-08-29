@@ -18,6 +18,7 @@
 	--modality-color: #4FC1E8;
 	--available-modality-color: #A0D568; /* right now same green as Location */
 	--occupied-modality-color: #ED5564; /* right now same red as Demographic */
+	--white: #FFFFFF;
 	--black: #000000;
 	--faded-black: #333333;
 	--gray-dark: #AAAAAA;
@@ -162,6 +163,7 @@
 }
 .Btn_primary:disabled {
 	box-shadow: none;
+	cursor: auto;
 }
 
 .Btn_secondary {
@@ -185,6 +187,7 @@
 }
 .Btn_secondary:disabled {
 	box-shadow: none;
+	cursor: auto;
 }
 
 .Btn_small {
@@ -207,6 +210,7 @@
 }
 .Btn_small:disabled {
 	box-shadow: none;
+	cursor: auto;
 }
 
 
@@ -328,7 +332,7 @@
 /* Dropdown */
 
 .Dropdown {
-	background: #FFFFFF;
+	background: var(--white);
 	border: 1px solid var(--gray-mid);
 	border-radius: 8px;
 	padding: 4px 24px 4px 8px;
@@ -358,7 +362,7 @@
 	align-items: center;
 	padding: 8px 12px;
 	gap: 8px;
-	background: #FFFFFF;
+	background: var(--white);
 	border: 1px solid var(--gray-mid);
 	border-radius: 8px;
 }
@@ -886,6 +890,7 @@
 	overflow-y: scroll;
 	position: relative;
 	display: flex;
+	flex-direction: row-reverse; /* need row-reverse to correct for the rendering of gallery columns */
 	align-items: flex-start;
 	justify-content: center;
 	padding: 24px 40px 40px;
@@ -927,9 +932,9 @@
 }
 
 
-/* WaitingRoom */
+/* UploadPage WaitingRoom */
 
-.WaitingRoom {
+.UploadWaitingRoom {
 	height: calc(100vh - 40px); /* minus height of Navbar */
 	/* as an item */
 	align-self: stretch;
@@ -940,14 +945,14 @@
 	align-items: flex-start;
 }
 
-.WaitingRoomControl {
+.UploadControl {
 	/*position: absolute;
 	left: 0;
 	top: 0;*/
 	/* as an item */
 	align-self: stretch;
 	/* as a container */
-	background-color: #FFFFFF;
+	background-color: var(--white);
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
@@ -955,7 +960,7 @@
 	padding: 24px 40px;
 }
 
-.WaitingRoomControl_addpic {
+.UploadControl_addpic {
 	/* as a container */
 	display: flex;
 	flex-direction: row;
@@ -963,7 +968,7 @@
 	gap: 24px;
 }
 
-.WaitingRoomControl_selectpic {  /* right now same as WaitingRoomControl_addpic */
+.UploadControl_selectpic {  /* right now same as UploadControl_addpic */
 	/* as a container */
 	display: flex;
 	flex-direction: row;
@@ -971,7 +976,7 @@
 	gap: 24px;
 }
 
-.WaitingRoomControl_uploadpic {  /* right now same as WaitingRoomControl_addpic */
+.UploadControl_uploadpic {  /* right now same as UploadControl_addpic */
 	/* as a container */
 	display: flex;
 	flex-direction: row;
@@ -989,6 +994,7 @@
 
 .WaitingPic_container {
 	position: relative;
+	overflow: visible;
 }
 
 .WaitingPic {
@@ -1011,6 +1017,32 @@
 .WaitingPicProgressBar {
 	width: 40px;
 	height: 40px;
+}
+
+.WaitingPicRemover_innercontainer {
+	padding: 0px;
+	background-color: var(--white);
+	border-radius: 100px;
+	cursor: pointer;
+	z-index: 1;
+}
+
+.WaitingPicRemover_outercontainer { /* an invidible outer container to adjust position of the remove button and improve selecting experience */
+	position: absolute;
+	transform: translate(50%, -50%); top: 0px; right: 0px;
+	display: none;
+	/*display: inline-flex; /*DEBUG*/
+	padding: 16px; /* modify this range according to achieve the best experience */
+	border-radius: 100px;
+	z-index: 1;
+}
+
+.WaitingPic_container:hover .WaitingPicRemover_outercontainer {
+	display: inline-flex;
+}
+
+.WaitingPicRemover_innercontainer:hover .WaitingPicRemover {
+	filter: invert(40%); /* brighten black img upon hover */
 }
 
 
@@ -1042,10 +1074,10 @@
 	/* centerize absolute-postion element */
 	transform: translate(-50%, -50%);
 	left: 50%;
-	top: 50%;
+	top: calc(50% - 20px); /* to make up for the height of Navbar (40px) */
 	width: 70%;
 	height: 80%;
-	min-width: 1000px;
+	min-width: 800px;
 }
 
 .UploadPopUpPic {
@@ -1084,12 +1116,11 @@
 .PopUpClose {
 	cursor: pointer;
 	position: absolute;
-	transform: translate(100%, -100%);
-	top: -8px;
-	right: -8px;
+	transform: translateX(100%);
+	right: -24px;
+	bottom: 2px; /* to make up for the width of the border of PopUpModal (2px) */
 }
 .PopUpClose:hover {
-	/*color: cyan;*/
 	filter: brightness(120%);
 }
 
@@ -1106,7 +1137,7 @@
 	/* as an item */
 	flex-grow: 0;
 	/* as a container */
-	background-color: #FFFFFF;
+	background-color: var(--white);
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
@@ -1294,7 +1325,7 @@
 	max-width: 400px;
 	min-width: 320px;
 	/* as a container (module layout) */
-	background-color: #FFFFFF;
+	background-color: var(--white);
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
@@ -1346,7 +1377,7 @@
 	max-width: 640px;
 	min-width: 320px;
 	/* as a container (module layout) */
-	background-color: #FFFFFF;
+	background-color: var(--white);
 	position: relative;
 	display: flex;
 	flex-direction: column;
@@ -1379,13 +1410,12 @@
 
 .ExploreDetailsCloseBtn_container {
 	position: absolute;
-	z-index: 1;
-	cursor: pointer;
 	top: 8px;
 	left: 8px;
 	padding: 8px;
 	background-color: var(--img-container-bg);
-	border-radius: 20px;
+	border-radius: 100px;
+	cursor: pointer;
 	z-index: 2;
 }
 
@@ -1488,7 +1518,7 @@
 	align-items: center;
 	padding: 0px 40px;
 	gap: 64px;
-	background: #FFFFFF;
+	background: var(--white);
 	z-index: 10;
 	border-bottom: 1px solid var(--gray-mid);
 }
