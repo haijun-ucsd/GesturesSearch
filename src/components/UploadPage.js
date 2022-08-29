@@ -309,19 +309,20 @@ export default function UploadPage(props) {
 			}
 
 			// Create space at proper index for this image.
-			set(ref_db(db, `images/${finalPicIndex}/index`), finalPicIndex);
+			set(ref_db(db, ("images/"+finalPicIndex+"/index")), finalPicIndex);
 		});
 
 		// Store picture to firebase.
 		const image_path = "images/" + finalPicIndex;
 		const image_ref = ref(storage, image_path); // store image into firebase storage
-		uploadBytes(image_ref, props.addedPics[idx]).then((snapshot) => {
+		await uploadBytes(image_ref, props.addedPics[idx]).then((snapshot) => {
 			getDownloadURL(snapshot.ref).then((url) => {
 
 				// 1. Store data to firebase realtime database under "images", data
 				//		includes form data, URL, annotation info.
 				console.log("Upload image, labels, and annotation.\nindex: " + finalPicIndex + "\n url: " + url); //DEBUG
 				let finalPicData = {
+					index: finalPicIndex,
 					url: url,
 					...props.formDataList[idx],
 					annotation: props.picAnnotation[idx],
