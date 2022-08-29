@@ -197,10 +197,25 @@ export default function UploadPage(props) {
 			});
 
 		}, "image/jpeg", 1); // mime=JPEG, quality=1.00
+
+		// TODO: if click too fast before image is fully loaded, will cause error
+		// idea: document ready
 	};
 
 
 /* To handle upload */
+
+	// whether in the process of uploading (publishing).
+	// 3 states: true, false, "succeed" (to show succeed msg).
+	const [uploadingPic, setUploadingPic] = useState(false);
+	useEffect(() => {
+		console.log("Is during the process of uploading picture? " + uploadingPic); //DEBUG
+		if (uploadingPic === "succeed") { // let succeed msg stay for 3s
+			setTimeout(() => {
+		    setUploadingPic(false);
+		  }, 3000); // 3s = 3000ms
+		}
+	}, [uploadingPic]);
 
 	/**
 	 * uploadImages
@@ -209,6 +224,7 @@ export default function UploadPage(props) {
 	 */
 	const uploadImages = async () => {
 		console.log("call uploadImages()"); //DEBUG
+		setUploadingPic(true);
 
 		validate();
 		console.log("allPicsValid: " + allPicsValid); //DEBUG
@@ -254,7 +270,7 @@ export default function UploadPage(props) {
 		}
 
 		// Alert successful upload.
-		alert("Pictures have been uploaded! :D");
+		setUploadingPic("succeed");
 
 		console.log("Uploaded pictures should have been cleared."); //DEBUG
 		console.log("addedPics:", props.addedPics); //DEBUG
@@ -309,19 +325,20 @@ export default function UploadPage(props) {
 			}
 
 			// Create space at proper index for this image.
-			set(ref_db(db, `images/${finalPicIndex}/index`), finalPicIndex);
+			set(ref_db(db, ("images/"+finalPicIndex+"/index")), finalPicIndex);
 		});
 
 		// Store picture to firebase.
 		const image_path = "images/" + finalPicIndex;
 		const image_ref = ref(storage, image_path); // store image into firebase storage
-		uploadBytes(image_ref, props.addedPics[idx]).then((snapshot) => {
+		await uploadBytes(image_ref, props.addedPics[idx]).then((snapshot) => {
 			getDownloadURL(snapshot.ref).then((url) => {
 
 				// 1. Store data to firebase realtime database under "images", data
 				//		includes form data, URL, annotation info.
 				console.log("Upload image, labels, and annotation.\nindex: " + finalPicIndex + "\n url: " + url); //DEBUG
 				let finalPicData = {
+					index: finalPicIndex,
 					url: url,
 					...props.formDataList[idx],
 					annotation: props.picAnnotation[idx],
@@ -541,6 +558,7 @@ export default function UploadPage(props) {
 					handle_add_pic={handle_add_pic}
 					numAddedPics={props.addedPics.length}
 					addingPic={addingPic}
+					uploadingPic={uploadingPic}
 					setAddingPic={setAddingPic}
 					uploadImages={uploadImages}
 					uploadDisabled={uploadDisabled}
