@@ -130,6 +130,9 @@ export default function WaitingRoom(props) {
 									e.preventDefault();
 									props.setClickedUrl(url);
 								}}
+								onLoad = {(e) => {
+									props.image_format_conversion(e, idx);
+								}}
 							/>
 						</div>
 					))}

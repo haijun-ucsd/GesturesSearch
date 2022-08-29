@@ -4,8 +4,9 @@ import React, { useState, useEffect } from "react";
 import { storage } from "../firebase";
 import { getDatabase, onValue, ref as ref_db, set, child, orderByChild, get } from "firebase/database";
 import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
-import { v4 } from "uuid";
+//import { v4 } from "uuid";
 import heic2any from "heic2any";
+import reactImageSize from 'react-image-size';
 import "./components.css";
 import WaitingRoom from "./WaitingRoom";
 import UploadControl from "./UploadControl";
@@ -63,10 +64,10 @@ export default function UploadPage(props) {
 		for (var i = 0; i < added_pics.length; i++) {
 
 			let currPic = added_pics[i];
-			//console.log("added_pics[" + i + "] (before heic check):", currPic); //DEBUG
+			//console.log("added_pics[" + i + "] (before convertion):", currPic); //DEBUG
 
 			/**
-			 * Convert .heic to .jpg for proper display
+			 * Convert .heic to .jpeg for proper display
 			 * references:
 			 *	https://stackoverflow.com/questions/57127365/make-html5-filereader-working-with-heic-files
 			 *	https://stackoverflow.com/questions/59227281/is-there-a-way-to-upload-an-image-heic-file-on-my-wysiwyg-editor-without-any-i
@@ -156,6 +157,48 @@ export default function UploadPage(props) {
 		props.setPicAnnotation((prev) => prev.filter((item, i) => i!=idx));
 	}
 
+	const image_format_conversion = (e, idx) => {
+
+		const convert_to_format = "jpeg"; // or png or gif
+
+		// Check current image format, skip if already the intended format.
+		if (props.addedPics[idx].type === ("image/"+convert_to_format)) {
+			return;
+		}
+
+		// Create a temporary canvas to draw the image.
+		var c = document.createElement("canvas");
+		var ctx = c.getContext("2d");
+		c.width = e.target.naturalWidth;
+		c.height = e.target.naturalHeight;
+		ctx.drawImage(e.target, 0, 0);
+			
+		// Convert the image to a new File object with the correct format.
+		c.toBlob((blob) => {
+			var newImgFile = new File( // create new image file
+				[blob],
+				"MyJPEG.jpeg", { //TODO: file name
+				type: "image/"+convert_to_format,
+				lastModified: props.addedPics[idx].lastModified,
+			});
+			console.log("newImgFile: ", newImgFile); //DEBUG
+			props.setAddedPics((prev) => {
+				let newAddedPics = [...prev];
+				newAddedPics[idx] = newImgFile;
+				return newAddedPics;
+			});
+
+			// Generate new URL and replace addedPicsUrl[idx] with it.
+			var newImgUrl = URL.createObjectURL(newImgFile);
+			props.setAddedPicsUrl((prev) => {
+				let newAddedPicsUrl = [...prev];
+				newAddedPicsUrl[idx] = newImgUrl;
+				return newAddedPicsUrl;
+			});
+
+		}, "image/jpeg", 1); // mime=JPEG, quality=1.00
+	};
+
 
 /* To handle upload */
 
@@ -164,7 +207,7 @@ export default function UploadPage(props) {
 	 * 
 	 * Upload all fully-labeled pictures.
 	 */
-	const uploadImages = () => {
+	const uploadImages = async () => {
 		console.log("call uploadImages()"); //DEBUG
 
 		validate();
@@ -198,7 +241,7 @@ export default function UploadPage(props) {
 			// Upload all pictures.
 			for (let i = 0; i < props.addedPics.length; i++) {
 				console.log(props.addedPics.length); //DEBUG
-				uploadImage(i);
+				await uploadImage(i);
 			}
 
 			// Simply clear all helper lists.
@@ -213,7 +256,7 @@ export default function UploadPage(props) {
 		// Alert successful upload.
 		alert("Pictures have been uploaded! :D");
 
-		console.log("Uploaded pictures should have been cleared"); //DEBUG
+		console.log("Uploaded pictures should have been cleared."); //DEBUG
 		console.log("addedPics:", props.addedPics); //DEBUG
 	}
 
@@ -228,102 +271,97 @@ export default function UploadPage(props) {
 	 *  https://stackoverflow.com/questions/38923644/firebase-update-vs-set
 	 *  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify
 	 */
-	const uploadImage = (idx) => {
-		console.log("call uploadImage() on individual image at index " + idx); //DEBUG
+	const uploadImage = async (idx) => {
+		console.log("Call uploadImage() on individual image at index " + idx); //DEBUG
 
-		// Generate random key, find the space to store in firebase.
-		let key = v4(); // generate random key
-		const imageRef = ref(storage, `images/${key}`);
-		console.log("new key: " + key); //DEBUG
+		// Set up database.
 		const db = getDatabase();
 
+		// Generate index (numeric id) for the picture according to publishing order.
+		var finalPicIndex = 0;
+		await get(ref_db(db, "images")).then((snapshot) => {
+
+			// First image ever case.
+			console.log("Size of 'images' folder in database:" + snapshot.size); //DEBUG
+			if (!snapshot.exists()) {
+				console.log("First image ever."); //DEBUG
+				// finalPicIndex = 0;
+			}
+
+			// Not first image case.
+			else {
+				let lastTimestamp = -1; // helpers to find the last image according to timestamp
+				let lastImage = null;
+				snapshot.forEach((child) => { // looking for the highest timestamp so far
+					const currImage = child.val();
+					if (
+						currImage.timestamp > lastTimestamp &&
+						currImage.index !== undefined
+					) {
+						lastTimestamp = currImage.timestamp;
+						lastImage = currImage;
+					}
+				});
+				if (lastImage) { // if lastImage exists
+					finalPicIndex = lastImage.index + 1;
+					console.log("Not first image, finalPicIndex:" + finalPicIndex); //DEBUG
+				}
+			}
+
+			// Create space at proper index for this image.
+			set(ref_db(db, `images/${finalPicIndex}/index`), finalPicIndex);
+		});
+
 		// Store picture to firebase.
-		uploadBytes(imageRef, props.addedPics[idx]).then((snapshot) => {
+		const image_path = "images/" + finalPicIndex;
+		const image_ref = ref(storage, image_path); // store image into firebase storage
+		uploadBytes(image_ref, props.addedPics[idx]).then((snapshot) => {
 			getDownloadURL(snapshot.ref).then((url) => {
 
 				// 1. Store data to firebase realtime database under "images", data
 				//		includes form data, URL, annotation info.
-				console.log("Upload image, labels, and annotation.\nkey: " + key + "\n url: " + url); //DEBUG
+				console.log("Upload image, labels, and annotation.\nindex: " + finalPicIndex + "\n url: " + url); //DEBUG
 				let finalPicData = {
 					url: url,
 					...props.formDataList[idx],
 					annotation: props.picAnnotation[idx],
 				};
 				//finalPicData["url"] = url; // TODO: remove this line, should not need
-				const image_path = "images/" + key;
 				set(ref_db(db, image_path), finalPicData); // store finalPicData into the corresponding picture object under "image"
 				console.log("finalPicData:", finalPicData); //DEBUG
 
-				// 2. Give a numeric id (finalPicIndex) for the picture, and use it to
-				//		store the picture under "labels" in firebase realtime database.
-				var finalPicIndex = 0;
+				// 2. Use the generated index to store the picture under the correct labels.
+				let formData = {...props.formDataList[idx]};
+				console.log("Append image index under corresponding labels."); //DEBUG
+				for (let category in formData) {
+					//console.log("category: " + category); //DEBUG
 
-				// Generate index for each image by publishing order.
-				get(ref_db(db, "images")).then((snapshot) => {
-					let lastTimestamp = -1;
-					let lastImage = null; // helper to find the last image according tio timestamp
-					console.log("snapshot size:" + snapshot.size); //DEBUG
-					if (snapshot.size === 1) {
-						console.log("first image ever"); //DEBUG
-						set(ref_db(db, `images/${key}/index`), 0);
-						snapshot.forEach((child) => {
-							const thisImage = child.val();
-							lastImage = thisImage;
+					// Special case: posture. No subcategory layer.
+					if (category === "posture") {
+						formData["posture"].map(label => { // formData["posture"] guaranteed to be an array
+							//console.log("label: " + label); //DEBUG
+							const label_path = "labels/posture/" + label;
+							set(ref_db(db, label_path + "/" + finalPicIndex), { url: url }); // TODO: storing url as well for now, can remove if find it unnecessary.
 						});
-					} else {
-						snapshot.forEach((child) => {
-							const thisImage = child.val();
-							console.log("thisImage.timestamp:" + thisImage.timestamp); //DEBUG
-							if (
-								thisImage.timestamp > lastTimestamp &&
-								thisImage.index !== undefined // looking for the second highest timestamp which is the last uploaded pic
-							) {
-								lastTimestamp = thisImage.timestamp;
-								lastImage = thisImage;
-							}
-						});
-						if (lastImage) {
-							//if lastImage exists
-							console.log("lastImage:" + lastImage); //DEBUG
-							set(ref_db(db, `images/${key}/index`), lastImage.index + 1); // set thisImage.index=lastImage.index+1
-							finalPicIndex = lastImage.index + 1;
-							console.log("finalPicIndex:" + finalPicIndex); //DEBUG
-						}
 					}
 
-					// Store index under the correct labels.
-					let formData = {...props.formDataList[idx]};
-					console.log("Append image index under corresponding labels."); //DEBUG
-					for (let category in formData) {
-						//console.log("category: " + category); //DEBUG
-
-						// Special case: posture. No subcategory layer.
-						if (category === "posture") {
-							formData["posture"].map(label => { // formData["posture"] guaranteed to be an array
-								//console.log("label: " + label); //DEBUG
-								const label_path = "labels/posture/" + label;
-								set(ref_db(db, label_path + "/" + finalPicIndex), { url: url }); // TODO: storing url as well for now, can remove if find it unnecessary.
-							});
-						}
-
-						// Default case.
-						else {
-							for (let subcategory in formData[category]) {
-								//console.log("subcategory: " + subcategory); //DEBUG
-								if (Array.isArray(formData[category][subcategory])) {
-									formData[category][subcategory].map(label => {
-										//console.log("label: " + label); //DEBUG
-										const label_path = "labels/" + category + "/" + subcategory + "/" + label;
-										set(ref_db(db, label_path + "/" + finalPicIndex), { url: url });
-									});
-								} else {
-									const label_path = "labels/" + category + "/" + subcategory + "/" + formData[category][subcategory];
+					// Default case.
+					else {
+						for (let subcategory in formData[category]) {
+							//console.log("subcategory: " + subcategory); //DEBUG
+							if (Array.isArray(formData[category][subcategory])) {
+								formData[category][subcategory].map(label => {
+									//console.log("label: " + label); //DEBUG
+									const label_path = "labels/" + category + "/" + subcategory + "/" + label;
 									set(ref_db(db, label_path + "/" + finalPicIndex), { url: url });
-								}
+								});
+							} else {
+								const label_path = "labels/" + category + "/" + subcategory + "/" + formData[category][subcategory];
+								set(ref_db(db, label_path + "/" + finalPicIndex), { url: url });
 							}
 						}
 					}
-				});
+				}
 			});
 		});
 
@@ -508,6 +546,7 @@ export default function UploadPage(props) {
 					uploadDisabled={uploadDisabled}
 				/>
 				<WaitingRoom
+					image_format_conversion={image_format_conversion}
 					handle_remove_pic={handle_remove_pic}
 					addedPics={props.addedPics}
 					addedPicsUrl={props.addedPicsUrl}
