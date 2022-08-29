@@ -159,7 +159,12 @@ export default function UploadPage(props) {
 
 	const image_format_conversion = (e, idx) => {
 
-		// TODO: check current image format, skip if already the intended format.
+		const convert_to_format = "jpeg"; // or png or gif
+
+		// Check current image format, skip if already the intended format.
+		if (props.addedPics[idx].type === ("image/"+convert_to_format)) {
+			return;
+		}
 
 		// Create a temporary canvas to draw the image.
 		var c = document.createElement("canvas");
@@ -170,29 +175,47 @@ export default function UploadPage(props) {
 			
 		// Convert the image to a new File object with the correct format.
 		c.toBlob((blob) => {
-			var newImgFile = new File([blob], e.target.name+".jpeg", {type: "image/jpeg"}); //TODO: file name
+			var newImgFile = new File( // create new image file
+				[blob],
+				"MyJPEG.jpeg", { //TODO: file name
+				type: "image/"+convert_to_format,
+				lastModified: props.addedPics[idx].lastModified,
+			});
 			console.log("newImgFile: ", newImgFile); //DEBUG
 			props.setAddedPics((prev) => {
 				let newAddedPics = [...prev];
-				console.log("newAddedPics:"+newAddedPics);
 				newAddedPics[idx] = newImgFile;
 				return newAddedPics;
 			});
 
 			// Generate new URL and replace addedPicsUrl[idx] with it.
-			// var newImgUrl = URL.createObjectURL(newImgFile);
-			// props.setAddedPicsUrl((prev) => {
-			// 	let newAddedPicsUrl = [...prev];
-			// 	newAddedPicsUrl[idx] = newImgUrl;
-			// 	return newAddedPicsUrl;
-			// });
-			// TODO: ↑ Will cause infinite loop, how to fix?
+			var newImgUrl = URL.createObjectURL(newImgFile);
+			props.setAddedPicsUrl((prev) => {
+				let newAddedPicsUrl = [...prev];
+				newAddedPicsUrl[idx] = newImgUrl;
+				return newAddedPicsUrl;
+			});
 
 		}, "image/jpeg", 1); // mime=JPEG, quality=1.00
+
+		// TODO: if click too fast before image is fully loaded, will cause error
+		// idea: document ready
 	};
 
 
 /* To handle upload */
+
+	// whether in the process of uploading (publishing).
+	// 3 states: true, false, "succeed" (to show succeed msg).
+	const [uploadingPic, setUploadingPic] = useState(false);
+	useEffect(() => {
+		console.log("Is during the process of uploading picture? " + uploadingPic); //DEBUG
+		if (uploadingPic === "succeed") { // let succeed msg stay for 3s
+			setTimeout(() => {
+		    setUploadingPic(false);
+		  }, 3000); // 3s = 3000ms
+		}
+	}, [uploadingPic]);
 
 	/**
 	 * uploadImages
@@ -201,6 +224,7 @@ export default function UploadPage(props) {
 	 */
 	const uploadImages = async () => {
 		console.log("call uploadImages()"); //DEBUG
+		setUploadingPic(true);
 
 		validate();
 		console.log("allPicsValid: " + allPicsValid); //DEBUG
@@ -246,7 +270,7 @@ export default function UploadPage(props) {
 		}
 
 		// Alert successful upload.
-		alert("Pictures have been uploaded! :D");
+		setUploadingPic("succeed");
 
 		console.log("Uploaded pictures should have been cleared."); //DEBUG
 		console.log("addedPics:", props.addedPics); //DEBUG
@@ -307,13 +331,14 @@ export default function UploadPage(props) {
 		// Store picture to firebase.
 		const image_path = "images/" + finalPicIndex;
 		const image_ref = ref(storage, image_path); // store image into firebase storage
-		uploadBytes(image_ref, props.addedPics[idx]).then((snapshot) => {
+		await uploadBytes(image_ref, props.addedPics[idx]).then((snapshot) => {
 			getDownloadURL(snapshot.ref).then((url) => {
 
 				// 1. Store data to firebase realtime database under "images", data
 				//		includes form data, URL, annotation info.
 				console.log("Upload image, labels, and annotation.\nindex: " + finalPicIndex + "\n url: " + url); //DEBUG
 				let finalPicData = {
+					index: finalPicIndex,
 					url: url,
 					...props.formDataList[idx],
 					annotation: props.picAnnotation[idx],
@@ -533,6 +558,7 @@ export default function UploadPage(props) {
 					handle_add_pic={handle_add_pic}
 					numAddedPics={props.addedPics.length}
 					addingPic={addingPic}
+					uploadingPic={uploadingPic}
 					setAddingPic={setAddingPic}
 					uploadImages={uploadImages}
 					uploadDisabled={uploadDisabled}

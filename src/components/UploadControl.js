@@ -8,6 +8,7 @@ import "./components.css";
 import { Icon } from '@iconify/react';
 import AddPicture from "../assets/AddPicture.png";
 import PublishPicture from "../assets/PublishPicture.png";
+import SucceedIcon from "../assets/SucceedIcon.png";
 
 
 
@@ -19,7 +20,8 @@ import PublishPicture from "../assets/PublishPicture.png";
  * parent props:
  *	- handle_add_pic
  *	- numAddedPics
- *	- addingPic
+ *	- addingPic: whether currently in the process of adding picture to WaitingRoom
+ *	- uploadingPic: whether currently in the process of uploading picture
  *	- setAddingPic
  *	- uploadImages
  *	- uploadDisabled
@@ -46,16 +48,48 @@ export default function UploadControl(props) {
 					/>
 				</div>
 				<div className="HintText">
-				{props.addingPic == true ?
-					<>
-						<Icon icon="line-md:loading-twotone-loop" />
-						Adding Pictures...
-					</>
-				:
-					<>{props.numAddedPics !==0 ?
-							<>Total {props.numAddedPics} pictures</>
-					: null}</>
-				}
+
+					{/* Custom messages */
+					(() => {
+
+						// priority 1: uploading picture
+						if (props.uploadingPic === "succeed") {
+							return (
+								<>
+									<img src={SucceedIcon} />
+									<span style={{color: "#A0D568"}}>
+										Pictures have been uploaded!
+									</span>
+								</>
+							);
+						} else if (props.uploadingPic == true) {
+							return (
+								<>
+									<Icon icon="line-md:loading-twotone-loop" />
+									Uploading Pictures...
+								</>
+							);
+						}
+
+						// priority 2: adding to waiting room
+						if (props.addingPic == true) {
+							return (
+								<>
+									<Icon icon="line-md:loading-twotone-loop" />
+									Adding Pictures...
+								</>
+							);
+						}
+
+						// priority 3: usual state, show number of pictures added
+						if (props.numAddedPics !==0) {
+							return (
+								<>Total {props.numAddedPics} pictures</>
+							);
+						}
+						// TODO: add number of incompletion
+					})()}
+
 				</div>
 			</div>
 			<div className="UploadControl_selectpic"></div>
