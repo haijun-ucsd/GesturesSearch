@@ -20,8 +20,19 @@ const firebaseConfig = {
   measurementId: "G-2EWNKH04ZV"
 };
 
+const firebaseConfig_test = {
+  apiKey: "AIzaSyA8ghxpaFmkciIaDaj-b8yOauWoyrutYaY",
+  authDomain: "ubigesture-test.firebaseapp.com",
+  projectId: "ubigesture-test",
+  storageBucket: "ubigesture-test.appspot.com",
+  messagingSenderId: "216316793909",
+  appId: "1:216316793909:web:184867f9c904d730bacd7c",
+  measurementId: "G-DY6MXLBJGD"
+};
+
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig); // leave this line uncommented for *actual annotation*
+//const app = initializeApp(firebaseConfig_test); // leave this line uncommented for *testing*
 const analytics = getAnalytics(app);
 const storage = getStorage(app);
 export {firebase, storage};
