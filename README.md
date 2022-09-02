@@ -27,11 +27,15 @@
 May also refer to labels_data.js
 
 
+---
+
 
 # Codebase Structure
 
 ![codebase structure diagram](./readme_imgs/CodebaseStructure.png?raw=true)
 
+
+---
 
 
 # Firebase Storage Structure
@@ -55,6 +59,8 @@ May also refer to labels_data.js
 	- username
 		- password
 
+
+---
 
 
 # Resources on React Usage
