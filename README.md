@@ -14,10 +14,10 @@
 	- Quantity \[T1\*\] (none, small, large)
 	- Density \[T1\*\] (none, sparse, dense)
 	- Attentive \[T1\*\] (1,2,3,4,5,6,7,8,>8)
-- Modality \[T3\*\]:  
-	Body parts (head, eyes, voice, facial expression, right arm, left arm, right hand, left hand, legs, feet)  
-	&varr;  
-	States (available, unavailable)
+- Modality \[T3\*\]:
+	Body part - State
+		- Body parts (head, eyes, voice, facial expression, right arm, left arm, right hand, left hand, legs, feet)
+		- States (available, unavailable)
 - Demographic:
 	- Age \[T1\] (baby, child, teen, young adult, adult, senior)
 	- Biological sex \[T1\] (F/M)
