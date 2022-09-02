@@ -1,8 +1,8 @@
 import React, { useState , useEffect, useRef, useLayoutEffect } from 'react';
 import Masonry from 'react-masonry-css';
 import useResizeAware from 'react-resize-aware';
-import './components.css';
-import { RemovableLabel, GalleryColumn_helper } from './components';
+import '../components.css';
+import { RemovableLabel, GalleryColumn_helper } from '../components';
 
 
 

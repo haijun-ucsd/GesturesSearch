@@ -1,34 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { getDatabase, onValue, ref as ref_db, set } from "firebase/database";
-import "./components.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "../components.css";
 import Facet from "./Facet";
 import ExploreGallery from "./ExploreGallery";
 import ExploreDetails from "./ExploreDetails";
-import { FilterStructure } from "./components";
+import { FilterStructure } from "../components";
 import _, { map } from "underscore";
 
 /* Assets: */
-import ArrowLeft from "../assets/ArrowLeft.png";
-import ArrowRight from "../assets/ArrowRight.png";
-import ExploreDetailsCloseBtn from "../assets/ExploreDetailsCloseBtn.png";
+import ArrowLeft from "../../assets/ArrowLeft.png";
+import ArrowRight from "../../assets/ArrowRight.png";
+import ExploreDetailsCloseBtn from "../../assets/ExploreDetailsCloseBtn.png";
 
 export default function ExplorePage() {
 
 /* Filters from Facet (search & filters) */
-	/**
-	 * range
-	 * Search range.
-	 * Default SearchRange: { Location, Demographic, Modality, Posture }
-	 * TODO: combine SearchRange and SearchRange_color variables into imgData_list?
-	 */
-	const SearchRange = ["location", "demographic", "modality", "posture"];
-  const [range, setRange] = useState(SearchRange);  // range of categories to search within. //TODO: what if all categories are unchecked and range is none?
-  // DEBUG
-  useEffect(() => {
-    console.log("updated search range:");
-    console.log(range);
-  }, [range]);
 
 	/**
 	 * filterList
@@ -41,7 +28,6 @@ export default function ExplorePage() {
   useEffect(() => {
     console.log("updated filterList:");
     console.log(filterList);
-
   }, [filterList]);
 
   /**
@@ -55,6 +41,67 @@ export default function ExplorePage() {
     console.log("updated facetList:");
     console.log(facetList);
   }, [facetList]);
+
+	/**
+	 * filter_change_handler
+	 *
+	 * Default filter_change_handler for checkbox facet fields.
+	 * Special case that doesn't belong to here: Modality → see within FacetModality.
+	 * The filter-removing part is located in the parent (ExplorePage) component, function name remove_filter(), because AppliedFilters also call that function.
+	 *
+	 * @param :
+	 *  A new filter in filterList contains (input as parameters):
+	 *  { label, label_id, category, subcategory, color }
+	 *
+	 * references:
+	 *  https://stackoverflow.com/questions/43784554/how-to-add-input-data-to-list-in-react-js
+	 *  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some
+	 */
+	const filter_change_handler = (label, label_id, category, subcategory, color) => {
+		console.log("clicked on filter: " + label); //DEBUG
+
+		// Check for empty.
+		if (label == "") { return; }
+
+		// Check for existence.
+		// Toggle: if exists, then remove; if doesn't exist, the add.
+		if (filterList.some(
+			(item) => item.label === label
+		)) {
+
+			// Remove.
+			console.log("label exists, remove."); //DEBUG
+			remove_filter(label); // remove from both filterList and facetList
+		} else {
+
+			// Add.
+			console.log("label doesn't exists yet, add."); //DEBUG
+			const newFilter = {
+				['label']: label,
+				['label_id']: label_id,
+				['category']: category,
+				['subcategory']: subcategory,
+				['color']: color,
+			};
+			setFilterList (prev => ([
+				...prev,
+				newFilter,
+			]));
+			setFacetList(prev => ({
+				...prev,
+				[category]: {
+					...prev[category],
+					[subcategory]: [
+						...prev[category][subcategory],
+						label,
+					]
+				},
+			}));
+		}
+
+		// TODO: Update gallery.
+		//console.log("adding succeeds, gallery updated."); //DEBUG
+	}
 
   /**
    * remove_filter
@@ -112,19 +159,13 @@ export default function ExplorePage() {
     //console.log("removing succeeds, gallery updated."); //DEBUG
   };
 
-  /* Gallery (pictures) */
+
+/* Gallery (pictures) */
 
   const [imageList, setImageList] = useState([]); // list of currently shown pictures
 
-	const [searchData, setSearchData] = useState([""]);
-	const handleSearch = (input) => {
-		console.log('search input:', input);
-		setSearchData(input.split(', ').map(item => item.trim()));
-		console.log('search data: ', searchData);
-	}
-
 	/* Update the gallery upon any change. */
-	useEffect(() => {
+	const update_gallery = () => {
 		// listAll(imageListRef).then((response) => {
 		//   response.items.forEach((item) => {
 		//     getDownloadURL(item).then((url) => {
@@ -142,10 +183,25 @@ export default function ExplorePage() {
 		  }
 		  setImageList(newImgList);
 		})
-	}, [])
+	}
+	useEffect(() => { update_gallery(); }, [])
+
 
 /* Search */
-	useEffect(() => {
+
+	const [searchData, setSearchData] = useState([""]);
+
+	const handle_searchbar = (input) => {
+		console.log('search input:', input);
+		setSearchData(input.split(', ').map(item => item.trim()));
+		console.log('search data: ', searchData);
+	}
+
+	/**
+	 * Handle search data from both searchbar and facet.
+	 * Any change in AppliedFilters should update the fetched image set.
+	 */
+	const handle_search = () => {
 		const db = getDatabase()
 		const dbRef = ref_db(db, 'images');
 		onValue(dbRef, (snapshot) => {
@@ -231,9 +287,12 @@ export default function ExplorePage() {
 				console.log('rendering filtered!');
 			}
 		})
-	}, [searchData, filterList])
+	}
+	useEffect(() => { handle_search(); }, [searchData, filterList])
 
-  /* Click to view details of a picture */
+
+/* Click to view details of a picture */
+
   const [pictureClicked, setPictureClicked] = useState(undefined);
   console.log("pictureClicked:");
   console.log(pictureClicked); //DEBUG
@@ -255,18 +314,18 @@ export default function ExplorePage() {
     setPictureClicked(undefined);
   };
 
-  /* Render */
+
+/* Render */
   return (
     <div className="PageBox PageBox_Explore">
       <Facet
-        setRange={setRange}
-        range={range}
         setFilterList={setFilterList}
-        remove_filter={remove_filter}
         filterList={filterList}
+        filter_change_handler={filter_change_handler}
+        remove_filter={remove_filter}
         setFacetList={setFacetList}
         facetList={facetList}
-        handleSearch={handleSearch}
+        handleSearch={handle_searchbar}
       />
       <ExploreGallery
         imageList={imageList}

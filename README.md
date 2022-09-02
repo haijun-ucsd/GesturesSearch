@@ -1,4 +1,16 @@
-# Getting Started with Create React App
+# Codebase Structure
+
+![codebase structure diagram](https://github.com/haijun-ucsd/GesturesSearch/blob/main/readme_imgs/CodebaseStructure.png?raw=true)
+
+
+
+# Firebase Storage Structure
+
+![storage structure diagram](https://github.com/haijun-ucsd/GesturesSearch/blob/main/readme_imgs/StorageStructure.png?raw=true)
+
+
+
+# Resources on React Usage
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
@@ -68,3 +80,9 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+
+# Resources on Firebase Deploy
+
+TODO
