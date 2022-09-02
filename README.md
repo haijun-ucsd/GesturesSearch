@@ -24,7 +24,7 @@
 	- Social role \[T2\] (eg. student, teacher, customer, parent)
 - Posture \[T2\*\] (eg. sitting, pointing)
 
-May also refer to labels_data.js
+> May also refer to labels_data.js
 
 
 ---
