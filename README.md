@@ -1,12 +1,12 @@
 # Codebase Structure
 
-![codebase structure diagram](https://github.com/haijun-ucsd/GesturesSearch/blob/main/readme_imgs/CodebaseStructure.png?raw=true)
+![codebase structure diagram](https://github.com/haijun-ucsd/GesturesSearch/blob/Juliet/readme_imgs/CodebaseStructure.png?raw=true)
 
 
 
 # Firebase Storage Structure
 
-![storage structure diagram](https://github.com/haijun-ucsd/GesturesSearch/blob/main/readme_imgs/StorageStructure.png?raw=true)
+![storage structure diagram](https://github.com/haijun-ucsd/GesturesSearch/blob/Juliet/readme_imgs/StorageStructure.png?raw=true)
 
 
 
