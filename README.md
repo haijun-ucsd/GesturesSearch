@@ -1,9 +1,9 @@
 # Label Structure
 
-> Legend:
-\[\*\] = required field
-\[T1\] = Type 1 category. Fixed number of possible labels under this category, and each picture should strictly have =1 label.
-\[T2\] = Type 2 category. Allow customized labels under this category during upload, and each picture can accept a list of labels.
+> Legend:	
+\[\*\] = required field	
+\[T1\] = Type 1 category. Fixed number of possible labels under this category, and each picture should strictly have =1 label.	
+\[T2\] = Type 2 category. Allow customized labels under this category during upload, and each picture can accept a list of labels.	
 \[T3\] = Type 3 category. Human figure.
 
 - Location:
