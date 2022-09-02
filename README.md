@@ -30,7 +30,7 @@ May also refer to labels_data.js
 
 # Codebase Structure
 
-![codebase structure diagram](https://github.com/haijun-ucsd/GesturesSearch/blob/Juliet/readme_imgs/CodebaseStructure.png?raw=true)
+![codebase structure diagram](./readme_imgs/CodebaseStructure.png?raw=true)
 
 
 
