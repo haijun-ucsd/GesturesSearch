@@ -1,10 +1,10 @@
 # Label Structure
 
 > Legend:
-> \[\*\] = required field
-> \[T1\] = Type 1 category. Fixed number of possible labels under this category, and each picture should strictly have =1 label.
-> \[T2\] = Type 2 category. Allow customized labels under this category during upload, and each picture can accept a list of labels.
-> \[T3\] = Type 3 category. Human figure.
+\[\*\] = required field
+\[T1\] = Type 1 category. Fixed number of possible labels under this category, and each picture should strictly have =1 label.
+\[T2\] = Type 2 category. Allow customized labels under this category during upload, and each picture can accept a list of labels.
+\[T3\] = Type 3 category. Human figure.
 
 - Location:
 	- In/outdoor \[T1\*\] (indoor, outdoor)
@@ -49,8 +49,8 @@ May also refer to labels_data.js
 			- label (for each existing label under the current subcategory)
 				- image id (for each image with the current label)
 					- "url": image url
-				- [TODO: to differentiate whether a label is being costomized by users] "inbuilt": true/false
-- [TODO: to help login] "users"
+				- "inbuilt": true/false [TODO: add this variable to differentiate whether a label is being costomized by users]
+- "users" [TODO: add this folder to help login]
 	- username
 		- password
 
