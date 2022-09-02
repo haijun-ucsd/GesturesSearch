@@ -1,4 +1,69 @@
-# Getting Started with Create React App
+# Label Structure
+
+> Legend:  
+\[\*\] = required field  
+\[T1\] = Type 1 category. Fixed number of possible labels under this category, and each picture should strictly have =1 label.  
+\[T2\] = Type 2 category. Allow customized labels under this category during upload, and each picture can accept a list of labels.  
+\[T3\] = Type 3 category. Human figure.
+
+- Location:
+	- In/outdoor \[T1\*\] (indoor, outdoor)
+	- Purpose of the place \[T2\*\] (eg. library, hospital)
+  - Architecture component \[T2\] (eg. escalator, hallway)
+- Spectators:
+	- Quantity \[T1\*\] (none, small, large)
+	- Density \[T1\*\] (none, sparse, dense)
+	- Attentive \[T1\*\] (1,2,3,4,5,6,7,8,>8)
+- Modality \[T3\*\]:  
+	Body part - State  
+	- Body parts (head, eyes, voice, facial expression, right arm, left arm, right hand, left hand, legs, feet)
+	- States (available, unavailable)
+- Demographic:
+	- Age \[T1\] (baby, child, teen, young adult, adult, senior)
+	- Biological sex \[T1\] (F/M)
+	- Social role \[T2\] (eg. student, teacher, customer, parent)
+- Posture \[T2\*\] (eg. sitting, pointing)
+
+> May also refer to labels_data.js
+
+
+---
+
+
+# Codebase Structure
+
+![codebase structure diagram](./readme_imgs/CodebaseStructure.png?raw=true)
+
+
+---
+
+
+# Firebase Storage Structure
+
+- "images":
+	- image id (for each image in the storage)
+		- "index": image id
+		- category (for each of the 5 categories)
+			- subcategory (for each subcategory under the current category. Ignore this layer if no subcategory exists under a certain category)
+				- label (all labels that the current image has under the current subcategory)
+		- "timestamp": timestamp
+		- "url": image url
+- "labels":
+	- category (for each of the 5 categories)
+		- subcategory (for each subcategory under the current category. Ignore this layer if no subcategory exists under a certain category)
+			- label (for each existing label under the current subcategory)
+				- image id (for each image with the current label)
+					- "url": image url
+				- "inbuilt": true/false [TODO: add this variable to differentiate whether a label is being costomized by users]
+- "users": [TODO: add this folder to help login]
+	- username
+		- password
+
+
+---
+
+
+# Resources on React Usage
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
@@ -68,3 +133,9 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+
+# Resources on Firebase Deploy
+
+TODO

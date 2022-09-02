@@ -1,5 +1,13 @@
+/**
+ * AboutPage.js
+ * 
+ * This file contains the entry point of the About page, which is one of the major tabs.
+ * About page introduces the project and has data visualization.
+ */
+
+
 import React, { useState , useEffect } from 'react';
-import './components.css';
+import '../components.css';
 import { Slide } from 'react-reveal';
 import { PieChart } from 'react-minimal-pie-chart';
 
@@ -175,7 +183,7 @@ export default function AboutPage() {
             <div className="Intro">
                 <Slide bottom>
                 <img
-                    src={require('./modalities.gif')}
+                    src={require("../../assets/ModalitiesGif.gif")}
                 />
                 </Slide>
                 <Slide bottom>

@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import Masonry from 'react-masonry-css'
 import useResizeAware from 'react-resize-aware';
-import "./components.css";
+import "../components.css";
 
 /* Assets: */
 import { Icon } from '@iconify/react';
-import AddPicture from "../assets/AddPicture.png";
-import PublishPicture from "../assets/PublishPicture.png";
-import SucceedIcon from "../assets/SucceedIcon.png";
+import AddPicture from "../../assets/AddPicture.png";
+import PublishPicture from "../../assets/PublishPicture.png";
+import SucceedIcon from "../../assets/SucceedIcon.png";
 
 
 
@@ -16,6 +16,10 @@ import SucceedIcon from "../assets/SucceedIcon.png";
  * UploadControl
  * 
  * The top bar on the UploadPage for controlling adding and uploading.
+ * Consists of 3 parts:
+ *	- add-pic btn
+ *	- notification msgs
+ *	- upload-pic btn
  * 
  * parent props:
  *	- handle_add_pic

@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 //import { Container, Row, Col, Button, InputGroup } from 'react-bootstrap';
 //import 'bootstrap/dist/css/bootstrap.min.css';
-import { storage } from "../firebase";
+import { storage } from "../../firebase";
 import { getDatabase, onValue, ref as ref_db, set, child, orderByChild, get } from "firebase/database";
 import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
 //import { v4 } from "uuid";
 import heic2any from "heic2any";
 import reactImageSize from 'react-image-size';
-import "./components.css";
+import "../components.css";
 import WaitingRoom from "./WaitingRoom";
 import UploadControl from "./UploadControl";
 import UploadPopUp from "./UploadPopUp";
-import { LabelStructure } from "./components";
+import { LabelStructure } from "../components";
 
 
 
@@ -157,7 +157,7 @@ export default function UploadPage(props) {
 		props.setPicAnnotation((prev) => prev.filter((item, i) => i!=idx));
 	}
 
-	const image_format_conversion = (e, idx) => {
+	const unify_image_format = (e, idx) => {
 
 		const convert_to_format = "jpeg"; // or png or gif
 
@@ -394,6 +394,66 @@ export default function UploadPage(props) {
 	};
 
 
+/* Validation & Progress */
+
+	const [uploadDisabled, setUploadDisabled] = useState(true);
+	// DEBUG
+	useEffect(() => {
+		console.log("uploadDisabled: " + uploadDisabled);
+	}, uploadDisabled);
+
+	const [allPicsValid, setAllPicsValid] = useState(false);
+	// DEBUG
+	useEffect(() => {
+		console.log("allPicsValid: " + allPicsValid);
+	}, allPicsValid);
+
+	/**
+	 * Validate
+	 *
+	 * Check progresses to validate for uploading, return the indices of pictures that are ready to upload.
+	 * A picture is ready to be published if all required fields are filled, aka. completePercentage==100.
+	 */
+	const validate = () => {
+		let publishable_flag = false;
+		let all_validate_flag = true;
+		for (let i = 0; i < props.completePercentages.length; i++) {
+			if (props.completePercentages[i] === 100) { // valid to upload
+				publishable_flag = true; // turn on publishable_flag if any picture has been fully labeled
+			} else {
+				all_validate_flag = false; // turn off all_validate_flag if any picture has not been fully labeled
+			}
+		}
+		if (publishable_flag===true) { // if any picture is valid, enable upload button
+			setUploadDisabled(false);
+		} else {
+			setUploadDisabled(true);
+		}
+		if (all_validate_flag===true) { // if all pictures are valid, upload without warning
+			setAllPicsValid(true);
+		} else {
+			setAllPicsValid(false);
+		}
+	};
+
+	// const validate_publish_list = () => {
+	//   let publishable_list=[];
+	//   for (let i = 0; i < completePercentages.length; i++) {
+	//     if (completePercentages[i] === 100) { // valid to upload
+	//       publishable_list.push(i);
+	//     }
+	//   }
+	//   return publishable_list;
+	// };
+
+	/**
+	 * Check progresses regularly to turn on the upload btn.
+	 */
+	useEffect(() => {
+		validate();
+	}, [props.addedPics, props.addedPicsUrl, props.formDataList, props.completePercentages]);
+
+
 /* Viewing and labeling individual picture */
 
 	/**
@@ -404,16 +464,16 @@ export default function UploadPage(props) {
 	const closePop = () => { setClickedUrl(""); }
 
 	/**
-	 * reprint_added_labels
+	 * refresh_added_labels
 	 *
-	 * Return a text that lists out all added labels
+	 * Upon update of formData, create a new string for hover-to-show addedLabels to replace the old one.
 	 * @param idx: Index of formDataList to fetch added labels from
 	 *
 	 * references:
 	 *  https://www.codegrepper.com/code-examples/javascript/how+to+check+if+something+is+an+array+javascript
 	 *  https://www.codegrepper.com/code-examples/javascript/remove+last+character+from+a+string+in+react
 	 */
-	const reprint_added_labels = (idx, data) => {
+	const refresh_added_labels = (idx, data) => {
 		let added_labels_string = "Added labels: \n";
 		for (let category in data) {
 			// Ignored case: url.
@@ -490,66 +550,6 @@ export default function UploadPage(props) {
 	};
 
 
-/* Validation & Progress */
-
-	const [uploadDisabled, setUploadDisabled] = useState(true);
-	// DEBUG
-	useEffect(() => {
-		console.log("uploadDisabled: " + uploadDisabled);
-	}, uploadDisabled);
-
-	const [allPicsValid, setAllPicsValid] = useState(false);
-	// DEBUG
-	useEffect(() => {
-		console.log("allPicsValid: " + allPicsValid);
-	}, allPicsValid);
-
-	/**
-	 * Validate
-	 *
-	 * Check progresses to validate for uploading, return the indices of pictures that are ready to upload.
-	 * A picture is ready to be published if all required fields are filled, aka. completePercentage==100.
-	 */
-	const validate = () => {
-		let publishable_flag = false;
-		let all_validate_flag = true;
-		for (let i = 0; i < props.completePercentages.length; i++) {
-			if (props.completePercentages[i] === 100) { // valid to upload
-				publishable_flag = true; // turn on publishable_flag if any picture has been fully labeled
-			} else {
-				all_validate_flag = false; // turn off all_validate_flag if any picture has not been fully labeled
-			}
-		}
-		if (publishable_flag===true) { // if any picture is valid, enable upload button
-			setUploadDisabled(false);
-		} else {
-			setUploadDisabled(true);
-		}
-		if (all_validate_flag===true) { // if all pictures are valid, upload without warning
-			setAllPicsValid(true);
-		} else {
-			setAllPicsValid(false);
-		}
-	};
-
-	// const validate_publish_list = () => {
-	//   let publishable_list=[];
-	//   for (let i = 0; i < completePercentages.length; i++) {
-	//     if (completePercentages[i] === 100) { // valid to upload
-	//       publishable_list.push(i);
-	//     }
-	//   }
-	//   return publishable_list;
-	// };
-
-	/**
-	 * Check progresses regularly to turn on the upload btn.
-	 */
-	useEffect(() => {
-		validate();
-	}, [props.addedPics, props.addedPicsUrl, props.formDataList, props.completePercentages]);
-
-
 /* Render */
 	return (
 		<div className="PageBox PageBox_Upload">
@@ -564,7 +564,7 @@ export default function UploadPage(props) {
 					uploadDisabled={uploadDisabled}
 				/>
 				<WaitingRoom
-					image_format_conversion={image_format_conversion}
+					unify_image_format={unify_image_format}
 					handle_remove_pic={handle_remove_pic}
 					addedPics={props.addedPics}
 					addedPicsUrl={props.addedPicsUrl}
@@ -582,7 +582,7 @@ export default function UploadPage(props) {
 					setFormDataList={props.setFormDataList}
 					setCompletePercentages={props.setCompletePercentages}
 					completePercentages={props.completePercentages}
-					reprint_added_labels={reprint_added_labels}
+					refresh_added_labels={refresh_added_labels}
 					picAnnotation={props.picAnnotation}
 					setPicAnnotation={props.setPicAnnotation}
 				/>

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import Masonry from 'react-masonry-css'
 import useResizeAware from 'react-resize-aware';
-import "./components.css";
-import { GalleryColumn_helper } from "./components";
+import "../components.css";
+import { GalleryColumn_helper } from "../components";
 
 /**
  * circular progress bar
@@ -15,9 +15,9 @@ import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 
 /* Assets: */
-import HintText_ArrowUp from "../assets/HintText_ArrowUp.png";
-import ZeroProgressAddLabel from "../assets/ZeroProgressAddLabel.png";
-import NoBtn from "../assets/NoBtn.png";
+import HintText_ArrowUp from "../../assets/HintText_ArrowUp.png";
+import ZeroProgressAddLabel from "../../assets/ZeroProgressAddLabel.png";
+import NoBtn from "../../assets/NoBtn.png";
 
 
 
@@ -131,7 +131,7 @@ export default function WaitingRoom(props) {
 									props.setClickedUrl(url);
 								}}
 								onLoad = {(e) => {
-									props.image_format_conversion(e, idx);
+									props.unify_image_format(e, idx);
 								}}
 							/>
 						</div>
