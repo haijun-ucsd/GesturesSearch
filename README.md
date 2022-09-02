@@ -36,22 +36,22 @@ May also refer to labels_data.js
 
 # Firebase Storage Structure
 
-- "images"
-	- image id
+- "images":
+	- image id (for each image in the storage)
 		- "index": image id
 		- category (for each of the 5 categories)
 			- subcategory (for each subcategory under the current category. Ignore this layer if no subcategory exists under a certain category)
 				- label (all labels that the current image has under the current subcategory)
 		- "timestamp": timestamp
 		- "url": image url
-- "labels"
+- "labels":
 	- category (for each of the 5 categories)
 		- subcategory (for each subcategory under the current category. Ignore this layer if no subcategory exists under a certain category)
 			- label (for each existing label under the current subcategory)
 				- image id (for each image with the current label)
 					- "url": image url
 				- "inbuilt": true/false [TODO: add this variable to differentiate whether a label is being costomized by users]
-- "users" [TODO: add this folder to help login]
+- "users": [TODO: add this folder to help login]
 	- username
 		- password
 
