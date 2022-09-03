@@ -13,9 +13,11 @@ import ArrowLeft from "../assets/ArrowLeft.png";
 import ArrowRight from "../assets/ArrowRight.png";
 import ExploreDetailsCloseBtn from "../assets/ExploreDetailsCloseBtn.png";
 
+export var searchDataCopy = [];
+
 export default function ExplorePage() {
 
-/* Filters from Facet (search & filters) */
+	/* Filters from Facet (search & filters) */
 	/**
 	 * range
 	 * Search range.
@@ -23,12 +25,12 @@ export default function ExplorePage() {
 	 * TODO: combine SearchRange and SearchRange_color variables into imgData_list?
 	 */
 	const SearchRange = ["location", "demographic", "modality", "posture"];
-  const [range, setRange] = useState(SearchRange);  // range of categories to search within. //TODO: what if all categories are unchecked and range is none?
-  // DEBUG
-  useEffect(() => {
-    console.log("updated search range:");
-    console.log(range);
-  }, [range]);
+	const [range, setRange] = useState(SearchRange);  // range of categories to search within. //TODO: what if all categories are unchecked and range is none?
+	// DEBUG
+	useEffect(() => {
+		console.log("updated search range:");
+		console.log(range);
+	}, [range]);
 
 	/**
 	 * filterList
@@ -37,101 +39,94 @@ export default function ExplorePage() {
 	 */
 	const [filterList, setFilterList] = useState([]);
 	//const [filterList, setFilterList] = useState([ { label: "library", label_id: 0, category: "location", subcategory: "site", color: "#A0D568" }, { label: "hospital", label_id: 1, category: "location", subcategory: "site", color: "#A0D568" }, ]); //DEBUG
-  // DEBUG
-  useEffect(() => {
-    console.log("updated filterList:");
-    console.log(filterList);
+	// DEBUG
+	useEffect(() => {
+		console.log("updated filterList:");
+		console.log(filterList);
 
-  }, [filterList]);
+	}, [filterList]);
 
-  /**
-   * facetList
-   * List of states in the facet sections (Modality, Posture, Spectators, Demongraphic).
-   * Default as: FilterStructure
-   */
-  const [facetList, setFacetList] = useState(FilterStructure);
-  // DEBUG
-  useEffect(() => {
-    console.log("updated facetList:");
-    console.log(facetList);
-  }, [facetList]);
+	/**
+	 * facetList
+	 * List of states in the facet sections (Modality, Posture, Spectators, Demongraphic).
+	 * Default as: FilterStructure
+	 */
+	const [facetList, setFacetList] = useState(FilterStructure);
+	// DEBUG
+	useEffect(() => {
+		console.log("updated facetList:");
+		console.log(facetList);
+	}, [facetList]);
 
-  /**
-   * remove_filter
-   *
-   * To specifically remove an applied filter.
-   *
-   * @param label: Value of the element to remove.
-   *
-   * references:
-   *  https://stackoverflow.com/questions/36326612/how-to-delete-an-item-from-state-array
-   *  https://stackoverflow.com/questions/35338961/how-to-remove-the-li-element-on-click-from-the-list-in-reactjs
-   */
-  const remove_filter = (label) => {
-    let filterToRemove = filterList.find((item) => item.label === label);
-    let category = filterToRemove.category;
-    let subcategory = filterToRemove.subcategory;
+	/**
+	 * remove_filter
+	 *
+	 * To specifically remove an applied filter.
+	 *
+	 * @param label: Value of the element to remove.
+	 *
+	 * references:
+	 *  https://stackoverflow.com/questions/36326612/how-to-delete-an-item-from-state-array
+	 *  https://stackoverflow.com/questions/35338961/how-to-remove-the-li-element-on-click-from-the-list-in-reactjs
+	 */
+	const remove_filter = (label) => {
+		let filterToRemove = filterList.find((item) => item.label === label);
+		let category = filterToRemove.category;
+		let subcategory = filterToRemove.subcategory;
 
-    // Reset facetList to update the corresponding facet section.
-    // Special case: Modality.
-    if (category === "modality") {
-      setFacetList((prev) => {
-        return {
-          ...prev,
-          [category]: {
-            ...prev[category],
-            [subcategory]: "any", // subcategory in Modality = body part
-          },
-        };
-      });
-    } else {
-      setFacetList((prev) => {
-        let newSubcategoryList = prev[category][subcategory].filter(
-          (item) => item !== label
-        );
-        console.log("newSubcategoryList: " + newSubcategoryList); //DEBUG
-        return {
-          ...prev,
-          [category]: {
-            ...prev[category],
-            [subcategory]: newSubcategoryList,
-          },
-        };
-      });
-    }
+		// Reset facetList to update the corresponding facet section.
+		// Special case: Modality.
+		if (category === "modality") {
+		setFacetList((prev) => {
+			return {
+			...prev,
+			[category]: {
+				...prev[category],
+				[subcategory]: "any", // subcategory in Modality = body part
+			},
+			};
+		});
+		} else {
+		setFacetList((prev) => {
+			let newSubcategoryList = prev[category][subcategory].filter(
+			(item) => item !== label
+			);
+			console.log("newSubcategoryList: " + newSubcategoryList); //DEBUG
+			return {
+			...prev,
+			[category]: {
+				...prev[category],
+				[subcategory]: newSubcategoryList,
+			},
+			};
+		});
+		}
 
-    // Reset filterList to remove the current filter from AppliedFilter.
-    setFilterList (prev => {
-      let newFilterList = prev.filter((item) => item.label !== label);
-      return newFilterList;
-    });
+		// Reset filterList to remove the current filter from AppliedFilter.
+		setFilterList (prev => {
+		let newFilterList = prev.filter((item) => item.label !== label);
+		return newFilterList;
+		});
 
-    console.log("remove filter: " + label); //DEBUG
+		console.log("remove filter: " + label); //DEBUG
 
-    // TODO: Update gallery.
-    //console.log("removing succeeds, gallery updated."); //DEBUG
-  };
+		// TODO: Update gallery.
+		//console.log("removing succeeds, gallery updated."); //DEBUG
+  	};
 
-  /* Gallery (pictures) */
+	/* Gallery (pictures) */
 
-  const [imageList, setImageList] = useState([]); // list of currently shown pictures
-
+	const [imageList, setImageList] = useState([]); // list of currently shown pictures
 	const [searchData, setSearchData] = useState([""]);
 	const handleSearch = (input) => {
-		console.log('search input:', input);
 		setSearchData(input.split(', ').map(item => item.trim()));
 		console.log('search data: ', searchData);
+		searchDataCopy = [...searchData];
+		console.log('search data copy: ', searchDataCopy);
 	}
 
 	/* Update the gallery upon any change. */
 	useEffect(() => {
-		// listAll(imageListRef).then((response) => {
-		//   response.items.forEach((item) => {
-		//     getDownloadURL(item).then((url) => {
-		//       setImageList((prev) => [...prev, url]);
-		//     })
-		//   })
-		// })
 		const db = getDatabase()
 		const dbRef = ref_db(db, 'images')
 		onValue(dbRef, (snapshot) => {
@@ -158,7 +153,6 @@ export default function ExplorePage() {
 				} else {
 					if (searchData[0].length !== 0){
 						for (const searchLabel of searchData) {
-							console.log(labels.demographic);
 							if (labels.location.in_outdoor === searchLabel || 
 								(labels.location.archi_compo !== undefined && String(labels.location.archi_compo).includes(searchLabel)) || 
 								(labels.location.site !== undefined && String(labels.location.site).includes(searchLabel)) ||
@@ -215,7 +209,7 @@ export default function ExplorePage() {
 									}
 									break;
 								default:
-									console.log("undefined range");
+
 							}
 						}
 					}

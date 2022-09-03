@@ -6,8 +6,10 @@ import React, { useState , useEffect, useLayoutEffect } from 'react';
 //import Slider, { Range } from 'rc-slider';
 import './components.css';
 import { labels_data } from "./labels_data.js";
+import { searchDataCopy } from "./ExplorePage.js";
 import { Filter, Checkbox, CheckLabel, ExploreSearchBar, AccordionSection, FetchLabelList_helper } from './components';
 import BodyComponent from './BodyComponent';
+import { Input } from '@mui/material';
 
 /* Assets: */
 //import ArrowUp_secondary from "../assets/ArrowUp_secondary.png";
@@ -169,7 +171,6 @@ export default function Facet(props) {
 	);
 }
 
-
 /**
  * ExploreSearch
  * 
@@ -183,10 +184,11 @@ export default function Facet(props) {
  */
 function ExploreSearch(props) {
 
-	const [searchData, setSearchData] = useState('');
-	const handleSearch = (input) => {
-		setSearchData(input);
-	}
+	// const [searchData, setSearchData] = useState('');
+	// const handleSearch = (input) => {
+	// 	setSearchData(input);
+	// }
+
 
 	return (
 		<div className="Module">
