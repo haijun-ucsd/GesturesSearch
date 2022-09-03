@@ -27,7 +27,7 @@ import SucceedIcon from "../../assets/SucceedIcon.png";
  *	- addingPic: whether currently in the process of adding picture to WaitingRoom
  *	- uploadingPic: whether currently in the process of uploading picture
  *	- setAddingPic
- *	- uploadImages
+ *	- upload_all_valid_images
  *	- uploadDisabled
  */
 export default function UploadControl(props) {
@@ -104,7 +104,7 @@ export default function UploadControl(props) {
 						type="submit"
 						onClick={(e) => {
 							e.preventDefault();
-							props.uploadImages();
+							props.upload_all_valid_images();
 						}}
 						variant="primary"
 						disabled={props.uploadDisabled}
