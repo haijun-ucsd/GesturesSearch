@@ -171,54 +171,57 @@ export default function UploadPage(props) {
 		props.setPicAnnotation((prev) => prev.filter((item, i) => i!=idx));
 	}
 
+	/** TODO */
 	const unify_image_format = (e, idx) => {
 
 		const convert_to_format = "jpeg"; // or png or gif
+		const size_limit = 1000000; // 1 MB
 
+		// 1. Format conversion.
 		// Check current image format, skip if already the intended format.
-		if (props.addedPics[idx].type === ("image/"+convert_to_format)) {
-			return;
+		if (props.addedPics[idx].type !== ("image/"+convert_to_format)) {
+
+			// Create a temporary canvas to draw the image.
+			var c = document.createElement("canvas");
+			var ctx = c.getContext("2d");
+			c.width = e.target.naturalWidth;
+			c.height = e.target.naturalHeight;
+			ctx.drawImage(e.target, 0, 0);
+				
+			// Convert the image to a new File object with the correct format.
+			c.toBlob((blob) => {
+				var newImgFile = new File( // create new image file
+					[blob],
+					"MyJPEG.jpeg", { //TODO: file name
+					type: "image/"+convert_to_format,
+					lastModified: props.addedPics[idx].lastModified,
+				});
+				console.log("Image format is converted at index " + idx + ".\nnewImgFile: ", newImgFile); //DEBUG
+				props.setAddedPics((prev) => {
+					let newAddedPics = [...prev];
+					newAddedPics[idx] = newImgFile;
+					return newAddedPics;
+				});
+
+				// Generate new URL and replace addedPicsUrl[idx] with it.
+				var newImgUrl = URL.createObjectURL(newImgFile);
+				props.setAddedPicsUrl((prev) => {
+					let newAddedPicsUrl = [...prev];
+					newAddedPicsUrl[idx] = newImgUrl;
+					return newAddedPicsUrl;
+				});
+
+			}, ("image/"+convert_to_format), 1); // mime=convert_to_format, quality=1.00
 		}
-
-		// Create a temporary canvas to draw the image.
-		var c = document.createElement("canvas");
-		var ctx = c.getContext("2d");
-		c.width = e.target.naturalWidth;
-		c.height = e.target.naturalHeight;
-		ctx.drawImage(e.target, 0, 0);
-			
-		// Convert the image to a new File object with the correct format.
-		c.toBlob((blob) => {
-			var newImgFile = new File( // create new image file
-				[blob],
-				"MyJPEG.jpeg", { //TODO: file name
-				type: "image/"+convert_to_format,
-				lastModified: props.addedPics[idx].lastModified,
-			});
-			console.log("newImgFile: ", newImgFile); //DEBUG
-			props.setAddedPics((prev) => {
-				let newAddedPics = [...prev];
-				newAddedPics[idx] = newImgFile;
-				return newAddedPics;
-			});
-
-			// Generate new URL and replace addedPicsUrl[idx] with it.
-			var newImgUrl = URL.createObjectURL(newImgFile);
-			props.setAddedPicsUrl((prev) => {
-				let newAddedPicsUrl = [...prev];
-				newAddedPicsUrl[idx] = newImgUrl;
-				return newAddedPicsUrl;
-			});
-
-		}, "image/jpeg", 1); // mime=JPEG, quality=1.00
-    
-    // Perform image compression.
+   
+    // 2. Image compression.
     new Compressor(props.addedPics[idx], {
       quality: 0.6,
-      mimeType: "image/jpeg",
-      convertSize: 1000000,
-      success(result) {
-        props.addedPics[idx] = result;
+      mimeType: ("image/"+convert_to_format),
+      convertSize: size_limit,
+      success(compressionResult) {
+      	console.log("Image is compressed at index " + idx + ".\ncompressionResult: ", compressionResult); //DEBUG
+        props.addedPics[idx] = compressionResult;
       },
     });
 
