@@ -126,7 +126,7 @@ export default function UploadPopUp(props) {
 		// Update Annotation state, store as percentage in relationship to picture height and width.
 		props.setPicAnnotation((prev) => {
 			let newPicAnnotation = [...prev];
-			newPicAnnotation[props.dataIndex] = [annotateStartX/canvasX, annotateStartY/canvasY, annotateEndX/canvasX, annotateEndY/canvasY];
+			newPicAnnotation[props.dataIndex] = [annotation[0]/canvasSize["X"], annotation[1]/canvasSize["Y"], annotation[2]/canvasSize["X"], annotation[3]/canvasSize["Y"]];
 			return newPicAnnotation;
 		});
 
@@ -378,39 +378,37 @@ export default function UploadPopUp(props) {
 
 	const UploadPopUpPic = useRef();
 	const UploadPopUpCanvas = useRef();
-	const [canvasX, setCanvasX] = useState();
-	const [canvasY, setCanvasY] = useState();
+	const [canvasSize, setCanvasSize] = useState({ X: 0, Y: 0 });
 
+	const [annotation, setAnnotation] = useState(props.picAnnotation[props.dataIndex]);
+		// In percentage here when first initiated from props.picAnnotation. Structure: [StartX, StartY, EndX, EndY]
 	const [annotated, setAnnotated] = useState(false);
-	const [annotateStartX, setAnnotateStartX] = useState(props.picAnnotation[props.dataIndex][0]); // in percentage here
-	const [annotateStartY, setAnnotateStartY] = useState(props.picAnnotation[props.dataIndex][1]);
-	const [annotateEndX, setAnnotateEndX] = useState(props.picAnnotation[props.dataIndex][2]);
-	const [annotateEndY, setAnnotateEndY] = useState(props.picAnnotation[props.dataIndex][3]);
 	const [annotationInProgress, setAnnotationInProgress] = useState(false); // whether annotation is in progress
 
 	/**
 	 * references:
 	 *	https://wincent.com/wiki/clientWidth_vs_offsetWidth_vs_scrollWidth#:~:text=clientWidth%20is%20the%20inner%20width,element%2C%20including%20padding%20and%20borders)
 	 *	https://codesandbox.io/s/affectionate-wildflower-jov21
+	 *	https://stackoverflow.com/questions/60618844/react-hooks-useeffect-is-called-twice-even-if-an-empty-array-is-used-as-an-ar
 	 */
 	const canvas_setup = () => {
 		const imgWidth = UploadPopUpPic.current.offsetWidth;
 		const imgHeight = UploadPopUpPic.current.offsetHeight;
 		console.log("loaded picture: [offsetWidth " + imgWidth + ", offsetHeight " + imgHeight + "]"); //DEBUG
-		setCanvasX(imgWidth);
-		setCanvasY(imgHeight);
+		setCanvasSize({ X: imgWidth, Y: imgHeight});
 		if (
-			annotateStartX!==0
-			&& annotateStartY!==0
-			&& annotateEndX!==0
-			&& annotateEndY!==0
+			annotation[0] !== 0
+			&& annotation[1] !== 0
+			&& annotation[2] !== 0
+			&& annotation[3] !== 0
 		) {
-			setAnnotateStartX(props.picAnnotation[props.dataIndex][0] * imgWidth); // turn percentage into pixel
-			setAnnotateStartY(props.picAnnotation[props.dataIndex][1] * imgHeight);
-			setAnnotateEndX(props.picAnnotation[props.dataIndex][2] * imgWidth);
-			setAnnotateEndY(props.picAnnotation[props.dataIndex][3] * imgHeight);
-			console.log("already annotated: " + props.picAnnotation[props.dataIndex]); //DEBUG
-			console.log("already annotated: [↖X " + annotateStartX + ", ↖Y " + annotateStartY + ", ↘X " + annotateEndX + ", ↘Y " + annotateEndY + "]"); //DEBUG
+			console.log("picture is already annotated: ", props.picAnnotation[props.dataIndex], " (in percentage)"); //DEBUG
+			setAnnotation([ // turn the initial percentage into pixel
+				props.picAnnotation[props.dataIndex][0] * imgWidth, // cannot use prev instead of props.picAnnotation[props.dataIndex] here, bc the image might be rendered twice, probably due to React.Strict mode
+				props.picAnnotation[props.dataIndex][1] * imgHeight,
+				props.picAnnotation[props.dataIndex][2] * imgWidth,
+				props.picAnnotation[props.dataIndex][3] * imgHeight,
+			]);
 			setAnnotated(true);
 			draw_rectangle();
 		}
@@ -426,11 +424,11 @@ export default function UploadPopUp(props) {
 
 		// Draw new rectangle.
 		ctx.beginPath(); // begin drawing outer white outline
-		ctx.rect(annotateStartX, annotateStartY, (annotateEndX-annotateStartX), (annotateEndY-annotateStartY)); // set size
+		ctx.rect(annotation[0], annotation[1], (annotation[2]-annotation[0]), (annotation[3]-annotation[1])); // set size
 		ctx.strokeStyle = "#FFFFFF"/*white*/; ctx.lineWidth = 6; // set style
 		ctx.stroke();
 		ctx.beginPath(); // begin drawing inner red line
-		ctx.rect(annotateStartX, annotateStartY, (annotateEndX-annotateStartX), (annotateEndY-annotateStartY));
+		ctx.rect(annotation[0], annotation[1], (annotation[2]-annotation[0]), (annotation[3]-annotation[1]));
 		ctx.strokeStyle = "#ED5564"/*red*/; ctx.lineWidth = 4;
 		ctx.stroke();
 	}
@@ -445,39 +443,49 @@ export default function UploadPopUp(props) {
 	const canvas_annotate_start = (e) => {
 		setAnnotationInProgress(true);
 		setAnnotated(true);
-		setAnnotateStartX(e.offsetX);
-		setAnnotateStartY(e.offsetY);
-		console.log("canvas annotation starts: [" + e.offsetX + ", " + e.offsetY + "]"); //DEBUG
+		setAnnotation((prev) => [
+			e.offsetX, // StartX
+			e.offsetY, // StartY
+			prev[2],
+			prev[3],
+		]);
+		console.log("canvas annotation starts: [StartX:" + e.offsetX + ", StartY:" + e.offsetY + "]"); //DEBUG
 	}
 	const canvas_annotate_end = (e) => {
-		setAnnotateEndX(e.offsetX);
-		setAnnotateEndY(e.offsetY);
-		console.log("canvas annotation ends: [" + e.offsetX + ", " + e.offsetY + "]"); //DEBUG
+		setAnnotation((prev) => [
+			prev[0],
+			prev[1],
+			e.offsetX, // EndX
+			e.offsetY, // EndY
+		]);
+		console.log("canvas annotation ends: [EndX" + e.offsetX + ", EndY" + e.offsetY + "]"); //DEBUG
 		setAnnotationInProgress(false);
 	}
 	const canvas_annotate_inprogress = (e) => {
 		if (annotationInProgress===true) {
-			setAnnotateEndX(e.offsetX);
-			setAnnotateEndY(e.offsetY);
-			//console.log("canvas annotation in progress: [" + e.offsetX + ", " + e.offsetY + "]"); //DEBUG
+			setAnnotation((prev) => [
+				prev[0],
+				prev[1],
+				e.offsetX, // EndX
+				e.offsetY, // EndY
+			]);
+			//console.log("canvas annotation in progress: [EndX" + e.offsetX + ", EndY" + e.offsetY + "]"); //DEBUG
 		}
 	}
 
 	// Draw rectangle when annotation ends.
 	useEffect(() => {
-		if (annotateStartX===annotateEndX && annotateStartY===annotateEndY) { return; } // avoid deleting rectangle when clicking image
+		if (annotation[0]===annotation[2] && annotation[1]===annotation[3]) { return; }
+			// avoid deleting rectangle when clicking instead of dragging on canvas
 		draw_rectangle();
-	}, [annotateEndX, annotateEndY])
+	}, [annotation[2], annotation[3]])
 
 	const clear_annotation = () => {
 		const cvs = UploadPopUpCanvas.current;
 		const ctx = cvs.getContext('2d');
 		ctx.clearRect(0, 0, cvs.width, cvs.height); // clear canvas
 		setAnnotated(false); // reset annotation state
-		setAnnotateStartX(0);
-		setAnnotateStartY(0);
-		setAnnotateEndX(0);
-		setAnnotateEndY(0);
+		setAnnotation([0,0,0,0]);
 	}
 
 
@@ -495,13 +503,13 @@ export default function UploadPopUp(props) {
 						<canvas
 							className="UploadPopUpCanvas"
 							ref={UploadPopUpCanvas}
-							width={canvasX || 0} height={canvasY || 0}
+							width={canvasSize["X"] || 0} height={canvasSize["Y"] || 0}
 							onMouseDown={(e)=>{canvas_annotate_start(e.nativeEvent);}}
 							onMouseUp={(e)=>{canvas_annotate_end(e.nativeEvent);}}
 							onMouseMove={(e)=>{canvas_annotate_inprogress(e.nativeEvent);}}
 						/>
 					</div></div>
-					<LabelsForm
+					<AnnotationForm
 						form_change_handler_type1={form_change_handler_type1}
 						form_change_handler_type2={form_change_handler_type2}
 						add_label_handler_type2={add_label_handler_type2}
@@ -527,7 +535,7 @@ export default function UploadPopUp(props) {
 
 
 /**
- * LabelsForm
+ * AnnotationForm
  *
  * The form to guide labeling.
  * TODO: Currently implemented with a fixed dummy list, will replace with fetching data from database.
@@ -547,7 +555,7 @@ export default function UploadPopUp(props) {
  *  https://stackoverflow.com/questions/43040721/how-to-update-nested-state-properties-in-react
  *  https://stackoverflow.com/questions/57798841/react-setting-state-for-deeply-nested-objects-w-hooks
  */
-function LabelsForm(props) {
+function AnnotationForm(props) {
 
 	/**
 	 * render_category
@@ -740,7 +748,7 @@ function LabelsForm(props) {
 								:
 									props.formData[categoryname][subcategory.subcategory]
 							}
-							id={"LabelsForm-" + subcategory.subcategory}
+							id={"AnnotationForm-" + subcategory.subcategory}
 							color={color}
 							category={categoryname}
 							subcategory={
@@ -782,7 +790,7 @@ function LabelsForm(props) {
 	/* Render */
 	return (
 		<Form
-			className="LabelsForm"
+			className="AnnotationForm"
 		>
 			<div className="FormCategory">
 				<div className="HintTextWithIcon_container">

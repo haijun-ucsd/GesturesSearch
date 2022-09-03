@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 //import { Container, Row, Col, Button, InputGroup } from 'react-bootstrap';
 //import 'bootstrap/dist/css/bootstrap.min.css';
 import { storage } from "../../firebase";
-import { getDatabase, onValue, ref as ref_db, set, child, orderByChild, get } from "firebase/database";
+import { getDatabase, ref as ref_db, set, child, orderByChild, get } from "firebase/database";
 import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
 //import { v4 } from "uuid";
 import heic2any from "heic2any";
@@ -11,7 +11,7 @@ import "../components.css";
 import WaitingRoom from "./WaitingRoom";
 import UploadControl from "./UploadControl";
 import UploadPopUp from "./UploadPopUp";
-import { LabelStructure } from "../components";
+import { LabelStructure, LabelStructure_type2_only } from "../components";
 
 
 
@@ -30,7 +30,7 @@ import { LabelStructure } from "../components";
  */
 export default function UploadPage(props) {
 
-/* Adding and removing pictures in WaitingRoom */
+/**--- Adding and removing pictures in WaitingRoom ---**/
 
 	const [addingPic, setAddingPic] = useState(false); // whether in the progress of adding picture to waiting room
 	// DEBUG
@@ -38,9 +38,22 @@ export default function UploadPage(props) {
 		console.log("Is during the process of adding picture? " + addingPic);
 	}, [addingPic]);
 
+	const defaultFormData = (() => {
+		let initialFormData = { ...LabelStructure };
+		for (let bodypart in initialFormData["modality"]) { // set modality default value: true (= available)
+			initialFormData["modality"][bodypart] = true;
+		};
+		return initialFormData;
+	});
+
 	/**
 	 * handle_add_pic
+	 *
 	 * To help store the pictures and initialize URLs for them while using add-pic-btn.
+	 * 
+	 * @param e: e.target.files are the files that the user temporarily uploads to the webpage (WaitingRoom).
+	 * 
+	 * Usage: Called by the add-picture button in UploadControl.
 	 */
 	const handle_add_pic = async (e) => {
 
@@ -67,7 +80,7 @@ export default function UploadPage(props) {
 			//console.log("added_pics[" + i + "] (before convertion):", currPic); //DEBUG
 
 			/**
-			 * Convert .heic to .jpeg for proper display
+			 * Convert .heic to .jpeg for proper display.
 			 * references:
 			 *	https://stackoverflow.com/questions/57127365/make-html5-filereader-working-with-heic-files
 			 *	https://stackoverflow.com/questions/59227281/is-there-a-way-to-upload-an-image-heic-file-on-my-wysiwyg-editor-without-any-i
@@ -105,7 +118,7 @@ export default function UploadPage(props) {
 
 			pics_to_store.push(currPic);
 			urls_to_store.push(URL.createObjectURL(currPic));
-			forms_to_store.push({...LabelStructure});
+			forms_to_store.push(defaultFormData);
 			percentages_to_store.push(0);
 			added_labels_to_store.push("");
 			annotations_to_store.push([0,0,0,0]);
@@ -203,7 +216,7 @@ export default function UploadPage(props) {
 	};
 
 
-/* To handle upload */
+/**--- To handle upload ---**/
 
 	// whether in the process of uploading (publishing).
 	// 3 states: true, false, "succeed" (to show succeed msg).
@@ -218,12 +231,12 @@ export default function UploadPage(props) {
 	}, [uploadingPic]);
 
 	/**
-	 * uploadImages
+	 * upload_all_valid_images
 	 * 
 	 * Upload all fully-labeled pictures.
 	 */
-	const uploadImages = async () => {
-		console.log("call uploadImages()"); //DEBUG
+	const upload_all_valid_images = async () => {
+		console.log("call upload_all_valid_images()"); //DEBUG
 		setUploadingPic(true);
 
 		validate();
@@ -240,7 +253,7 @@ export default function UploadPage(props) {
 					if (props.completePercentages[i] === 100) { // valid picture, can upload
 						console.log("addedPics[" + i + "] is valid"); //DEBUG
 						console.log(props.addedPics.length); //DEBUG
-						uploadImage(i);
+						upload_single_image(i);
 					}
 				}
 
@@ -257,7 +270,7 @@ export default function UploadPage(props) {
 			// Upload all pictures.
 			for (let i = 0; i < props.addedPics.length; i++) {
 				console.log(props.addedPics.length); //DEBUG
-				await uploadImage(i);
+				await upload_single_image(i);
 			}
 
 			// Simply clear all helper lists.
@@ -277,7 +290,7 @@ export default function UploadPage(props) {
 	}
 
 	/**
-	 * uploadImage
+	 * upload_single_image
 	 *
 	 * Final step to upload image to firebase with settled labels.
 	 * 
@@ -286,9 +299,11 @@ export default function UploadPage(props) {
 	 *  https://stackoverflow.com/questions/46000360/use-of-then-in-reactjs
 	 *  https://stackoverflow.com/questions/38923644/firebase-update-vs-set
 	 *  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify
+	 *	https://stackoverflow.com/questions/1098040/checking-if-a-key-exists-in-a-javascript-object
+	 *	https://stackoverflow.com/questions/71244451/angular-returning-a-value-from-onvalue-in-firebase-realtime-database
 	 */
-	const uploadImage = async (idx) => {
-		console.log("Call uploadImage() on individual image at index " + idx); //DEBUG
+	const upload_single_image = async (idx) => {
+		console.log("Call upload_single_image() on individual image at index " + idx); //DEBUG
 
 		// Set up database.
 		const db = getDatabase();
@@ -296,16 +311,7 @@ export default function UploadPage(props) {
 		// Generate index (numeric id) for the picture according to publishing order.
 		var finalPicIndex = 0;
 		await get(ref_db(db, "images")).then((snapshot) => {
-
-			// First image ever case.
-			console.log("Size of 'images' folder in database:" + snapshot.size); //DEBUG
-			if (!snapshot.exists()) {
-				console.log("First image ever."); //DEBUG
-				// finalPicIndex = 0;
-			}
-
-			// Not first image case.
-			else {
+			if (snapshot.exists()) { // not first image case
 				let lastTimestamp = -1; // helpers to find the last image according to timestamp
 				let lastImage = null;
 				snapshot.forEach((child) => { // looking for the highest timestamp so far
@@ -318,63 +324,111 @@ export default function UploadPage(props) {
 						lastImage = currImage;
 					}
 				});
-				if (lastImage) { // if lastImage exists
+				if (lastImage != null) { // if lastImage exists
 					finalPicIndex = lastImage.index + 1;
-					console.log("Not first image, finalPicIndex:" + finalPicIndex); //DEBUG
+					console.log("finalPicIndex:" + finalPicIndex); //DEBUG
 				}
+			} else { // first image ever case
+				console.log("First image ever."); //DEBUG
 			}
 
 			// Create space at proper index for this image.
 			set(ref_db(db, ("images/"+finalPicIndex+"/index")), finalPicIndex);
 		});
 
-		// Store picture to firebase.
+		// Store picture to firebase storage, and then data to realtime database.
 		const image_path = "images/" + finalPicIndex;
 		const image_ref = ref(storage, image_path); // store image into firebase storage
 		await uploadBytes(image_ref, props.addedPics[idx]).then((snapshot) => {
-			getDownloadURL(snapshot.ref).then((url) => {
+			getDownloadURL(snapshot.ref).then(async (url) => {
 
-				// 1. Store data to firebase realtime database under "images", data
-				//		includes form data, URL, annotation info.
-				console.log("Upload image, labels, and annotation.\nindex: " + finalPicIndex + "\n url: " + url); //DEBUG
+				// 1. Store data to firebase realtime database under "images". Data includes: form data, URL, annotation info.
 				let finalPicData = {
 					index: finalPicIndex,
 					url: url,
+					timestamp: Math.floor(Date.now() / 1000), // upload time
 					...props.formDataList[idx],
 					annotation: props.picAnnotation[idx],
 				};
-				//finalPicData["url"] = url; // TODO: remove this line, should not need
+				console.log("[Upload Step 1] Upload image, labels, and annotation."
+					+ "\nindex: " + finalPicIndex
+					+ "\nurl: " + url +
+					"\nfinalPicData:", finalPicData); // DEBUG
 				set(ref_db(db, image_path), finalPicData); // store finalPicData into the corresponding picture object under "image"
-				console.log("finalPicData:", finalPicData); //DEBUG
 
-				// 2. Use the generated index to store the picture under the correct labels.
-				let formData = {...props.formDataList[idx]};
-				console.log("Append image index under corresponding labels."); //DEBUG
+				// 2. Append the image index & URL to "labels" folder, under the associated labels.
+				const formData = {...props.formDataList[idx]};
+				console.log("[Upload Step 2] Append image index under associated labels."); //DEBUG
+				const append_to_labels = (label, path) => { // helper function to append image under the correct path within "labels" folder
+					set(ref_db(db, ("labels/" + path + label + "/" + finalPicIndex)), { url: url });
+				}
 				for (let category in formData) {
-					//console.log("category: " + category); //DEBUG
-
-					// Special case: posture. No subcategory layer.
-					if (category === "posture") {
-						formData["posture"].map(label => { // formData["posture"] guaranteed to be an array
-							//console.log("label: " + label); //DEBUG
-							const label_path = "labels/posture/" + label;
-							set(ref_db(db, label_path + "/" + finalPicIndex), { url: url }); // TODO: storing url as well for now, can remove if find it unnecessary.
+					if (category === "posture") { // special case: posture (no subcategory layer)
+						formData["posture"].map(label => {
+							append_to_labels(label, "posture/");
 						});
-					}
-
-					// Default case.
-					else {
+					} else { // default case
 						for (let subcategory in formData[category]) {
-							//console.log("subcategory: " + subcategory); //DEBUG
 							if (Array.isArray(formData[category][subcategory])) {
 								formData[category][subcategory].map(label => {
-									//console.log("label: " + label); //DEBUG
-									const label_path = "labels/" + category + "/" + subcategory + "/" + label;
-									set(ref_db(db, label_path + "/" + finalPicIndex), { url: url });
+									append_to_labels(label, (category + "/" + subcategory + "/"));
 								});
 							} else {
-								const label_path = "labels/" + category + "/" + subcategory + "/" + formData[category][subcategory];
-								set(ref_db(db, label_path + "/" + finalPicIndex), { url: url });
+								append_to_labels(
+									formData[category][subcategory],
+									(category + "/" + subcategory + "/")
+								);
+							}
+						}
+					}
+				}
+
+				// 3. If label is customized and unreviewed yet, add it to "unreviewed_labels" folder to wait for manual reviewing.
+				console.log("[Upload Step 3] Find unreviewed labels and store them."); //DEBUG
+				let reviewed_labels_list = { ...LabelStructure_type2_only };
+				await get(ref_db(db, "reviewed_labels")).then((snapshot) => { // try to fetch full list of reviewed label from firebase
+					if (!snapshot.exists()) { // no any reviewed label yet
+						console.log("No reviewed label yet, all labels stored as unreviewed."); //DEBUG
+					} else {
+						reviewed_labels_list = {...snapshot.val()};
+					}
+				});
+				const append_to_unreviewed = async (label, path_to_reviewed, path_to_unreviewed) => { // helper function to append label under the correct path within "unreviewed_labels" folder
+					console.log("path_to_reviewed: ", path_to_reviewed); //DEBUG
+					if (! (label in path_to_reviewed)) { // if the current label doesn't exist in reviewed_labels_list
+						await get(ref_db(db, ("unreviewed_labels/" + path_to_unreviewed + label))).then((snapshot) => {
+							if (!snapshot.exists()) { // first mention of this label ever, count start at 1
+								set(ref_db(db, ("unreviewed_labels/" + path_to_unreviewed + label)), { count: 1 });
+							}
+							else { // otherwise, increment count
+								const currCount = snapshot.val().count;
+								console.log("Label '" + label + "' has been mentioned before.\ncount: " + currCount + " +1");
+								set(ref_db(db, ("unreviewed_labels/" + path_to_unreviewed + label)), { count: (currCount+1) });
+							}
+						});
+					}
+				}
+				for (let category in reviewed_labels_list) {
+					if (category === "posture") { // special case: posture (no subcategory layer)
+						formData["posture"].map(label => {
+							append_to_unreviewed(label, reviewed_labels_list["posture"], "posture/");
+						});
+					} else { // default case
+						for (let subcategory in reviewed_labels_list[category]) {
+							if (Array.isArray(formData[category][subcategory])) {
+								formData[category][subcategory].map(label => {
+									append_to_unreviewed(
+										label,
+										reviewed_labels_list[category][subcategory],
+										(category + "/" + subcategory + "/")
+									);
+								});
+							} else {
+								append_to_unreviewed(
+									formData[category][subcategory],
+									reviewed_labels_list[category][subcategory],
+									(category + "/" + subcategory + "/")
+								);
 							}
 						}
 					}
@@ -394,7 +448,7 @@ export default function UploadPage(props) {
 	};
 
 
-/* Validation & Progress */
+/**--- Validation & Progress ---**/
 
 	const [uploadDisabled, setUploadDisabled] = useState(true);
 	// DEBUG
@@ -454,7 +508,7 @@ export default function UploadPage(props) {
 	}, [props.addedPics, props.addedPicsUrl, props.formDataList, props.completePercentages]);
 
 
-/* Viewing and labeling individual picture */
+/**--- Viewing and labeling individual picture ---**/
 
 	/**
 	 * clickedUrl
@@ -550,7 +604,7 @@ export default function UploadPage(props) {
 	};
 
 
-/* Render */
+/**--- Render ---**/
 	return (
 		<div className="PageBox PageBox_Upload">
 			<div className="UploadWaitingRoom">
@@ -560,7 +614,7 @@ export default function UploadPage(props) {
 					addingPic={addingPic}
 					uploadingPic={uploadingPic}
 					setAddingPic={setAddingPic}
-					uploadImages={uploadImages}
+					upload_all_valid_images={upload_all_valid_images}
 					uploadDisabled={uploadDisabled}
 				/>
 				<WaitingRoom

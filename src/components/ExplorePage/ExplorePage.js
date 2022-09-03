@@ -24,23 +24,29 @@ export default function ExplorePage() {
 	 */
 	const [filterList, setFilterList] = useState([]);
 	//const [filterList, setFilterList] = useState([ { label: "library", label_id: 0, category: "location", subcategory: "site", color: "#A0D568" }, { label: "hospital", label_id: 1, category: "location", subcategory: "site", color: "#A0D568" }, ]); //DEBUG
-  // DEBUG
-  useEffect(() => {
-    console.log("updated filterList:");
-    console.log(filterList);
-  }, [filterList]);
+	// DEBUG
+	useEffect(() => {
+		console.log("updated filterList:");
+		console.log(filterList);
+	}, [filterList]);
 
-  /**
-   * facetList
-   * List of states in the facet sections (Modality, Posture, Spectators, Demongraphic).
-   * Default as: FilterStructure
-   */
-  const [facetList, setFacetList] = useState(FilterStructure);
-  // DEBUG
-  useEffect(() => {
-    console.log("updated facetList:");
-    console.log(facetList);
-  }, [facetList]);
+	/**
+	 * facetList
+	 * List of states in the facet sections (Location, Modality, Posture, Spectators, Demongraphic).
+	 * Default as: FilterStructure
+	 */
+	const [facetList, setFacetList] = useState(() => {
+		let initialFacetList = { ...FilterStructure };
+		for (let bodypart in initialFacetList["modality"]) { // set modality default value: "any"
+			initialFacetList["modality"][bodypart] = "any";
+		};
+		return initialFacetList;
+	});
+	// DEBUG
+	useEffect(() => {
+		console.log("updated facetList:");
+		console.log(facetList);
+	}, [facetList]);
 
 	/**
 	 * filter_change_handler
@@ -103,66 +109,66 @@ export default function ExplorePage() {
 		//console.log("adding succeeds, gallery updated."); //DEBUG
 	}
 
-  /**
-   * remove_filter
-   *
-   * To specifically remove an applied filter.
-   *
-   * @param label: Value of the element to remove.
-   *
-   * references:
-   *  https://stackoverflow.com/questions/36326612/how-to-delete-an-item-from-state-array
-   *  https://stackoverflow.com/questions/35338961/how-to-remove-the-li-element-on-click-from-the-list-in-reactjs
-   */
-  const remove_filter = (label) => {
-    let filterToRemove = filterList.find((item) => item.label === label);
-    let category = filterToRemove.category;
-    let subcategory = filterToRemove.subcategory;
+	/**
+	 * remove_filter
+	 *
+	 * To specifically remove an applied filter.
+	 *
+	 * @param label: Value of the element to remove.
+	 *
+	 * references:
+	 *  https://stackoverflow.com/questions/36326612/how-to-delete-an-item-from-state-array
+	 *  https://stackoverflow.com/questions/35338961/how-to-remove-the-li-element-on-click-from-the-list-in-reactjs
+	 */
+	const remove_filter = (label) => {
+		let filterToRemove = filterList.find((item) => item.label === label);
+		let category = filterToRemove.category;
+		let subcategory = filterToRemove.subcategory;
 
-    // Reset facetList to update the corresponding facet section.
-    // Special case: Modality.
-    if (category === "modality") {
-      setFacetList((prev) => {
-        return {
-          ...prev,
-          [category]: {
-            ...prev[category],
-            [subcategory]: "any", // subcategory in Modality = body part
-          },
-        };
-      });
-    } else {
-      setFacetList((prev) => {
-        let newSubcategoryList = prev[category][subcategory].filter(
-          (item) => item !== label
-        );
-        console.log("newSubcategoryList: " + newSubcategoryList); //DEBUG
-        return {
-          ...prev,
-          [category]: {
-            ...prev[category],
-            [subcategory]: newSubcategoryList,
-          },
-        };
-      });
-    }
+		// Reset facetList to update the corresponding facet section.
+		// Special case: Modality.
+		if (category === "modality") {
+			setFacetList((prev) => {
+				return {
+					...prev,
+					[category]: {
+						...prev[category],
+						[subcategory]: "any", // subcategory in Modality = body part
+					},
+				};
+			});
+		} else {
+			setFacetList((prev) => {
+				let newSubcategoryList = prev[category][subcategory].filter(
+					(item) => item !== label
+				);
+				console.log("newSubcategoryList: " + newSubcategoryList); //DEBUG
+				return {
+					...prev,
+					[category]: {
+						...prev[category],
+						[subcategory]: newSubcategoryList,
+					},
+				};
+			});
+		}
 
-    // Reset filterList to remove the current filter from AppliedFilter.
-    setFilterList (prev => {
-      let newFilterList = prev.filter((item) => item.label !== label);
-      return newFilterList;
-    });
+		// Reset filterList to remove the current filter from AppliedFilter.
+		setFilterList (prev => {
+			let newFilterList = prev.filter((item) => item.label !== label);
+			return newFilterList;
+		});
 
-    console.log("remove filter: " + label); //DEBUG
+		console.log("remove filter: " + label); //DEBUG
 
-    // TODO: Update gallery.
-    //console.log("removing succeeds, gallery updated."); //DEBUG
-  };
+		// TODO: Update gallery.
+		//console.log("removing succeeds, gallery updated."); //DEBUG
+	};
 
 
 /* Gallery (pictures) */
 
-  const [imageList, setImageList] = useState([]); // list of currently shown pictures
+	const [imageList, setImageList] = useState([]); // list of currently shown pictures
 
 	/* Update the gallery upon any change. */
 	const update_gallery = () => {
@@ -176,12 +182,12 @@ export default function ExplorePage() {
 		const db = getDatabase()
 		const dbRef = ref_db(db, 'images')
 		onValue(dbRef, (snapshot) => {
-		  const data = snapshot.val();
-		  let newImgList = [];
-		  for (const [imgKey, imgData] of Object.entries(data)) {
+			const data = snapshot.val();
+			let newImgList = [];
+			for (const [imgKey, imgData] of Object.entries(data)) {
 				newImgList.push([imgKey, imgData]);
-		  }
-		  setImageList(newImgList);
+			}
+			setImageList(newImgList);
 		})
 	}
 	useEffect(() => { update_gallery(); }, [])
@@ -293,53 +299,53 @@ export default function ExplorePage() {
 
 /* Click to view details of a picture */
 
-  const [pictureClicked, setPictureClicked] = useState(undefined);
-  console.log("pictureClicked:");
-  console.log(pictureClicked); //DEBUG
+	const [pictureClicked, setPictureClicked] = useState(undefined);
+	console.log("pictureClicked:");
+	console.log(pictureClicked); //DEBUG
 
-  const click_picture = (labelData) => {
-    // If the current picture has been clicked twice, then close ExploreDetails.
-    if (pictureClicked && labelData.url === pictureClicked.url) {
-      setPictureClicked(undefined);
-    }
+	const click_picture = (labelData) => {
+		// If the current picture has been clicked twice, then close ExploreDetails.
+		if (pictureClicked && labelData.url === pictureClicked.url) {
+			setPictureClicked(undefined);
+		}
 
-    // Otherwise, open up (or expand) ExploreDetails by setting pictureClicked as the input labelData of the picture being clicked on.
-    // Facet panel will be pushed into collapsed state.
-    else {
-      setPictureClicked(labelData);
-    }
-  };
+		// Otherwise, open up (or expand) ExploreDetails by setting pictureClicked as the input labelData of the picture being clicked on.
+		// Facet panel will be pushed into collapsed state.
+		else {
+			setPictureClicked(labelData);
+		}
+	};
 
-  const close_exploredetails = () => {
-    setPictureClicked(undefined);
-  };
+	const close_exploredetails = () => {
+		setPictureClicked(undefined);
+	};
 
 
 /* Render */
-  return (
-    <div className="PageBox PageBox_Explore">
-      <Facet
-        setFilterList={setFilterList}
-        filterList={filterList}
-        filter_change_handler={filter_change_handler}
-        remove_filter={remove_filter}
-        setFacetList={setFacetList}
-        facetList={facetList}
-        handleSearch={handle_searchbar}
-      />
-      <ExploreGallery
-        imageList={imageList}
-        filterList={filterList}
-        remove_filter={remove_filter}
-        click_picture={click_picture}
-        pictureClicked={pictureClicked}
-      />
-      {pictureClicked !== undefined ? (
-        <ExploreDetails
-          pictureClicked={pictureClicked}
-          close_exploredetails={close_exploredetails}
-        />
-      ) : null}
-    </div>
-  );
+	return (
+		<div className="PageBox PageBox_Explore">
+			<Facet
+				setFilterList={setFilterList}
+				filterList={filterList}
+				filter_change_handler={filter_change_handler}
+				remove_filter={remove_filter}
+				setFacetList={setFacetList}
+				facetList={facetList}
+				handleSearch={handle_searchbar}
+			/>
+			<ExploreGallery
+				imageList={imageList}
+				filterList={filterList}
+				remove_filter={remove_filter}
+				click_picture={click_picture}
+				pictureClicked={pictureClicked}
+			/>
+			{pictureClicked !== undefined ? (
+				<ExploreDetails
+					pictureClicked={pictureClicked}
+					close_exploredetails={close_exploredetails}
+				/>
+			) : null}
+		</div>
+	);
 }
