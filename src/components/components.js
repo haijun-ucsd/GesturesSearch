@@ -4,7 +4,6 @@ import { getDatabase, onValue, ref as ref_db, set, get } from 'firebase/database
 import './components.css';
 import { labels_data } from "./labels_data.js";
 import { useState , useEffect } from 'react';
-import { Autocomplete, TextField } from '@mui/material';
 import Fuse from 'fuse.js';
 import useResizeAware from 'react-resize-aware';
 
@@ -290,131 +289,6 @@ function Checkbox(props) {
 			</label>
 		);
 	}
-}
-
-/**
- * ExploreSearchBar
- * 
- * parent props:
- *	- search_handler(searchText, ...): whatever function to perform at the current search bar.
- *	- searchResults: a list of labels as resulted from the search.
- *	- id: ref, id and name for this search bar, forwarded from parent.
- *
- * hooks:
- *	- [searchText, setSearchText]: to record current input in the search bar
- *	- [submittedSearchText, setSubmittedSearchText]: snapshot of searchText at the time of submission (clicking search btn or pressing ENTER)
- *			TODO: move "submittedSearchText" to a proper parent layer
- * 
- * references:
- *	https://stackoverflow.com/questions/12875911/how-can-i-make-my-input-type-submit-an-image
- *	https://bobbyhadz.com/blog/react-get-input-value-on-button-click
- *	https://stackoverflow.com/questions/31272207/to-call-onchange-event-after-pressing-enter-key
- */
-function ExploreSearchBar(props) {
-
-	const [searchText, setSearchText] = useState('');
-	// DEBUG
-	useEffect(() => {
-		console.log("searchText is: " + searchText);
-	}, [searchText]);
-
-	const [submittedSearchText, setSubmittedSearchText] = useState('');
-	// DEBUG
-	useEffect(() => {
-		console.log("submittedSearchText is: " + submittedSearchText);
-	}, [submittedSearchText]);
-
-	// Examples:
-	// TODO: make this not hard-coded
-	const locationLabels = [
-		{ label: 'library'},
-		{ label: 'hospital'},
-		{ label: 'shopping'},
-		{ label: 'public transportation'},
-		{ label: 'entertainment'},
-		{ label: 'sport'},
-		{ label: 'nature'},
-		{ label: 'parking lot'},
-		{ label: 'street'},
-		{ label: 'pedestrian'},
-		{ label: 'restaurant'},
-		{ label: 'work space'},
-		{ label: 'hostpital'},
-		{ label: 'indoor'},
-		{ label: 'outdoor'},
-		{ label: 'entrance'},
-		{ label: 'corridor'},
-		{ label: 'bench'},
-		{ label: 'cabin'},
-		{ label: 'waiting room'},
-		{ label: 'shelf'},
-		{ label: 'pool'},
-		{ label: 'poolside'},
-		{ label: 'table'},
-		{ label: 'zebra walk'},
-		{ label: 'rock climbing wall'}
-	];
-
-	/* Render */
-	return (
-		<div className="SearchBar_container">
-			<div className="SearchBar">
-				{/* <input
-					type="text"
-					className="SearchBarInput"
-					id={props.id} name={props.id}
-					placeholder=""
-					value={searchText}
-					onChange={(e) => {
-						setSearchText(e.target.value);
-					}}
-					onKeyDown={(e) => {	// pressing ENTER == clicking search icon
-						if (e.key==='Enter') {
-							setSubmittedSearchText(searchText);
-						}
-					}}
-				/> */}
-				<Autocomplete
-					disablePortal
-					id="combo-box-demo"
-					options={locationLabels}
-					sx={{ width: 300 }}
-					renderInput={
-						(params) => <TextField {...params} label="location, demographic, posture...(split with ',')"/>
-					}
-					onKeyPress= {(e, value) => {
-						if (e.key === 'Enter') {
-							console.log('Enter key pressed');
-							// write your functionality here
-							// search for relevant images here
-							// send inputed location back to Facet and re-render images
-							// console.log(e.target.value);
-							props.handleSearch(e.target.value);
-						}
-					}}
-				/>
-				{searchText.length > 0 ?
-					<input
-						type="image" src={NoBtn}
-						className="SearchBar_clearbtn"
-						onClick={(e) => { // clear input field
-							e.preventDefault();
-							setSearchText('');
-							setSubmittedSearchText('');
-						}}
-					/>
-				: null }
-				<input
-					type="image" src={SearchBtn}	// <input type="image"> defines an image as a submit button
-					className="SearchBar_searchbtn"
-					onClick={(e) => {
-						e.preventDefault();
-						setSubmittedSearchText(searchText);
-					}}
-				/>
-			</div>
-		</div>
-	);
 }
 
 /**
@@ -830,23 +704,11 @@ const FetchLabelList_helper = (category, subcategory) => {
 
 
 /**
- * Dots */
-/**
- * Human figure */
-/**
- * Modality */
-/**
- * Rearrange filters */
-/**
  * Img */
 /**
  * Category */
 /**
  * Statistics */
-/**
- * Info */
-/**
- * Imgs */
 /**
  * Btn */
 /**
@@ -931,4 +793,4 @@ const FilterStructure = Object.freeze({
 	},
 })
 
-export { LabelStructure, FilterStructure, CheckLabel, RemovableLabel, Checkbox, DescriptionHover, ExploreSearchBar, SearchableDropdown, AccordionSection, GalleryColumn_helper, FetchLabelList_helper };
+export { LabelStructure, FilterStructure, CheckLabel, RemovableLabel, Checkbox, DescriptionHover, SearchableDropdown, AccordionSection, GalleryColumn_helper, FetchLabelList_helper };

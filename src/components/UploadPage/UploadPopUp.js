@@ -2,15 +2,15 @@ import React, { Component, useState, useEffect, useRef } from "react";
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { CheckLabel, SearchableDropdown, DescriptionHover, FetchLabelList_helper } from './components';
-import './components.css';
-import { labels_data } from "./labels_data.js";
-import BodyComponent from './BodyComponent';
+import { CheckLabel, SearchableDropdown, DescriptionHover, FetchLabelList_helper } from '../components';
+import '../components.css';
+import { labels_data } from "../labels_data.js";
+import BodyComponent from '../BodyComponent';
 
 /* Assets: */
 //import PopUpCloseBtn from "../assets/PopUpCloseBtn.png";
-import YesBtn from "../assets/YesBtn.png";
-import EditPicIcon from "../assets/EditPicIcon.png";
+import YesBtn from "../../assets/YesBtn.png";
+import EditPicIcon from "../../assets/EditPicIcon.png";
 
 
 
@@ -114,7 +114,7 @@ export default function UploadPopUp(props) {
 		});
 
 		// Update addedLabels.
-		props.reprint_added_labels(props.dataIndex, formData);
+		props.refresh_added_labels(props.dataIndex, formData);
 
 		// Update formDataList.
 		props.setFormDataList((prev) => {

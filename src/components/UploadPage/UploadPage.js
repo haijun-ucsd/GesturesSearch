@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 //import { Container, Row, Col, Button, InputGroup } from 'react-bootstrap';
 //import 'bootstrap/dist/css/bootstrap.min.css';
-import { storage } from "../firebase";
+import { storage } from "../../firebase";
 import { getDatabase, onValue, ref as ref_db, set, child, orderByChild, get } from "firebase/database";
 import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
 //import { v4 } from "uuid";
 import heic2any from "heic2any";
 import reactImageSize from 'react-image-size';
-import "./components.css";
+import "../components.css";
 import WaitingRoom from "./WaitingRoom";
 import UploadControl from "./UploadControl";
 import UploadPopUp from "./UploadPopUp";
-import { LabelStructure } from "./components";
+import { LabelStructure } from "../components";
 import Compressor from 'compressorjs';
 
 
@@ -158,7 +158,7 @@ export default function UploadPage(props) {
 		props.setPicAnnotation((prev) => prev.filter((item, i) => i!=idx));
 	}
 
-	const image_format_conversion = (e, idx) => {
+	const unify_image_format = (e, idx) => {
 
 		const convert_to_format = "jpeg"; // or png or gif
 
@@ -198,10 +198,25 @@ export default function UploadPage(props) {
 			});
 
 		}, "image/jpeg", 1); // mime=JPEG, quality=1.00
+
+		// TODO: if click too fast before image is fully loaded, will cause error
+		// idea: document ready
 	};
 
 
 /* To handle upload */
+
+	// whether in the process of uploading (publishing).
+	// 3 states: true, false, "succeed" (to show succeed msg).
+	const [uploadingPic, setUploadingPic] = useState(false);
+	useEffect(() => {
+		console.log("Is during the process of uploading picture? " + uploadingPic); //DEBUG
+		if (uploadingPic === "succeed") { // let succeed msg stay for 3s
+			setTimeout(() => {
+		    setUploadingPic(false);
+		  }, 3000); // 3s = 3000ms
+		}
+	}, [uploadingPic]);
 
 	/**
 	 * uploadImages
@@ -210,6 +225,7 @@ export default function UploadPage(props) {
 	 */
 	const uploadImages = async () => {
 		console.log("call uploadImages()"); //DEBUG
+		setUploadingPic(true);
 
 		validate();
 		console.log("allPicsValid: " + allPicsValid); //DEBUG
@@ -255,7 +271,7 @@ export default function UploadPage(props) {
 		}
 
 		// Alert successful upload.
-		alert("Pictures have been uploaded! :D");
+		setUploadingPic("succeed");
 
 		console.log("Uploaded pictures should have been cleared."); //DEBUG
 		console.log("addedPics:", props.addedPics); //DEBUG
@@ -309,7 +325,7 @@ export default function UploadPage(props) {
 			}
 
 			// Create space at proper index for this image.
-			set(ref_db(db, `images/${finalPicIndex}/index`), finalPicIndex);
+			set(ref_db(db, ("images/"+finalPicIndex+"/index")), finalPicIndex);
 		});
 
 		// Store picture to firebase.
@@ -325,22 +341,22 @@ export default function UploadPage(props) {
       // which means you have to access the `result` in the `success` hook function.
       success(result) {
         props.addedPics[idx] = result;
-            // Store picture to firebase.
-        uploadBytes(image_ref, result).then((snapshot) => {
-          console.log("compressed result: ", props.addedPics[idx]);
-          getDownloadURL(snapshot.ref).then((url) => {
+		uploadBytes(image_ref, props.addedPics[idx]).then((snapshot) => {
+			console.log("compressed result: ", props.addedPics[idx]);
+			getDownloadURL(snapshot.ref).then((url) => {
 
-            // 1. Store data to firebase realtime database under "images", data
-            //		includes form data, URL, annotation info.
-            console.log("Upload image, labels, and annotation.\nkey: " + finalPicIndex + "\n url: " + url); //DEBUG
-            let finalPicData = {
-              url: url,
-              ...props.formDataList[idx],
-              annotation: props.picAnnotation[idx],
-            };
-            //finalPicData["url"] = url; // TODO: remove this line, should not need
-            set(ref_db(db, image_path), finalPicData); // store finalPicData into the corresponding picture object under "image"
-            console.log("finalPicData:", finalPicData); //DEBUG
+				// 1. Store data to firebase realtime database under "images", data
+				//		includes form data, URL, annotation info.
+				console.log("Upload image, labels, and annotation.\nindex: " + finalPicIndex + "\n url: " + url); //DEBUG
+				let finalPicData = {
+					index: finalPicIndex,
+					url: url,
+					...props.formDataList[idx],
+					annotation: props.picAnnotation[idx],
+				};
+				//finalPicData["url"] = url; // TODO: remove this line, should not need
+				set(ref_db(db, image_path), finalPicData); // store finalPicData into the corresponding picture object under "image"
+				console.log("finalPicData:", finalPicData); //DEBUG
 
             // 2. Use the generated index to store the picture under the correct labels.
             let formData = {...props.formDataList[idx]};
@@ -480,6 +496,66 @@ export default function UploadPage(props) {
 	};
 
 
+/* Validation & Progress */
+
+	const [uploadDisabled, setUploadDisabled] = useState(true);
+	// DEBUG
+	useEffect(() => {
+		console.log("uploadDisabled: " + uploadDisabled);
+	}, uploadDisabled);
+
+	const [allPicsValid, setAllPicsValid] = useState(false);
+	// DEBUG
+	useEffect(() => {
+		console.log("allPicsValid: " + allPicsValid);
+	}, allPicsValid);
+
+	/**
+	 * Validate
+	 *
+	 * Check progresses to validate for uploading, return the indices of pictures that are ready to upload.
+	 * A picture is ready to be published if all required fields are filled, aka. completePercentage==100.
+	 */
+	const validate = () => {
+		let publishable_flag = false;
+		let all_validate_flag = true;
+		for (let i = 0; i < props.completePercentages.length; i++) {
+			if (props.completePercentages[i] === 100) { // valid to upload
+				publishable_flag = true; // turn on publishable_flag if any picture has been fully labeled
+			} else {
+				all_validate_flag = false; // turn off all_validate_flag if any picture has not been fully labeled
+			}
+		}
+		if (publishable_flag===true) { // if any picture is valid, enable upload button
+			setUploadDisabled(false);
+		} else {
+			setUploadDisabled(true);
+		}
+		if (all_validate_flag===true) { // if all pictures are valid, upload without warning
+			setAllPicsValid(true);
+		} else {
+			setAllPicsValid(false);
+		}
+	};
+
+	// const validate_publish_list = () => {
+	//   let publishable_list=[];
+	//   for (let i = 0; i < completePercentages.length; i++) {
+	//     if (completePercentages[i] === 100) { // valid to upload
+	//       publishable_list.push(i);
+	//     }
+	//   }
+	//   return publishable_list;
+	// };
+
+	/**
+	 * Check progresses regularly to turn on the upload btn.
+	 */
+	useEffect(() => {
+		validate();
+	}, [props.addedPics, props.addedPicsUrl, props.formDataList, props.completePercentages]);
+
+
 /* Viewing and labeling individual picture */
 
 	/**
@@ -490,16 +566,16 @@ export default function UploadPage(props) {
 	const closePop = () => { setClickedUrl(""); }
 
 	/**
-	 * reprint_added_labels
+	 * refresh_added_labels
 	 *
-	 * Return a text that lists out all added labels
+	 * Upon update of formData, create a new string for hover-to-show addedLabels to replace the old one.
 	 * @param idx: Index of formDataList to fetch added labels from
 	 *
 	 * references:
 	 *  https://www.codegrepper.com/code-examples/javascript/how+to+check+if+something+is+an+array+javascript
 	 *  https://www.codegrepper.com/code-examples/javascript/remove+last+character+from+a+string+in+react
 	 */
-	const reprint_added_labels = (idx, data) => {
+	const refresh_added_labels = (idx, data) => {
 		let added_labels_string = "Added labels: \n";
 		for (let category in data) {
 			// Ignored case: url.
@@ -576,66 +652,6 @@ export default function UploadPage(props) {
 	};
 
 
-/* Validation & Progress */
-
-	const [uploadDisabled, setUploadDisabled] = useState(true);
-	// DEBUG
-	useEffect(() => {
-		console.log("uploadDisabled: " + uploadDisabled);
-	}, uploadDisabled);
-
-	const [allPicsValid, setAllPicsValid] = useState(false);
-	// DEBUG
-	useEffect(() => {
-		console.log("allPicsValid: " + allPicsValid);
-	}, allPicsValid);
-
-	/**
-	 * Validate
-	 *
-	 * Check progresses to validate for uploading, return the indices of pictures that are ready to upload.
-	 * A picture is ready to be published if all required fields are filled, aka. completePercentage==100.
-	 */
-	const validate = () => {
-		let publishable_flag = false;
-		let all_validate_flag = true;
-		for (let i = 0; i < props.completePercentages.length; i++) {
-			if (props.completePercentages[i] === 100) { // valid to upload
-				publishable_flag = true; // turn on publishable_flag if any picture has been fully labeled
-			} else {
-				all_validate_flag = false; // turn off all_validate_flag if any picture has not been fully labeled
-			}
-		}
-		if (publishable_flag===true) { // if any picture is valid, enable upload button
-			setUploadDisabled(false);
-		} else {
-			setUploadDisabled(true);
-		}
-		if (all_validate_flag===true) { // if all pictures are valid, upload without warning
-			setAllPicsValid(true);
-		} else {
-			setAllPicsValid(false);
-		}
-	};
-
-	// const validate_publish_list = () => {
-	//   let publishable_list=[];
-	//   for (let i = 0; i < completePercentages.length; i++) {
-	//     if (completePercentages[i] === 100) { // valid to upload
-	//       publishable_list.push(i);
-	//     }
-	//   }
-	//   return publishable_list;
-	// };
-
-	/**
-	 * Check progresses regularly to turn on the upload btn.
-	 */
-	useEffect(() => {
-		validate();
-	}, [props.addedPics, props.addedPicsUrl, props.formDataList, props.completePercentages]);
-
-
 /* Render */
 	return (
 		<div className="PageBox PageBox_Upload">
@@ -644,12 +660,13 @@ export default function UploadPage(props) {
 					handle_add_pic={handle_add_pic}
 					numAddedPics={props.addedPics.length}
 					addingPic={addingPic}
+					uploadingPic={uploadingPic}
 					setAddingPic={setAddingPic}
 					uploadImages={uploadImages}
 					uploadDisabled={uploadDisabled}
 				/>
 				<WaitingRoom
-					image_format_conversion={image_format_conversion}
+					unify_image_format={unify_image_format}
 					handle_remove_pic={handle_remove_pic}
 					addedPics={props.addedPics}
 					addedPicsUrl={props.addedPicsUrl}
@@ -667,7 +684,7 @@ export default function UploadPage(props) {
 					setFormDataList={props.setFormDataList}
 					setCompletePercentages={props.setCompletePercentages}
 					completePercentages={props.completePercentages}
-					reprint_added_labels={reprint_added_labels}
+					refresh_added_labels={refresh_added_labels}
 					picAnnotation={props.picAnnotation}
 					setPicAnnotation={props.setPicAnnotation}
 				/>
