@@ -5,7 +5,7 @@ import "../components.css";
 import Facet from "./Facet";
 import ExploreGallery from "./ExploreGallery";
 import ExploreDetails from "./ExploreDetails";
-import { FilterStructure } from "../components";
+import { FilterStructure, FetchLabelList_helper } from "../components";
 import _, { map } from "underscore";
 
 /* Assets: */
@@ -13,9 +13,11 @@ import ArrowLeft from "../../assets/ArrowLeft.png";
 import ArrowRight from "../../assets/ArrowRight.png";
 import ExploreDetailsCloseBtn from "../../assets/ExploreDetailsCloseBtn.png";
 
+export var searchDataCopy = []; //TODO
+
 export default function ExplorePage() {
 
-/* Filters from Facet (search & filters) */
+/**--- Filters from Facet (search & filters) ---**/
 
 	/**
 	 * filterList
@@ -63,7 +65,7 @@ export default function ExplorePage() {
 	 *  https://stackoverflow.com/questions/43784554/how-to-add-input-data-to-list-in-react-js
 	 *  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some
 	 */
-	const filter_change_handler = (label, label_id, category, subcategory, color) => {
+	const filter_change_handler = (label, label_id, category, subcategory, color, removable=true, location=false) => {
 		console.log("clicked on filter: " + label); //DEBUG
 
 		// Check for empty.
@@ -74,10 +76,11 @@ export default function ExplorePage() {
 		if (filterList.some(
 			(item) => item.label === label
 		)) {
-
-			// Remove.
-			console.log("label exists, remove."); //DEBUG
-			remove_filter(label); // remove from both filterList and facetList
+			if (removable){
+				// Remove.
+				console.log("label exists, remove."); //DEBUG
+				remove_filter(label); // remove from both filterList and facetList
+			}
 		} else {
 
 			// Add.
@@ -93,16 +96,18 @@ export default function ExplorePage() {
 				...prev,
 				newFilter,
 			]));
-			setFacetList(prev => ({
-				...prev,
-				[category]: {
-					...prev[category],
-					[subcategory]: [
-						...prev[category][subcategory],
-						label,
-					]
-				},
-			}));
+			if(!location){
+				setFacetList(prev => ({
+					...prev,
+					[category]: {
+						...prev[category],
+						[subcategory]: [
+							...prev[category][subcategory],
+							label,
+						]
+					},
+				}));
+			}
 		}
 
 		// TODO: Update gallery.
@@ -166,7 +171,7 @@ export default function ExplorePage() {
 	};
 
 
-/* Gallery (pictures) */
+/**--- Gallery (pictures) ---**/
 
 	const [imageList, setImageList] = useState([]); // list of currently shown pictures
 
@@ -193,14 +198,53 @@ export default function ExplorePage() {
 	useEffect(() => { update_gallery(); }, [])
 
 
-/* Search */
+/**--- Search ---**/
 
 	const [searchData, setSearchData] = useState([""]);
 
 	const handle_searchbar = (input) => {
 		console.log('search input:', input);
-		setSearchData(input.split(', ').map(item => item.trim()));
-		console.log('search data: ', searchData);
+		
+		setSearchData((prev) => input.split(', ').map(item => item.trim()));
+		console.log("searchData: ", searchData);
+
+		//Add searchbar content to applied filters
+		const locationColor = "#80aa54";
+		const postureColor = "#AC92EB";
+		const demographicColor = "#ED5564";
+
+		const inputArr = input.split(', ').map(item => item.trim());
+		console.log('search input Arr:', inputArr);
+
+		const allSites = FetchLabelList_helper("location", "site");
+		const allArchi_compo = FetchLabelList_helper("location", "archi_compo");
+		const allIn_outdoor = FetchLabelList_helper("location", "in_outdoor");
+
+		const allSex = FetchLabelList_helper("demographic", "sex");
+		const allAge = FetchLabelList_helper("demographic", "age");
+		const allRoles = FetchLabelList_helper("demographic", "social_role");
+
+		const allPostures = FetchLabelList_helper("posture", undefined);
+		
+		if (inputArr.length !== 0) {
+			for (const searchField of inputArr) {
+				if (allPostures.includes(searchField)) {
+					filter_change_handler(searchField, 0, "posture", "posture", postureColor, false);
+				} else if (allSites.includes(searchField)) {
+					filter_change_handler(searchField, 0, "location", "site", locationColor, false, true);
+				} else if (allArchi_compo.includes(searchField)) {
+					filter_change_handler(searchField, 0, "location", "archi_compo", locationColor, false, true);
+				} else if (allIn_outdoor.includes(searchField)) {
+					filter_change_handler(searchField, 0, "location", "in_outdoor", locationColor, false, true);
+				} else if (allSex.includes(searchField)) {
+					filter_change_handler(searchField, 0, "demographic", "sex", demographicColor, false);
+				} else if (allAge.includes(searchField)) {
+					filter_change_handler(searchField, 0, "demographic", "age", demographicColor, false);
+				} else if (allRoles.includes(searchField)) {
+					filter_change_handler(searchField, 0, "demographic", "social_role", demographicColor, false, true);
+				}
+			}
+		}
 	}
 
 	/**
@@ -215,95 +259,95 @@ export default function ExplorePage() {
 			let filtered = [];
 			for (const [imgKey, labels] of Object.entries(data)) {
 				//match labels in searchbar query
-				if (searchData[0].length === 0 && filterList[0] === undefined) {
+				if (filterList[0] === undefined) {
 					filtered.push([imgKey, labels]);
 				} else {
-					if (searchData[0].length !== 0){
-						for (const searchLabel of searchData) {
-							console.log(labels.demographic);
-							if (labels.location.in_outdoor === searchLabel || 
-								(labels.location.archi_compo !== undefined && String(labels.location.archi_compo).includes(searchLabel)) || 
-								(labels.location.site !== undefined && String(labels.location.site).includes(searchLabel)) ||
-								(labels.posture !== undefined && String(labels.posture).includes(searchLabel)) ||
-								(labels.demographic.sex !== undefined && labels.demographic.sex === searchLabel) ||
-								(labels.demographic.age !== undefined && labels.demographic.age === searchLabel) ||
-								(labels.demographic.social_role !== undefined && String(labels.demographic.social_role).includes(searchLabel))) {
-								filtered.push([imgKey, labels]);
-							}
-						}
-					}
-	
-					//match labels in facet
-					if (filterList[0] !== undefined){
-						for (const facetLabel of filterList) {
-							switch (facetLabel.category) {
-								case 'posture':
-									if (labels.posture !== undefined && String(labels.posture).includes(facetLabel.label)) {
+					for (const facetLabel of filterList) {
+						switch (facetLabel.category) {
+							case 'posture':
+								if (labels.posture !== undefined && String(labels.posture).includes(facetLabel.label)) {
+									filtered.push([imgKey, labels]);
+								}
+								break;
+							case 'demographic':
+								if (facetLabel.subcategory === "age") {
+									if (labels.demographic.age !== undefined && labels.demographic.age === facetLabel.label) {
 										filtered.push([imgKey, labels]);
 									}
-									break;
-								case 'demographic':
-									if (facetLabel.subcategory === "age") {
-										if (labels.demographic.age !== undefined && labels.demographic.age === facetLabel.label) {
-											filtered.push([imgKey, labels]);
-										}
-									} else if (facetLabel.subcategory === "sex") {
-										if (labels.demographic.sex !== undefined && labels.demographic.sex === facetLabel.label) {
-											filtered.push([imgKey, labels]);
-										}
-									}
-									break;
-								case 'modality':
-									var avail = facetLabel.label.split(' ')[facetLabel.label.split(' ').length - 1];
-									console.log('here!!! ', labels.modality[facetLabel.subcategory], Boolean(avail === 'available'));
-									if (labels.modality[facetLabel.subcategory] === Boolean(avail === 'available')) {
+								} else if (facetLabel.subcategory === "sex") {
+									if (labels.demographic.sex !== undefined && labels.demographic.sex === facetLabel.label) {
 										filtered.push([imgKey, labels]);
 									}
-									break;
-								case 'spectators':
-									var value = facetLabel.label.split(' ')[2];
-									if (facetLabel.subcategory === "quantity") {
-										if (labels.spectators.quantity === value) {
-											filtered.push([imgKey, labels]);
-										}
-									} else if (facetLabel.subcategory === "density") {
-										if (labels.spectators.density === value) {
-											filtered.push([imgKey, labels]);
-										}
-									} else {
-										if (labels.spectators.attentive === value) {
-											filtered.push([imgKey, labels]);
-										}
+								} else {
+									if (String(labels.demographic.social_role).includes(facetLabel.label)) {
+										filtered.push([imgKey, labels]);
 									}
-									break;
-								default:
-									console.log("undefined range");
-							}
+								}
+								break;
+							case 'modality':
+								var avail = facetLabel.label.split(' ')[facetLabel.label.split(' ').length - 1];
+								if (labels.modality[facetLabel.subcategory] === Boolean(avail === 'available')) {
+									filtered.push([imgKey, labels]);
+								}
+								break;
+							case 'spectators':
+								var value = facetLabel.label.split(' ')[2];
+								if (facetLabel.subcategory === "quantity") {
+									if (labels.spectators.quantity === value) {
+										filtered.push([imgKey, labels]);
+									}
+								} else if (facetLabel.subcategory === "density") {
+									if (labels.spectators.density === value) {
+										filtered.push([imgKey, labels]);
+									}
+								} else {
+									if (labels.spectators.attentive === value) {
+										filtered.push([imgKey, labels]);
+									}
+								}
+								break;
+							case 'location':
+								if (facetLabel.subcategory === "site") {
+									if (String(labels.location.site).includes(facetLabel.label)) {
+										filtered.push([imgKey, labels]);
+									}
+								} else if (facetLabel.subcategory === "archi_compo") {
+									if (String(labels.location.archi_compo).includes(facetLabel.label)) {
+										filtered.push([imgKey, labels]);
+									}
+								} else {
+									if (labels.location.in_outdoor === facetLabel.label) {
+										filtered.push([imgKey, labels]);
+									}
+								}
+								break;
+							default:
+
 						}
 					}
+					
 				}
 			}
 			if (filtered.length !== 0) {
 				setImageList(_.uniq(filtered, false, function (arr) {return arr[0];}));
-				console.log('filtered: ', _.uniq(filtered, false, function (arr) {return arr[0];}));
-			} else if (searchData[0].length === 0 && filterList[0] === undefined) {
+			} else if (filterList[0] === undefined) {
 				console.log('all!');
 			} else {
 				setImageList(filtered);
-				console.log('rendering filtered!');
 			}
 		})
 	}
 	useEffect(() => { handle_search(); }, [searchData, filterList])
 
 
-/* Click to view details of a picture */
+/**--- Click to view details of a picture ---**/
 
 	const [pictureClicked, setPictureClicked] = useState(undefined);
 	console.log("pictureClicked:");
 	console.log(pictureClicked); //DEBUG
 
 	const click_picture = (labelData) => {
+
 		// If the current picture has been clicked twice, then close ExploreDetails.
 		if (pictureClicked && labelData.url === pictureClicked.url) {
 			setPictureClicked(undefined);
@@ -321,7 +365,7 @@ export default function ExplorePage() {
 	};
 
 
-/* Render */
+/**--- Render ---**/
 	return (
 		<div className="PageBox PageBox_Explore">
 			<Facet

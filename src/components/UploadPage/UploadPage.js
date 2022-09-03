@@ -7,6 +7,7 @@ import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
 //import { v4 } from "uuid";
 import heic2any from "heic2any";
 import reactImageSize from 'react-image-size';
+import Compressor from 'compressorjs';
 import "../components.css";
 import WaitingRoom from "./WaitingRoom";
 import UploadControl from "./UploadControl";
@@ -210,6 +211,16 @@ export default function UploadPage(props) {
 			});
 
 		}, "image/jpeg", 1); // mime=JPEG, quality=1.00
+    
+    // Perform image compression.
+    new Compressor(props.addedPics[idx], {
+      quality: 0.6,
+      mimeType: "image/jpeg",
+      convertSize: 1000000,
+      success(result) {
+        props.addedPics[idx] = result;
+      },
+    });
 
 		// TODO: if click too fast before image is fully loaded, will cause error
 		// idea: document ready
@@ -307,8 +318,7 @@ export default function UploadPage(props) {
 
 		// Set up database.
 		const db = getDatabase();
-
-		// Generate index (numeric id) for the picture according to publishing order.
+    // Generate index (numeric id) for the picture according to publishing order.
 		var finalPicIndex = 0;
 		await get(ref_db(db, "images")).then((snapshot) => {
 			if (snapshot.exists()) { // not first image case
