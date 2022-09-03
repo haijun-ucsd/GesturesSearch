@@ -7,7 +7,7 @@ import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
 //import { v4 } from "uuid";
 import heic2any from "heic2any";
 import reactImageSize from 'react-image-size';
-import Compressor from 'compressor.js';
+import Compressor from 'compressorjs';
 import "../components.css";
 import WaitingRoom from "./WaitingRoom";
 import UploadControl from "./UploadControl";
