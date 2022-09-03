@@ -112,7 +112,7 @@ export default function Facet(props) {
  */
 function ExploreSearch(props) {
 
-	const [searchData, setSearchData] = useState('');
+	// const [searchData, setSearchData] = useState('');
 
 	const [searchText, setSearchText] = useState('');
 	// DEBUG
@@ -126,9 +126,9 @@ function ExploreSearch(props) {
 		console.log("submittedSearchText is: " + submittedSearchText);
 	}, [submittedSearchText]);
 
-	const handleSearch = (input) => {
-		setSearchData(input);
-	}
+	// const handleSearch = (input) => {
+	// 	setSearchData(input);
+	// }
 
 	// Examples:
 	// TODO: make this not hard-coded
