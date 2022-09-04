@@ -1125,9 +1125,9 @@
 }
 
 
-/* LabelsForm */
+/* AnnotationForm */
 
-.LabelsForm {
+.AnnotationForm {
 	overflow-y: scroll;
 	width: 40%;
 	max-width: 640px;
