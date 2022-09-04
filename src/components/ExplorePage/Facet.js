@@ -187,7 +187,7 @@ function ExploreSearch(props) {
 						options={locationLabels}
 						sx={{ width: 300 }}
 						renderInput={
-							(params) => <TextField {...params} label="location, demographic, posture...(split with ',')"/>
+							(params) => <TextField {...params} label="Search"/>
 						}
 						onKeyPress= {(e, value) => {
 							if (e.key === 'Enter') {

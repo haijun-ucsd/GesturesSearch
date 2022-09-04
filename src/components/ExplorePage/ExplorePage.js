@@ -144,7 +144,8 @@ export default function ExplorePage() {
 					},
 				};
 			});
-		} else {
+		} else if (category === "location" || subcategory === "social_role") {}
+		else {
 			setFacetList((prev) => {
 				let newSubcategoryList = prev[category][subcategory].filter(
 					(item) => item !== label
@@ -201,6 +202,41 @@ export default function ExplorePage() {
 
 
 /**--- Search ---**/
+	const locationColor = "#80aa54";
+	const postureColor = "#AC92EB";
+	const demographicColor = "#ED5564";
+	const spectatorColor = "#FFCE54";
+
+	const allSites = FetchLabelList_helper("location", "site");
+	const allArchi_compo = FetchLabelList_helper("location", "archi_compo");
+	const allIn_outdoor = FetchLabelList_helper("location", "in_outdoor");
+
+	const allSex = FetchLabelList_helper("demographic", "sex");
+	const allAge = FetchLabelList_helper("demographic", "age");
+	const allRoles = FetchLabelList_helper("demographic", "social_role");
+
+	const allPostures = FetchLabelList_helper("posture", undefined);
+
+	const allQuantities = FetchLabelList_helper("spectators", "quantity");
+	const allDensities = FetchLabelList_helper("spectators", "density");
+	//fuse.js
+	const options = {
+		includeScore: true,
+		threshold: 0.3,
+		minMatchCharLength: 3
+	};
+	const fuseSite = new Fuse(allSites, options);
+	const fuseArchi = new Fuse(allArchi_compo, options);
+	const fuseIn_outdoor = new Fuse(allIn_outdoor, options);
+
+	const fuseSex = new Fuse(allSex, options);
+	const fuseAge = new Fuse(allAge, options);
+	const fuseRole = new Fuse(allRoles, options);
+
+	const fusePosture = new Fuse(allPostures, options);
+
+	const fuseQuantity = new Fuse(allQuantities, options);
+	const fuseDensity = new Fuse(allDensities, options);
 
 	const [searchData, setSearchData] = useState([""]);
 
@@ -209,50 +245,70 @@ export default function ExplorePage() {
 		
 		setSearchData((prev) => input.split(', ').map(item => item.trim()));
 		console.log("searchData: ", searchData);
+		const inputArr = input.split(' ').map(item => item.trim());
+		console.log("ALL ROLES: ", allRoles);
 
 		//Add searchbar content to applied filters
-		const locationColor = "#80aa54";
-		const postureColor = "#AC92EB";
-		const demographicColor = "#ED5564";
-
-		const inputArr = input.split(' ').map(item => item.trim());
-
-		const allSites = FetchLabelList_helper("location", "site");
-		const allArchi_compo = FetchLabelList_helper("location", "archi_compo");
-		const allIn_outdoor = FetchLabelList_helper("location", "in_outdoor");
-
-		const allSex = FetchLabelList_helper("demographic", "sex");
-		const allAge = FetchLabelList_helper("demographic", "age");
-		const allRoles = FetchLabelList_helper("demographic", "social_role");
-
-		const allPostures = FetchLabelList_helper("posture", undefined);
-		
 		if (inputArr.length !== 0) {
-			const options = {
-				includeScore: true,
-				threshold: 0.4
-			};
-			
-			const fuse = new Fuse(allPostures, options);
+			// result = [];
 			for (const searchField of inputArr) {
-				const result = fuse.search(searchField);
-				console.log("Result: ", result);
-				if (allPostures.includes(searchField)) {
-					filter_change_handler(searchField, 0, "posture", "posture", postureColor, false);
-				} else if (allSites.includes(searchField)) {
-					filter_change_handler(searchField, 0, "location", "site", locationColor, false, true);
-				} else if (allArchi_compo.includes(searchField)) {
-					filter_change_handler(searchField, 0, "location", "archi_compo", locationColor, false, true);
-				} else if (allIn_outdoor.includes(searchField)) {
-					filter_change_handler(searchField, 0, "location", "in_outdoor", locationColor, false, true);
-				} else if (allSex.includes(searchField)) {
-					filter_change_handler(searchField, 0, "demographic", "sex", demographicColor, false);
-				} else if (allAge.includes(searchField)) {
-					filter_change_handler(searchField, 0, "demographic", "age", demographicColor, false);
-				} else if (allRoles.includes(searchField)) {
-					filter_change_handler(searchField, 0, "demographic", "social_role", demographicColor, false, true);
+				const result = [];
+				if (fuseSite.search(searchField).length !== 0) {
+					result.push(...fuseSite.search(searchField));
 				}
+				if (fuseArchi.search(searchField).length !== 0) {
+					result.push(...fuseArchi.search(searchField));
+				}
+				if (fuseIn_outdoor.search(searchField).length !== 0) {
+					result.push(...fuseIn_outdoor.search(searchField));
+				}
+				if (fuseSex.search(searchField).length !== 0) {
+					result.push(...fuseSex.search(searchField));
+				}
+				if (fuseAge.search(searchField).length !== 0) {
+					result.push(...fuseAge.search(searchField));
+				}
+				if (fuseRole.search(searchField).length !== 0) {
+					result.push(...fuseRole.search(searchField));
+				}
+				if (fusePosture.search(searchField).length !== 0) {
+					result.push(...fusePosture.search(searchField));
+				}
+				if (fuseQuantity.search(searchField).length !== 0) {
+					result.push(...fuseQuantity.search(searchField));
+				}
+				if (fuseDensity.search(searchField).length !== 0) {
+					result.push(...fuseDensity.search(searchField));
+				}
+
+				result.sort(function(a, b){
+					return a.score - b.score;
+				});
+				//TODO: Mark the category of each result and change filter directly
+				if(result.length !== 0){
+					if (allPostures.includes(result[0].item)) {
+						filter_change_handler(result[0].item, 0, "posture", "posture", postureColor, false);
+					} else if (allSites.includes(result[0].item)) {
+						filter_change_handler(result[0].item, 0, "location", "site", locationColor, false, true);
+					} else if (allArchi_compo.includes(result[0].item)) {
+						filter_change_handler(result[0].item, 0, "location", "archi_compo", locationColor, false, true);
+					} else if (allIn_outdoor.includes(result[0].item)) {
+						filter_change_handler(result[0].item, 0, "location", "in_outdoor", locationColor, false, true);
+					} else if (allSex.includes(result[0].item)) {
+						filter_change_handler(result[0].item, 0, "demographic", "sex", demographicColor, false);
+					} else if (allAge.includes(result[0].item)) {
+						filter_change_handler(result[0].item, 0, "demographic", "age", demographicColor, false);
+					} else if (allRoles.includes(result[0].item)) {
+						filter_change_handler(result[0].item, 0, "demographic", "social_role", demographicColor, false, true);
+					} else if (allQuantities.includes(result[0].item)) {
+						filter_change_handler("spectators quantity: " + result[0].item, 0, "spectators", "quantity", spectatorColor, false);
+					} else if (allDensities.includes(result[0].item)) {
+						filter_change_handler("spectators density: " + result[0].item, 0, "spectators", "density", spectatorColor, false);
+					}
+				}
+				console.log("RESULT: ", result);
 			}
+			
 			
 		}
 	}

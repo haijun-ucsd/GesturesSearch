@@ -31,7 +31,7 @@ const firebaseConfig_test = {
 };
 
 // Initialize Firebase
-//const app = initializeApp(firebaseConfig); // leave this line uncommented for *actual annotation*
+// const app = initializeApp(firebaseConfig); // leave this line uncommented for *actual annotation*
 const app = initializeApp(firebaseConfig_test); // leave this line uncommented for *testing*
 const analytics = getAnalytics(app);
 const storage = getStorage(app);
