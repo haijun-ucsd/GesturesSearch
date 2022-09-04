@@ -7,6 +7,8 @@ import ExploreGallery from "./ExploreGallery";
 import ExploreDetails from "./ExploreDetails";
 import { FilterStructure, FetchLabelList_helper } from "../components";
 import _, { map } from "underscore";
+import Fuse from 'fuse.js';
+import { labels_data } from "../labels_data.js";
 
 /* Assets: */
 import ArrowLeft from "../../assets/ArrowLeft.png";
@@ -206,8 +208,7 @@ export default function ExplorePage() {
 		const postureColor = "#AC92EB";
 		const demographicColor = "#ED5564";
 
-		const inputArr = input.split(', ').map(item => item.trim());
-		console.log('search input Arr:', inputArr);
+		const inputArr = input.split(' ').map(item => item.trim());
 
 		const allSites = FetchLabelList_helper("location", "site");
 		const allArchi_compo = FetchLabelList_helper("location", "archi_compo");
@@ -220,7 +221,15 @@ export default function ExplorePage() {
 		const allPostures = FetchLabelList_helper("posture", undefined);
 		
 		if (inputArr.length !== 0) {
+			const options = {
+				includeScore: true,
+				threshold: 0.4
+			};
+			
+			const fuse = new Fuse(allPostures, options);
 			for (const searchField of inputArr) {
+				const result = fuse.search(searchField);
+				console.log("Result: ", result);
 				if (allPostures.includes(searchField)) {
 					filter_change_handler(searchField, 0, "posture", "posture", postureColor, false);
 				} else if (allSites.includes(searchField)) {
@@ -237,6 +246,7 @@ export default function ExplorePage() {
 					filter_change_handler(searchField, 0, "demographic", "social_role", demographicColor, false, true);
 				}
 			}
+			
 		}
 	}
 
