@@ -511,7 +511,7 @@ export default function UploadPopUp(props) {
 					</div></div>
 					<AnnotationForm
 						form_change_handler_type1={form_change_handler_type1}
-						form_change_handler_type2={form_change_handler_type2}
+						//form_change_handler_type2={form_change_handler_type2}
 						add_label_handler_type2={add_label_handler_type2}
 						remove_label_handler_type2={remove_label_handler_type2}
 						form_change_handler_type3={form_change_handler_type3}
@@ -758,7 +758,7 @@ function AnnotationForm(props) {
 								:
 									subcategory.subcategory
 							}
-							label_change_handler={props.form_change_handler_type2}
+							//label_change_handler={props.form_change_handler_type2}
 							label_add_handler={props.add_label_handler_type2}
 							label_remove_handler={props.remove_label_handler_type2}
 						/>
