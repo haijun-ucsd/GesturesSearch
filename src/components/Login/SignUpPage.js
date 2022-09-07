@@ -16,20 +16,21 @@ export default function LoginPage(props) {
 	const { setAuth } = useContext(AuthContext);
 	const userRef = useRef();
 	const errRef = useRef();
+    const successRef = useRef();
 
 	// const [user, setUser] = useState("");
 	// const [pwd, setPwd] = useState("");
 	// const [errMsg, setErrMsg] = useState("");
 	const [success, setSuccess] = useState("");
-    const [signUp, setSignUp] = useState("");
 
 	useEffect(() => {
 		userRef.current.focus(); //set the focus on the first input when the component loads
 	}, []);
 
-	// useEffect(() => {
-	// 	props.setErrMsg("");
-	// }, [props.user, props.pwd]); //empty the error msg whenever the user change either username or pwd
+	useEffect(() => {
+		props.setErrMsg("");
+        props.setSuccessMsg("");
+	}, [props.user, props.pwd]); //empty the error msg whenever the user change either username or pwd
 
 	const handleSubmit = async (e) => {
 		e.preventDefault(); //prevent component reload after form being submitted
@@ -40,7 +41,8 @@ export default function LoginPage(props) {
 			}
 			else{
 			    set(ref_db(db, 'users/'+ props.user+'/pwd/'), props.pwd);
-				console.log("snapshot::::", typeof snapshot.val().pwd, typeof props.pwd);
+                props.setSuccessMsg('Account has been successfully created!');
+				console.log("signup, successmsg:::", props.successMsg);
             }
 		});
 
@@ -107,7 +109,8 @@ export default function LoginPage(props) {
 							</section>
 						) : (
 							<section>
-                                <p ref={errRef} className={props.errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{props.errMsg}</p>
+                                <p ref={errRef} className={props.errMsg ? "errmsg" : "offscreen"} >{props.errMsg}</p>
+                                <p ref={successRef} className={props.successMsg ? "successmsg" : "offscreen"}>{props.successMsg}</p>
 								<form onSubmit={handleSubmit}>
 									<label htmlFor="username">Username:</label>
 									<input

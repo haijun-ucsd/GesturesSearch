@@ -1008,6 +1008,14 @@ button {
     margin-bottom: 0.5rem;
 }
 
+.successmsg {
+    background-color: rgb(202,253,243);
+    color: lightseagreen;
+    font-weight: bold;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
 
 /* UploadPage WaitingRoom */
 

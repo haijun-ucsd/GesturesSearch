@@ -30,6 +30,7 @@ export default function App() {
 	const [pwd, setPwd] = useState("");
 	const [errMsg, setErrMsg] = useState("");
 	const [success, setSuccess] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
  
 
   // DEBUG
@@ -67,7 +68,9 @@ export default function App() {
           pwd={pwd}
           setPwd={setPwd}
           errMsg={errMsg}
-          setErrMsg={setErrMsg}/>}
+          setErrMsg={setErrMsg}
+          successMsg={successMsg}
+          setSuccessMsg={setSuccessMsg}/>}
         />
         <Route
           path='/upload'
