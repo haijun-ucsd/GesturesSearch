@@ -7,9 +7,9 @@ import { getDatabase, onValue, ref as ref_db, set } from 'firebase/database';
 import { ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage';
 import './components.css';
 import Navbar from './Navbar';
-import UploadPage from './UploadPage';
-import ExplorePage from './ExplorePage';
-import AboutPage from './AboutPage';
+import UploadPage from './UploadPage/UploadPage';
+import ExplorePage from './ExplorePage/ExplorePage';
+import AboutPage from './AboutPage/AboutPage';
 import LoginPage from './Login/LoginPage';
 import SignUpPage from './Login/SignUpPage';
 
