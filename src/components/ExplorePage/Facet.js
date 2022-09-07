@@ -1,17 +1,14 @@
 import React, { useState , useEffect, useLayoutEffect } from 'react';
-//import { storage } from '../firebase';
-//import { getDatabase, onValue, ref as ref_db, set } from 'firebase/database';
-//import { ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage';
-//import { v4 } from 'uuid';
+import { Autocomplete, TextField } from '@mui/material';
 //import Slider, { Range } from 'rc-slider';
-import './components.css';
-import { labels_data } from "./labels_data.js";
-import { Filter, Checkbox, CheckLabel, ExploreSearchBar, AccordionSection, FetchLabelList_helper } from './components';
-import BodyComponent from './BodyComponent';
+import '../components.css';
+import { labels_data } from "../labels_data.js";
+import { Filter, Checkbox, CheckLabel, AccordionSection, FetchLabelList_helper } from '../components';
+import BodyComponent from '../BodyComponent';
 
 /* Assets: */
-//import ArrowUp_secondary from "../assets/ArrowUp_secondary.png";
-//import ArrowDown_secondary from "../assets/ArrowDown_secondary.png";
+import NoBtn from "../../assets/NoBtn.png";
+import SearchBtn from "../../assets/SearchBtn.png";
 
 
 
@@ -25,13 +22,10 @@ import BodyComponent from './BodyComponent';
  * so they are made into separate components at the end of this file.
  *
  * parent props:
- *  - setRange(): To update range (search range).
- *  - range: Search range.
- *  - setFilterList(): To update filterList.
- *  - filterList: Up-to-date list of currently applied filters.
- *  - setFacetList(): To update facetList.
- *  - facetList: List of states in the facet sections.
+ *  - [filterList, setFilterList]
+ *	- filter_change_handler (label, label_id, category, subcategory, color): to update appliedFilters according to change in facet.
  *  - remove_filter(): To help remove from filterList.
+ *  - [facetList, setFacetList]
  *
  * references:
  *  https://reactjs.org/docs/composition-vs-inheritance.html
@@ -50,7 +44,7 @@ export default function Facet(props) {
 		if (checked) {
 
 			// Add category to range.
-			props.setRange((prev) => {
+			props.setSearchRange((prev) => {
 				console.log("add category to search range. category added: " + e.target.value); //DEBUG
 				return [
 					...prev,
@@ -60,7 +54,7 @@ export default function Facet(props) {
 		} else {
 
 			// Remove category from range.
-			props.setRange((prev) => {
+			props.setSearchRange((prev) => {
 				console.log("remove category from search range. category removed: " + e.target.value); //DEBUG
 				return prev.filter(
 					(item => item!==e.target.value)
@@ -69,76 +63,11 @@ export default function Facet(props) {
 		}
 	};
 
-	/**
-	 * filter_change_handler
-	 *
-	 * Default filter_change_handler for checkbox facet fields.
-	 * Special case that doesn't belong to here: Modality → see within FacetModality.
-	 * The filter-removing part is located in the parent (ExplorePage) component, function name remove_filter(), because AppliedFilters also call that function.
-	 *
-	 * @param :
-	 *  A new filter in filterList contains (input as parameters):
-	 *  { label, label_id, category, subcategory, color }
-	 *
-	 * references:
-	 *  https://stackoverflow.com/questions/43784554/how-to-add-input-data-to-list-in-react-js
-	 *  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some
-	 */
-	const filter_change_handler = (label, label_id, category, subcategory, color) => {
-		// DEBUG
-		console.log("clicked on filter: " + label);
-
-		// Check for empty.
-		if (label == "") { return; }
-
-		// Check for existence.
-		// Toggle: if exists, then remove; if doesn't exist, the add.
-		if (props.filterList.some(
-			(item) => item.label === label
-		)) {
-
-			// Remove.
-			console.log("label exists, remove."); //DEBUG
-			props.remove_filter(label); // remove from both filterList and facetList
-		} else {
-
-			// Add.
-			console.log("label doesn't exists yet, add."); //DEBUG
-			const newFilter = {
-				['label']: label,
-				['label_id']: label_id,
-				['category']: category,
-				['subcategory']: subcategory,
-				['color']: color,
-			};
-			props.setFilterList (prev => ([
-				...prev,
-				newFilter,
-			]));
-			props.setFacetList(prev => ({
-				...prev,
-				[category]: {
-					...prev[category],
-					[subcategory]: [
-						...prev[category][subcategory],
-						label,
-					]
-				},
-			}));
-		}
-
-		// TODO: Update gallery.
-		//console.log("adding succeeds, gallery updated."); //DEBUG
-	}
-
 	/* Render */
 	return (
 		<div className="FacetMenu">
 			<ExploreSearch
-				range={props.range}
-				setRange={props.setRange}
-				onchange_handler={range_change_handler}
-				filter_change_handler={filter_change_handler}
+				filter_change_handler={props.filter_change_handler}
 				handleSearch={props.handleSearch}
 			/>
 			<div className="Facet">
@@ -151,17 +80,17 @@ export default function Facet(props) {
 				/>
 				<FacetPosture
 					facetList={props.facetList}
-					filter_change_handler={filter_change_handler}
+					filter_change_handler={props.filter_change_handler}
 					handleSearch={props.handleSearch}
 				/>
 				<FacetSpectators
 					facetList={props.facetList}
-					filter_change_handler={filter_change_handler}
+					filter_change_handler={props.filter_change_handler}
 					handleSearch={props.handleSearch}
 				/>
 				<FacetDemongraphic
 					facetList={props.facetList}
-					filter_change_handler={filter_change_handler}
+					filter_change_handler={props.filter_change_handler}
 					handleSearch={props.handleSearch}
 				/>
 			</div>
@@ -169,38 +98,133 @@ export default function Facet(props) {
 	);
 }
 
-
 /**
  * ExploreSearch
- * 
- * TODO: combine SearchRange and SearchRange_color variables into labels_list?
  * 
  * references:
  *  https://stackoverflow.com/questions/59016030/css-flexbox-or-grid-2-columns-row-wrapping-no-growth-inner-margins
  *  https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-columns
  *  https://bobbyhadz.com/blog/react-capitalize-first-letter#:~:text=To%20capitalize%20the%20first%20letter%20of%20a%20string%20in%20React%3A&text=Call%20the%20toUpperCase()%20method,the%20rest%20of%20the%20string.
  *  https://stackoverflow.com/questions/45277306/check-if-item-exists-in-array-react
+ *	https://stackoverflow.com/questions/12875911/how-can-i-make-my-input-type-submit-an-image
+ *	https://bobbyhadz.com/blog/react-get-input-value-on-button-click
+ *	https://stackoverflow.com/questions/31272207/to-call-onchange-event-after-pressing-enter-key
  */
 function ExploreSearch(props) {
 
-	const [searchData, setSearchData] = useState('');
-	const handleSearch = (input) => {
-		setSearchData(input);
-	}
+	// const [searchData, setSearchData] = useState('');
 
+	const [searchText, setSearchText] = useState('');
+	// DEBUG
+	useEffect(() => {
+		console.log("searchText is: " + searchText);
+	}, [searchText]);
+
+	const [submittedSearchText, setSubmittedSearchText] = useState('');
+	// DEBUG
+	useEffect(() => {
+		console.log("submittedSearchText is: " + submittedSearchText);
+	}, [submittedSearchText]);
+
+	// const handleSearch = (input) => {
+	// 	setSearchData(input);
+	// }
+
+	// Examples:
+	// TODO: make this not hard-coded
+	const locationLabels = [
+		{ label: 'library'},
+		{ label: 'hospital'},
+		{ label: 'shopping'},
+		{ label: 'public transportation'},
+		{ label: 'entertainment'},
+		{ label: 'sport'},
+		{ label: 'nature'},
+		{ label: 'parking lot'},
+		{ label: 'street'},
+		{ label: 'pedestrian'},
+		{ label: 'restaurant'},
+		{ label: 'work space'},
+		{ label: 'hostpital'},
+		{ label: 'indoor'},
+		{ label: 'outdoor'},
+		{ label: 'entrance'},
+		{ label: 'corridor'},
+		{ label: 'bench'},
+		{ label: 'cabin'},
+		{ label: 'waiting room'},
+		{ label: 'shelf'},
+		{ label: 'pool'},
+		{ label: 'poolside'},
+		{ label: 'table'},
+		{ label: 'zebra walk'},
+		{ label: 'rock climbing wall'}
+	];
+
+	/* Render */
 	return (
 		<div className="Module">
-			<ExploreSearchBar
-				handleSearch={props.handleSearch}
-				//search_handler = {...} //TODO: define a search function and use it here, in the SearchBar component this function will be used onClick of the search button.
-			/>
-			{/* Search in range deleted */}
+			<div className="SearchBar_container">
+				<div className="SearchBar">
+					{/* <input
+						type="text"
+						className="SearchBarInput"
+						id={props.id} name={props.id}
+						placeholder=""
+						value={searchText}
+						onChange={(e) => {
+							setSearchText(e.target.value);
+						}}
+						onKeyDown={(e) => {	// pressing ENTER == clicking search icon
+							if (e.key==='Enter') {
+								setSubmittedSearchText(searchText);
+							}
+						}}
+					/> */}
+					<Autocomplete
+						disablePortal
+						id="combo-box-demo"
+						options={locationLabels}
+						sx={{ width: 300 }}
+						renderInput={
+							(params) => <TextField {...params} label="Search"/>
+						}
+						onKeyPress= {(e, value) => {
+							if (e.key === 'Enter') {
+								console.log('Enter key pressed');
+								// write your functionality here
+								// search for relevant images here
+								// send inputed location back to Facet and re-render images
+								// console.log(e.target.value);
+								props.handleSearch(e.target.value);
+							}
+						}}
+					/>
+					{searchText.length > 0 ?
+						<input
+							type="image" src={NoBtn}
+							className="SearchBar_clearbtn"
+							onClick={(e) => { // clear input field
+								e.preventDefault();
+								setSearchText('');
+								setSubmittedSearchText('');
+							}}
+						/>
+					: null }
+					<input
+						type="image" src={SearchBtn}	// <input type="image"> defines an image as a submit button
+						className="SearchBar_searchbtn"
+						onClick={(e) => {
+							e.preventDefault();
+							setSubmittedSearchText(searchText);
+						}}
+					/>
+				</div>
+			</div>
 		</div>
 	);
 }
 
-
-// TODO: improve organization of these category modules, combine things that can be combined.
 
 /**
  * FacetModality

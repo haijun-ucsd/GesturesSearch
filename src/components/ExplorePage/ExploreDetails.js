@@ -1,11 +1,10 @@
 import React, { useState , useEffect, useRef, useLayoutEffect } from 'react';
-import './components.css';
-import { labels_data } from "./labels_data.js";
-//import { DescriptionHover } from './components';
-import BodyComponent from './BodyComponent';
+import '../components.css';
+import { labels_data } from "../labels_data.js";
+import BodyComponent from '../BodyComponent';
 
 /* Assets: */
-import ExploreDetailsCloseBtn from "../assets/ExploreDetailsCloseBtn.png";
+import ExploreDetailsCloseBtn from "../../assets/ExploreDetailsCloseBtn.png";
 
 
 

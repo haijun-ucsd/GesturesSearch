@@ -4,7 +4,6 @@ import { getDatabase, onValue, ref as ref_db, set, get } from 'firebase/database
 import './components.css';
 import { labels_data } from "./labels_data.js";
 import { useState , useEffect } from 'react';
-import { Autocomplete, TextField } from '@mui/material';
 import Fuse from 'fuse.js';
 import useResizeAware from 'react-resize-aware';
 
@@ -293,134 +292,9 @@ function Checkbox(props) {
 }
 
 /**
- * ExploreSearchBar
- * 
- * parent props:
- *	- search_handler(searchText, ...): whatever function to perform at the current search bar.
- *	- searchResults: a list of labels as resulted from the search.
- *	- id: ref, id and name for this search bar, forwarded from parent.
- *
- * hooks:
- *	- [searchText, setSearchText]: to record current input in the search bar
- *	- [submittedSearchText, setSubmittedSearchText]: snapshot of searchText at the time of submission (clicking search btn or pressing ENTER)
- *			TODO: move "submittedSearchText" to a proper parent layer
- * 
- * references:
- *	https://stackoverflow.com/questions/12875911/how-can-i-make-my-input-type-submit-an-image
- *	https://bobbyhadz.com/blog/react-get-input-value-on-button-click
- *	https://stackoverflow.com/questions/31272207/to-call-onchange-event-after-pressing-enter-key
- */
-function ExploreSearchBar(props) {
-
-	const [searchText, setSearchText] = useState('');
-	// DEBUG
-	useEffect(() => {
-		console.log("searchText is: " + searchText);
-	}, [searchText]);
-
-	const [submittedSearchText, setSubmittedSearchText] = useState('');
-	// DEBUG
-	useEffect(() => {
-		console.log("submittedSearchText is: " + submittedSearchText);
-	}, [submittedSearchText]);
-
-	// Examples:
-	// TODO: make this not hard-coded
-	const locationLabels = [
-		{ label: 'library'},
-		{ label: 'hospital'},
-		{ label: 'shopping'},
-		{ label: 'public transportation'},
-		{ label: 'entertainment'},
-		{ label: 'sport'},
-		{ label: 'nature'},
-		{ label: 'parking lot'},
-		{ label: 'street'},
-		{ label: 'pedestrian'},
-		{ label: 'restaurant'},
-		{ label: 'work space'},
-		{ label: 'hostpital'},
-		{ label: 'indoor'},
-		{ label: 'outdoor'},
-		{ label: 'entrance'},
-		{ label: 'corridor'},
-		{ label: 'bench'},
-		{ label: 'cabin'},
-		{ label: 'waiting room'},
-		{ label: 'shelf'},
-		{ label: 'pool'},
-		{ label: 'poolside'},
-		{ label: 'table'},
-		{ label: 'zebra walk'},
-		{ label: 'rock climbing wall'}
-	];
-
-	/* Render */
-	return (
-		<div className="SearchBar_container">
-			<div className="SearchBar">
-				{/* <input
-					type="text"
-					className="SearchBarInput"
-					id={props.id} name={props.id}
-					placeholder=""
-					value={searchText}
-					onChange={(e) => {
-						setSearchText(e.target.value);
-					}}
-					onKeyDown={(e) => {	// pressing ENTER == clicking search icon
-						if (e.key==='Enter') {
-							setSubmittedSearchText(searchText);
-						}
-					}}
-				/> */}
-				<Autocomplete
-					disablePortal
-					id="combo-box-demo"
-					options={locationLabels}
-					sx={{ width: 300 }}
-					renderInput={
-						(params) => <TextField {...params} label="location, demographic, posture...(split with ',')"/>
-					}
-					onKeyPress= {(e, value) => {
-						if (e.key === 'Enter') {
-							console.log('Enter key pressed');
-							// write your functionality here
-							// search for relevant images here
-							// send inputed location back to Facet and re-render images
-							// console.log(e.target.value);
-							props.handleSearch(e.target.value);
-						}
-					}}
-				/>
-				{searchText.length > 0 ?
-					<input
-						type="image" src={NoBtn}
-						className="SearchBar_clearbtn"
-						onClick={(e) => { // clear input field
-							e.preventDefault();
-							setSearchText('');
-							setSubmittedSearchText('');
-						}}
-					/>
-				: null }
-				<input
-					type="image" src={SearchBtn}	// <input type="image"> defines an image as a submit button
-					className="SearchBar_searchbtn"
-					onClick={(e) => {
-						e.preventDefault();
-						setSubmittedSearchText(searchText);
-					}}
-				/>
-			</div>
-		</div>
-	);
-}
-
-/**
  * SearchableDropdown
  * 
- * Usage: used in LabelsForm during upload.
+ * Usage: used in AnnotationForm during upload.
  * 
  * parent props:
  *	- selectedLabels: a list of labels selected in this SearchableDropdown.
@@ -523,23 +397,22 @@ function SearchableDropdown(props) {
 	// When list is empty yet input >= 2 characters, trigger add_customized_label().
 	const [searchResultList, setSearchResultList] = useState([]);
 
+	/** TODO */
 	const get_search_result = () => {
 		const submittedSearchText = searchText; // take a snapshot of the current searchText upon submission
 		//console.log("search '" + submittedSearchText + "' in range : ", searchRange); //DEBUG
 		const newSearchResult =
 			fuzzy_search_helper.search(submittedSearchText) // structure of Fuse result: [{item: "XXX" (label name), refIndex: N (index in searchRange)}, ...]
-			.map((item) => item.item );
+				.map((item) => item.item );
 		console.log("newSearchResult:", newSearchResult); //DEBUG
 		setSearchResultList(newSearchResult);
 	}
 
+	/** TODO */
 	const add_customized_label = () => { // trigger when no search result is found
 		const newLabel = searchText; // take snapshot of current entered label
-		if (!(props.selectedLabels.some(item => item===newLabel))) { // check for existence
-			props.label_add_handler(newLabel, props.category, props.subcategory);
-			set(ref_db(db, "Label/unreviewed/"+ props.category + props.subcategory), {
-				label: newLabel,
-			  }); //store the customized label to firebase unreviewed folder
+		if (!(props.selectedLabels.some(item => item===newLabel))) { // check for existence in the list of selected labels
+			props.label_add_handler(newLabel, props.category, props.subcategory); // if not exists yet, add it
 		} else {
 			alert("Label '" + newLabel + "'is already selected.");
 		}
@@ -830,23 +703,11 @@ const FetchLabelList_helper = (category, subcategory) => {
 
 
 /**
- * Dots */
-/**
- * Human figure */
-/**
- * Modality */
-/**
- * Rearrange filters */
-/**
  * Img */
 /**
  * Category */
 /**
  * Statistics */
-/**
- * Info */
-/**
- * Imgs */
 /**
  * Btn */
 /**
@@ -867,7 +728,6 @@ const FetchLabelList_helper = (category, subcategory) => {
  *	https://medium.com/@alifabdullah/never-confuse-json-and-javascript-object-ever-again-7c32f4c071ad
  */
 const LabelStructure = Object.freeze({
-	//url: "",
 	location: {
 		in_outdoor: "",
 		site: [],
@@ -883,20 +743,37 @@ const LabelStructure = Object.freeze({
 		sex: "",
 		social_role: [],
 	},
-	modality: {
-		head: true,
-		eyes: true,
-		voice: true,
-		facial_expression: true,
-		r_arm: true,
-		l_arm: true,
-		r_hand: true,
-		l_hand: true,
-		legs: true,
-		feet: true,
+	modality: { // default value to be set during use
+		head: null,
+		eyes: null,
+		voice: null,
+		facial_expression: null,
+		r_arm: null,
+		l_arm: null,
+		r_hand: null,
+		l_hand: null,
+		legs: null,
+		feet: null,
 	},
 	posture: [],
-	timestamp: Math.floor(Date.now() / 1000),
+})
+
+/**
+ * LabelStructure_type2_only
+ *
+ * The template of label structure for type2 labels only, to help storing customized type2 labels
+ * 
+ * Usage: Used in UploadPage upload_single_image() function to build "reviewed_labels" folder and store unreviewed type2 labels into "unreviewed_labels" folder.
+ */
+const LabelStructure_type2_only = Object.freeze({
+	location: {
+		site: [],
+		archi_compo: [],
+	},
+	demographic: {
+		social_role: [],
+	},
+	posture: [],
 })
 
 /**
@@ -905,17 +782,17 @@ const LabelStructure = Object.freeze({
  * The template of facet filter structure to help filter and display (only the AccordionSection parts).
  */
 const FilterStructure = Object.freeze({
-	modality: {
-		head: "any",
-		eyes: "any",
-		voice: "any",
-		facial_expression: "any",
-		r_arm: "any",
-		l_arm: "any",
-		r_hand: "any",
-		l_hand: "any",
-		legs: "any",
-		feet: "any",
+	modality: { // default value to be set during use
+		head: null,
+		eyes: null,
+		voice: null,
+		facial_expression: null,
+		r_arm: null,
+		l_arm: null,
+		r_hand: null,
+		l_hand: null,
+		legs: null,
+		feet: null,
 	},
 	posture: {
 		posture: [], // ALL: ["sitting", "standing", "walking", "running", "jumping", "bending", "squatting", "kneeling", "climbing", "hanging", "lying", "backbending", "holding sth.", "grasping sth.", "operating sth.", "pulling sth.", "pushing sth.", "reaching for sth.", "pointing at sth.", "crossing arms", "raising arm(s)", "crossing legs", "raising leg(s)"]
@@ -931,4 +808,8 @@ const FilterStructure = Object.freeze({
 	},
 })
 
-export { LabelStructure, FilterStructure, CheckLabel, RemovableLabel, Checkbox, DescriptionHover, ExploreSearchBar, SearchableDropdown, AccordionSection, GalleryColumn_helper, FetchLabelList_helper };
+export {
+	LabelStructure, LabelStructure_type2_only, FilterStructure,
+	CheckLabel, RemovableLabel, Checkbox, DescriptionHover, SearchableDropdown, AccordionSection,
+	GalleryColumn_helper, FetchLabelList_helper
+};
