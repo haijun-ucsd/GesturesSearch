@@ -923,12 +923,89 @@
 	margin-right:0;*/
 }
 
+.PageBox_Login {
+	flex-direction: column;
+}
+
 .PageBox_Upload {
 	flex-direction: column;
 }
 
 .PageBox_Explore {
 	flex-direction: row;
+}
+
+/* LogIn Page*/
+.Login_body{
+    -webkit-tap-highlight-color: transparent;
+    color: #d93025;
+    font-family: roboto,"Noto Sans Myanmar UI",arial,sans-serif;
+    direction: ltr;
+    font-size: 60px;
+    line-height: 1;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+	height:80vh;
+    position: relative;
+	margin: auto;
+}
+
+.Login_box{
+	-webkit-tap-highlight-color: transparent;
+    color: #bf98f6;
+    font-family: roboto,"Noto Sans Myanmar UI",arial,sans-serif;
+    font-size: 22px;
+    line-height: 1.5;
+    flex-direction: row;
+	width: 600px;
+    max-width: 100%;
+    position: relative;
+    z-index: 2;
+    transition: .2s;
+    background: #fff;
+    border: 1px solid #3b68c1;
+    border-radius: 8px;
+    display: block;
+    flex-shrink: 0;
+    margin: auto;
+	height: 80vh;
+	box-sizing: border-box;
+	margin-top: 10% ;
+	padding:10%;
+}
+
+input[type="text"],
+input[type="password"],
+button,
+textarea {
+  font-family: 'Nunito', sans-serif;
+  font-size: 22px;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+  display: block;
+}
+
+label,
+button {
+  margin-top: 1rem;
+  font-size: 22px;
+  display: block;
+  margin:auto;
+}
+
+button {
+  padding: 0.5rem;
+  display:block;
+  margin-top:5px;
+}
+
+.errmsg {
+    background-color: lightpink;
+    color: firebrick;
+    font-weight: bold;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
 

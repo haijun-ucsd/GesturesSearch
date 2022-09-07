@@ -12,6 +12,7 @@ import WaitingRoom from "./WaitingRoom";
 import UploadControl from "./UploadControl";
 import UploadPopUp from "./UploadPopUp";
 import { LabelStructure } from "./components";
+import LoginPage from './Login/LoginPage';
 
 
 
@@ -122,6 +123,7 @@ export default function UploadPage(props) {
 	};
 
 	// DEBUG
+	console.log("userName:"+ props.user)
 	useEffect(() => {
 		console.log("\n「");
 		console.log("addedPics:", props.addedPics);
@@ -342,7 +344,8 @@ export default function UploadPage(props) {
 					url: url,
 					...props.formDataList[idx],
 					annotation: props.picAnnotation[idx],
-				};
+					userID: props.user,
+				}
 				//finalPicData["url"] = url; // TODO: remove this line, should not need
 				set(ref_db(db, image_path), finalPicData); // store finalPicData into the corresponding picture object under "image"
 				console.log("finalPicData:", finalPicData); //DEBUG
@@ -379,8 +382,13 @@ export default function UploadPage(props) {
 						}
 					}
 				}
+				
+				
+				
 			});
 		});
+		
+		
 
 		// Prepare to clear the uploaded picture.
 		// For now, maintain a tombstone at the index to facilitate the upload loop.
