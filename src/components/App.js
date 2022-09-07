@@ -5,12 +5,13 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { storage } from '../firebase';
 import { getDatabase, onValue, ref as ref_db, set } from 'firebase/database';
 import { ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage';
-import { v4 } from 'uuid';
 import './components.css';
 import Navbar from './Navbar';
 import UploadPage from './UploadPage';
 import ExplorePage from './ExplorePage';
 import AboutPage from './AboutPage';
+import LoginPage from './Login/LoginPage';
+import SignUpPage from './Login/SignUpPage';
 
 /**
  * references:
@@ -25,6 +26,11 @@ export default function App() {
   const [completePercentages, setCompletePercentages] = useState([]);
   const [addedLabels, setAddedLabels] = useState([]);
   const [picAnnotation, setPicAnnotation] = useState([]); // element structure: [ annotateStartX, annotateStartY, annotateEndX, annotateEndY ]
+  const [user, setUser] = useState("");
+	const [pwd, setPwd] = useState("");
+	const [errMsg, setErrMsg] = useState("");
+	const [success, setSuccess] = useState("");
+ 
 
   // DEBUG
   useEffect(() => {
@@ -46,6 +52,23 @@ export default function App() {
       <Navbar />
       <Routes>
         <Route path='/' element={<AboutPage />} />
+        <Route path='/Login' element={<LoginPage
+          user={user}
+          setUser={setUser}
+          pwd={pwd}
+          setPwd={setPwd}
+          errMsg={errMsg}
+          setErrMsg={setErrMsg}
+          />}
+        />
+        <Route path='/SignUp' element={<SignUpPage 
+          user={user}
+          setUser={setUser}
+          pwd={pwd}
+          setPwd={setPwd}
+          errMsg={errMsg}
+          setErrMsg={setErrMsg}/>}
+        />
         <Route
           path='/upload'
           element={<UploadPage
@@ -61,6 +84,9 @@ export default function App() {
             setAddedLabels={setAddedLabels}
             picAnnotation={picAnnotation}
             setPicAnnotation={setPicAnnotation}
+            user={user}
+            // success={success}
+            // setSuccess={setSuccess}
           />}
         />
         <Route path='/explore' exact element={<ExplorePage />} />

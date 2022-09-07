@@ -32,7 +32,7 @@ import EditPicIcon from "../assets/EditPicIcon.png";
  */
 export default function UploadPopUp(props) {
 
-/* Poping and saving of the PopUp */
+/* Popping and saving of the PopUp */
 
 	const required_fields = [
 		{category: "location", subcategories: ["in_outdoor", "site"]},
