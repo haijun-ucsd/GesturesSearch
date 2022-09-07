@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 const LOGIN_URL = "/auth"; //append to baseURL in axios.js
 const db = getDatabase();
 
+
 export default function LoginPage(props) {
 	const { setAuth } = useContext(AuthContext);
 	const userRef = useRef();
