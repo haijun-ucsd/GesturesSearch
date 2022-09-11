@@ -8,14 +8,14 @@ import Fuse from 'fuse.js';
 import useResizeAware from 'react-resize-aware';
 
 /* Assets: */
-import RemovableLabel_removebtn from "../assets/RemovableLabel_removebtn.png";
-import YesBtn from "../assets/YesBtn.png";
-import NoBtn from "../assets/NoBtn.png";
-import SearchBtn from "../assets/SearchBtn.png";
-import ArrowUp_primary from "../assets/ArrowUp_primary.png";
-import ArrowDown_primary from "../assets/ArrowDown_primary.png";
-import ArrowUp_tiny from "../assets/ArrowUp_tiny.png";
-import ArrowDown_tiny from "../assets/ArrowDown_tiny.png";
+import RemovableLabel_removebtn from "../assets/RemovableLabel_removebtn@2x.png";
+import YesBtn from "../assets/YesBtn@2x.png";
+import NoBtn from "../assets/NoBtn@2x.png";
+import SearchBtn from "../assets/SearchBtn@2x.png";
+import ArrowUp_primary from "../assets/ArrowUp_primary@2x.png";
+import ArrowDown_primary from "../assets/ArrowDown_primary@2x.png";
+import ArrowUp_tiny from "../assets/ArrowUp_tiny@2x.png";
+import ArrowDown_tiny from "../assets/ArrowDown_tiny@2x.png";
 
 const db = getDatabase();
 
@@ -186,9 +186,9 @@ function RemovableLabel(props) {
 			<div className="LabelText">
 				{props.label}
 			</div>
-			<input
-				type="image" src={RemovableLabel_removebtn}
-				className="RemovableLabel_removebtn"
+			<img
+				srcset={RemovableLabel_removebtn+" 2x"}
+				className="RemovableLabel_removebtn Btn"
 				onClick={(e) => {
 					e.preventDefault();
 					props.remove_filter(props.label);
@@ -455,9 +455,9 @@ function SearchableDropdown(props) {
 		>
 			{(expanded==false) ?
 				<>
-					<input
-						className="SearchableDropdown_ecbtn"
-						type="image" src={ArrowDown_tiny} 
+					<img
+						srcset={ArrowDown_tiny+" 2x"} 
+						className="SearchableDropdown_ecbtn Btn"
 						onClick={(e) => {
 							e.preventDefault();
 							setExpanded(true);
@@ -484,9 +484,9 @@ function SearchableDropdown(props) {
 				</>
 			:
 				<>
-					<input
+					<img
+						srcset={ArrowUp_tiny+" 2x"} 
 						className="SearchableDropdown_ecbtn"
-						type="image" src={ArrowUp_tiny} 
 						onClick={(e) => {
 							e.preventDefault();
 							collapse_dropdown();
@@ -536,17 +536,17 @@ function SearchableDropdown(props) {
 							}}
 						/>
 						{searchText.length > 0 ?
-							<input
-								type="image" src={NoBtn}
-								className="SearchBar_clearbtn"
+							<img
+								srcset={NoBtn+" 2x"}
+								className="SearchBar_clearbtn Btn"
 								onClick={(e) => {
 									e.preventDefault();
 									clear_search_input_field();
 								}}
 							/>
 						: null }
-						<input
-							type="image" src={SearchBtn}
+						<img
+							srcset={SearchBtn+" 2x"}
 							className="SearchBar_searchbtn"
 							onClick={(e) => {
 								e.preventDefault();
@@ -630,16 +630,16 @@ function AccordionSection(props) {
 					}
 				</div>
 				{expanded ?
-					<input
-						type="image" src={ArrowUp_primary} 
+					<img
+						srcset={ArrowUp_primary+" 2x"} 
 						onClick={(e) => {
 							e.preventDefault();
 							setExpanded(false);
 						}}
 					/>
 				:
-					<input
-						type="image" src={ArrowDown_primary} 
+					<img
+						srcset={ArrowDown_primary+" 2x"} 
 						onClick={(e) => {
 							e.preventDefault();
 							setExpanded(true);

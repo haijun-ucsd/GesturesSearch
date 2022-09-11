@@ -8,9 +8,9 @@ import { labels_data } from "../labels_data.js";
 import BodyComponent from '../BodyComponent';
 
 /* Assets: */
-//import PopUpCloseBtn from "../assets/PopUpCloseBtn.png";
-import YesBtn from "../../assets/YesBtn.png";
-import EditPicIcon from "../../assets/EditPicIcon.png";
+//import PopUpCloseBtn from "../assets/PopUpCloseBtn@2x.png";
+import YesBtn from "../../assets/YesBtn@2x.png";
+import EditPicIcon from "../../assets/EditPicIcon@2x.png";
 
 
 
@@ -524,7 +524,7 @@ export default function UploadPopUp(props) {
 					className="PopUpClose Btn_primary"
 					onClick={close_pop_and_save}
 				>
-					<img src={YesBtn} />
+					<img srcset={YesBtn+" 2x"} />
 					Save
 				</btn>
 			</div>
@@ -794,7 +794,7 @@ function AnnotationForm(props) {
 		>
 			<div className="FormCategory">
 				<div className="HintTextWithIcon_container">
-					<img src={EditPicIcon} />
+					<img srcset={EditPicIcon+" 2x"} />
 					<span className="HintText">
 						Multiple persons in the picture?<br/>
 						Drag to draw rectangle around the one that you are labelling.

@@ -15,9 +15,9 @@ import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 
 /* Assets: */
-import HintText_ArrowUp from "../../assets/HintText_ArrowUp.png";
-import ZeroProgressAddLabel from "../../assets/ZeroProgressAddLabel.png";
-import NoBtn from "../../assets/NoBtn.png";
+import HintText_ArrowUp from "../../assets/HintText_ArrowUp@2x.png";
+import ZeroProgressAddLabel from "../../assets/ZeroProgressAddLabel@2x.png";
+import NoBtn from "../../assets/NoBtn@2x.png";
 
 
 
@@ -71,12 +71,13 @@ export default function WaitingRoom(props) {
 						<div className="WaitingPic_container">
 							<div className="WaitingPicProgress">
 								{props.completePercentages[idx]===0 ?
-									<input
-										type="image" src={ZeroProgressAddLabel}
+									<img
+										srcset={ZeroProgressAddLabel+" 2x"}
 										onClick={(e) => {
 											e.preventDefault();
 											props.setClickedUrl(url);
 										}}
+										className="Btn"
 									/>
 								:
 									<div className="DescriptionHover">
@@ -119,7 +120,7 @@ export default function WaitingRoom(props) {
 								>
 									<img
 										className="WaitingPicRemover"
-										src={NoBtn}
+										srcset={NoBtn+" 2x"}
 									/>
 								</div>
 							</div>
@@ -140,7 +141,7 @@ export default function WaitingRoom(props) {
 			:
 				<div className="WaitingRoomGallery">
 					<div className="HintText">
-						<img src={HintText_ArrowUp} />
+						<img srcset={HintText_ArrowUp+" 2x"} />
 						No picture added yet. Click here to start!
 					</div>
 				</div>

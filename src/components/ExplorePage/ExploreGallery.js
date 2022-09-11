@@ -142,7 +142,7 @@ function AppliedFilters(props) {
 					/>
 				)}
 			</div>
-			{/*showLink && (
+			{/*showLink && (xs
 				<span onClick={onClickMore}>
 					{showMore ? "show less" : "& more"}
 				</span>
@@ -151,10 +151,54 @@ function AppliedFilters(props) {
 	);
 }
 
-/*function FilterRearrange(props) {
+/**
+ * FilterRearrange
+ * 
+ * Feature to help the user indicate priority of filter.
+ *
+ * parent props:
+ *	- filterList
+ *	- remove_filter()
+ *
+ * references:
+ *	https://tinloof.com/blog/how-to-make-and-test-your-own-react-drag-and-drop-list-with-0-dependencies
+ *	https://stackoverflow.com/questions/22922761/rounded-corners-with-html-draggable
+ */
+function FilterRearrange(props) {
 	return (
-		<div className="Module">
-			<... />
-		</div>
+		// <div className="Module">
+		// 	<... />
+		// </div>
+		<div className="AppliedFilters">
+			<div className="ModuleHeaderBar">
+				<div className="HintText">
+					Rearrange filter priority:
+				</div>
+				{/* TODO: add btns: save, cancel */}
+			</div>
+			 {/*<div ref={ref} className={(showMore ? "" : "AppliedFiltersList") + " " + "FilterList"}>*/}
+			 <div className="FilterList">
+				 {props.filterList.map((item) =>
+				 	<div
+				 		draggable
+				 		style={{borderRadius:"50%", opacity:"0.999"}} // need this to ensure corner radius
+				 	>
+						<RemovableLabel
+							key={item.label_id}
+							label={item.label}
+							color={item.color}
+							//category={item.category}
+							//subcategory={item.subcategory}
+							remove_filter={props.remove_filter}
+						/>
+					</div>
+				)}
+			</div>
+			{/*showLink && (xs
+				<span onClick={onClickMore}>
+					{showMore ? "show less" : "& more"}
+				</span>
+			)*/}
+	</div>
 	);
-}*/
+}

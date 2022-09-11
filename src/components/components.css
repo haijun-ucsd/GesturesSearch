@@ -4,6 +4,7 @@
  *  https://stackoverflow.com/questions/15831657/creating-css-global-variables-stylesheet-theme-management
  *  https://stackoverflow.com/questions/40010597/how-do-i-apply-opacity-to-a-css-color-variable
  *	https://www.w3schools.com/cssref/sel_attribute_value.asp
+ *	https://stackoverflow.com/questions/7699621/display-image-at-50-of-its-native-size
  */
 
 
@@ -11,6 +12,7 @@
 
 :root {
 	--img-container-bg: rgb(234, 197, 197);
+	--link-color: #A9C7D9;
 	--demographic-color: #ED5564;
 	--spectators-color: #FFCE54;
 	--location-color: #A0D568;
@@ -141,6 +143,10 @@
 
 /* Btn */
 
+.Btn {
+	cursor: pointer;
+}
+
 .Btn_primary {
 	background: var(--gray-light);
 	border: 1px solid var(--gray-mid);
@@ -212,6 +218,21 @@
 	box-shadow: none;
 	cursor: auto;
 }
+
+.Link {
+	cursor: pointer;
+	color: var(--link-color);
+	text-decoration: none;
+}
+.Link:not(:disabled):hover {
+	filter: brightness(110%);
+	text-decoration: underline;
+}
+.Link:disabled {
+	background: var(--gray-bg);
+	cursor: auto;
+}
+
 
 
 /* Checkbox */
@@ -956,8 +977,16 @@
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	align-items: flex-end;
+	align-items: center;
 	padding: 24px 40px;
+}
+
+.UploadControl_addpic_div {
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 24px;
 }
 
 .UploadControl_addpic {
@@ -965,18 +994,50 @@
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	gap: 24px;
+	gap: 8px;
+	/* border styling
+	border: 2px dashed var(--gray-bg); border-radius: 8px;
+	border-image: url("../assets/DashedBorder_small.svg") 30% / 14px / 8px round; */
 }
 
-.UploadControl_selectpic {  /* right now same as UploadControl_addpic */
+.UploadControl_addpic_bigbox { /* reference: https://developer.mozilla.org/en-US/docs/Web/CSS/border-image */
+	/* as an item */
+	align-self: stretch;
+	position: absolute;
+	transform: translate(-50%, -50%); top: 50%; left: 50%; /* centerize */
+	width: 70%; min-width: 400px;
+	height: 80%;
 	/* as a container */
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	gap: 24px;
+	justify-content: center;
+	gap: 16px;
+	/* border styling */
+	border: 2px dashed var(--gray-bg); border-radius: 20px; /* specify a separate border-style in case the border image fails to load */
+	border-image:
+		url("../assets/DashedBorder_big.svg") /* source */
+		30% /* slice = border width ÷ src img width */ /
+		26px /* width = border width (above) */ /
+		0px /* outset: distance from the div border */
+		round /* repeat: round = round up to full dashes */
+	;
 }
 
-.UploadControl_uploadpic {  /* right now same as UploadControl_addpic */
+.AddPicBigBox_cover {
+	position: absolute;
+	top: 0; left: 0;
+	width: 100%; height: 100%;
+}
+
+.AddPicBigBox_notification {
+	position: absolute;
+	transform: translate(-50%, -50%);
+	left: 50%; top: 24px;
+	width: 100%; text-align: center;
+}
+
+.UploadControl_uploadpic_div {  /* right now same as UploadControl_addpic */
 	/* as a container */
 	display: flex;
 	flex-direction: row;
@@ -1022,8 +1083,7 @@
 .WaitingPicRemover_innercontainer {
 	padding: 0px;
 	background-color: var(--white);
-	border-radius: 100px;
-	cursor: pointer;
+	border-radius: 50%;
 	z-index: 1;
 }
 
@@ -1033,7 +1093,7 @@
 	display: none;
 	/*display: inline-flex; /*DEBUG*/
 	padding: 16px; /* modify this range according to achieve the best experience */
-	border-radius: 100px;
+	border-radius: 50%;
 	z-index: 1;
 }
 
@@ -1114,7 +1174,6 @@
 }
 
 .PopUpClose {
-	cursor: pointer;
 	position: absolute;
 	transform: translateX(100%);
 	right: -24px;
@@ -1416,8 +1475,7 @@
 	left: 8px;
 	padding: 8px;
 	background-color: var(--img-container-bg);
-	border-radius: 100px;
-	cursor: pointer;
+	border-radius: 50%;
 	z-index: 1;
 }
 
@@ -1553,69 +1611,69 @@
 /* About Page*/
 
 .AboutPageBox {
-  background-color: var(--gray-bg);
+	background-color: var(--gray-bg);
 }
 
 .Stats {
-  margin-top: 50px;
-  display: flex;
-  position: relative;
-  height: 325px;
+	margin-top: 50px;
+	display: flex;
+	position: relative;
+	height: 325px;
 }
 
 .HistoryTitle {
-  margin-top: 0px;
-  display: flex;
-  position: relative;
-  height: 50px;
+	margin-top: 0px;
+	display: flex;
+	position: relative;
+	height: 50px;
 }
 
 .HistoryTitle h5 {
-  margin-left: 400px;
-  margin-right: 100px;
+	margin-left: 400px;
+	margin-right: 100px;
 }
 
 .LineChart {
-  margin-left: 100px;
-  margin-right: 50px;
+	margin-left: 100px;
+	margin-right: 50px;
 }
 
 /* .BarChar {
-  margin-left: 1200px;
+	margin-left: 1200px;
 } */
 
 .Vis {
-  margin-top: 0px;
-  display: flex;
-  position: relative;
-  height: 400px;
+	margin-top: 0px;
+	display: flex;
+	position: relative;
+	height: 400px;
 }
 
 /* .VisBar {
-  margin-top: 0px;
-  display: flex;
-  position: relative;
-  height: 400px;
+	margin-top: 0px;
+	display: flex;
+	position: relative;
+	height: 400px;
 } */
 
 .RoleBar {
-  margin-left: 1100px;
-  margin-top: 50px;
-  margin-bottom: 150px;
+	margin-left: 1100px;
+	margin-top: 50px;
+	margin-bottom: 150px;
 }
 
 .Age{
-  margin-left: 800px;
-  margin-top: 100px;
-  height: 250px;
-  width: 250px;
+	margin-left: 800px;
+	margin-top: 100px;
+	height: 250px;
+	width: 250px;
 }
 
 .Pie {
-  margin-top: 100px;
-  margin-left: 80px;
-  height: 250px;
-  width: 250px;
+	margin-top: 100px;
+	margin-left: 80px;
+	height: 250px;
+	width: 250px;
 }
 
 .Intro {
@@ -1664,16 +1722,16 @@
 }
 
 .Box {
-  -webkit-border-radius: 20px;
-  -moz-border-radius: 20px;
-  border-radius: 20px;
-  overflow: hidden;
-  width: 700px;
-  height: 350px;
-  margin-top: 50px;
-  margin-left: auto;
-  margin-right: auto;
-  background-color: var(--gray-bg);
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+	border-radius: 20px;
+	overflow: hidden;
+	width: 700px;
+	height: 350px;
+	margin-top: 50px;
+	margin-left: auto;
+	margin-right: auto;
+	background-color: var(--gray-bg);
 }
 
 .Box p {
@@ -1733,11 +1791,11 @@
 }
 
 .Contributor {
-  margin-top: 100px;
-  margin-left: 400px;
-  width: 150px;
-  height: auto;
-  align-self: center;
+	margin-top: 100px;
+	margin-left: 400px;
+	width: 150px;
+	height: auto;
+	align-self: center;
 }
 
 .ContributorTitle{
@@ -1747,21 +1805,21 @@
 }
 
 .Contributor p {
-  margin-left: 25px;
-  color: #174ea6;
+	margin-left: 25px;
+	color: #174ea6;
 }
 
 .Contributor h1 {
-  margin-left: 25px;
-  font-size: 30px;
+	margin-left: 25px;
+	font-size: 30px;
 }
 
 .Images {
-  margin-top: 100px;
-  margin-left: 150px;
-  width: 150px;
-  height: auto;
-  align-self: center;
+	margin-top: 100px;
+	margin-left: 150px;
+	width: 150px;
+	height: auto;
+	align-self: center;
 }
 
 .ImageTitle {
@@ -1771,35 +1829,35 @@
 }
 
 .Images p {
-  margin-left: 25px;
-  color: #ED5564;
+	margin-left: 25px;
+	color: #ED5564;
 }
 
 .Images h1 {
-  margin-left: 0px;
-  font-size: 30px;
+	margin-left: 0px;
+	font-size: 30px;
 }
 
 .Locations {
-  margin-top: 100px;
-  margin-left: 150px;
-  width: 150px;
-  height: auto;
-  align-self: center;
+	margin-top: 100px;
+	margin-left: 150px;
+	width: 150px;
+	height: auto;
+	align-self: center;
 }
 
 .LocationTitle {
-  margin-left: -10px;
-  font-size: 25px;
-  font-weight: bold;
+	margin-left: -10px;
+	font-size: 25px;
+	font-weight: bold;
 }
 
 .Locations h1 {
-  margin-left: 20px;
-  font-size: 30px;
+	margin-left: 20px;
+	font-size: 30px;
 }
 
 .Locations p {
-  margin-left: 30px;
-  color: #A0D568;
+	margin-left: 30px;
+	color: #A0D568;
 }

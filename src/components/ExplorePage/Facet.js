@@ -7,8 +7,8 @@ import { Filter, Checkbox, CheckLabel, AccordionSection, FetchLabelList_helper }
 import BodyComponent from '../BodyComponent';
 
 /* Assets: */
-import NoBtn from "../../assets/NoBtn.png";
-import SearchBtn from "../../assets/SearchBtn.png";
+import NoBtn from "../../assets/NoBtn@2x.png";
+import SearchBtn from "../../assets/SearchBtn@2x.png";
 
 
 
@@ -201,9 +201,9 @@ function ExploreSearch(props) {
 						}}
 					/>
 					{searchText.length > 0 ?
-						<input
-							type="image" src={NoBtn}
-							className="SearchBar_clearbtn"
+						<img
+							srcset={NoBtn+" 2x"}
+							className="SearchBar_clearbtn Btn"
 							onClick={(e) => { // clear input field
 								e.preventDefault();
 								setSearchText('');
@@ -211,9 +211,9 @@ function ExploreSearch(props) {
 							}}
 						/>
 					: null }
-					<input
-						type="image" src={SearchBtn}	// <input type="image"> defines an image as a submit button
-						className="SearchBar_searchbtn"
+					<img
+						srcset={SearchBtn+" 2x"}	// <input type="image"> defines an image as a submit button
+						className="SearchBar_searchbtn Btn"
 						onClick={(e) => {
 							e.preventDefault();
 							setSubmittedSearchText(searchText);

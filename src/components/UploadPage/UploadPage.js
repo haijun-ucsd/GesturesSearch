@@ -31,14 +31,6 @@ import { LabelStructure, LabelStructure_type2_only } from "../components";
  */
 export default function UploadPage(props) {
 
-/**--- Adding and removing pictures in WaitingRoom ---**/
-
-	const [addingPic, setAddingPic] = useState(false); // whether in the progress of adding picture to waiting room
-	// DEBUG
-	useEffect(() => {
-		console.log("Is during the process of adding picture? " + addingPic);
-	}, [addingPic]);
-
 	const defaultFormData = (() => {
 		let initialFormData = { ...LabelStructure };
 		for (let bodypart in initialFormData["modality"]) { // set modality default value: true (= available)
@@ -47,27 +39,47 @@ export default function UploadPage(props) {
 		return initialFormData;
 	});
 
+
+/**--- Adding and removing pictures in WaitingRoom ---**/
+
+	const [addingPic, setAddingPic] = useState(false); // whether in the progress of adding picture to waiting room
+	// DEBUG
+	useEffect(() => {
+		console.log("Is during the process of adding picture? " + addingPic);
+	}, [addingPic]);
+
+	const [draggingActive, setDraggingActive] = useState(false); // whether in the progress of dragging something (unconfirmed yet if it is a picture)
+	// DEBUG
+	useEffect(() => {
+		console.log("Is during the process of dragging something into the upload box? " + draggingActive);
+	}, [draggingActive]);
+
+	// Validator for drag-to-add.
+	// When true, report to the user that some or all of their dragged items is non-image.
+	const [dragToAddInvalid, setDragToAddInvalid] = useState(false);
+	useEffect(() => {
+		console.log("Is any dragged and dropped items invalid? " + dragToAddInvalid); //DEBUG
+		if (dragToAddInvalid === true) { // let succeed msg stay for 3s
+			setTimeout(() => {
+		    setDragToAddInvalid(false);
+		  }, 3000); // 3s = 3000ms
+		}
+	}, [dragToAddInvalid]);
+
 	/**
 	 * handle_add_pic
 	 *
 	 * To help store the pictures and initialize URLs for them while using add-pic-btn.
 	 * 
-	 * @param e: e.target.files are the files that the user temporarily uploads to the webpage (WaitingRoom).
+	 * @param added_pics: the files that the user temporarily uploads to the webpage (WaitingRoom).
 	 * 
 	 * Usage: Called by the add-picture button in UploadControl.
 	 */
-	const handle_add_pic = async (e) => {
-
-		// Check for existence of event.target.files.
-		if (!e.target.files) {
-			return;
-		}
-		console.log("Valid new pictures set : , refresh waiting room."); //DUBUG
+	const handle_add_pic = async (added_pics) => {
 
 		// Loop through all images to append to:
 		//	1. append to the current picture list,
 		//	2. create URLs and store them sequentially.
-		const added_pics = e.target.files;
 		var pics_to_store = [...props.addedPics];
 		var urls_to_store = [...props.addedPicsUrl];
 		var forms_to_store = [...props.formDataList];
@@ -154,6 +166,65 @@ export default function UploadPage(props) {
 		props.picAnnotation
 	]);
 
+	/** TODO */
+	const add_pic_by_click = (e) => {
+		e.preventDefault();
+		if (!e.target.files) { return; } // check for existence of event.target.files
+		console.log("Valid new pictures added by click:\n", e.target.files, "\nUpdating waiting room."); //DUBUG
+		handle_add_pic(e.target.files);
+	}
+
+	/**
+	 * add_pic_by_drag
+	 * 
+	 * Triggered when some item is dragged over or into a box that accepts drag-to-add.
+	 * 
+	 * Usage:
+	 *	- In UploadControl before any picture is added
+	 *	- In WaitingRoom after some picture is added
+	 *
+	 * references:
+	 *	https://www.codemzy.com/blog/react-drag-drop-file-upload
+	 *	https://www.w3schools.com/jsref/event_ondragenter.asp
+	 *	https://www.w3schools.com/jsref/event_stoppropagation.asp
+	 *	https://roufid.com/javascript-check-file-image/
+	 */
+	const add_pic_by_drag = (e) => {
+		e.preventDefault();
+		e.stopPropagation(); // prevents propagation, which means "bubbling up to parent elements or capturing down to child elements"
+		console.log("Dragging. Drag type: " + e.type);
+
+		// During the dragging process.
+		if (e.type === "dragenter" || e.type === "dragover") {
+      setDraggingActive(true);
+    }
+
+    // Dragged element moves out of the drag-to-add area.
+    else if (e.type === "dragleave") {
+      setDraggingActive(false);
+    }
+
+    // Dragged item is dropped within the drag-to-add area.
+    else if (e.type === "drop") {
+			setDraggingActive(false);
+			if (!e.dataTransfer.files) { return; } // check for existence of event.dataTransfer.files
+			let valid_pics = [];
+			for (let i = 0; i < e.dataTransfer.files.length; i++) { // check whether the files are images
+				if (e.dataTransfer.files[i]["type"].split("/")[0] === "image") {
+					valid_pics.push(e.dataTransfer.files[i]);
+				}
+			}
+			if (valid_pics.length < e.dataTransfer.files.length) {
+				setDragToAddInvalid(true);
+			}
+			if (valid_pics.length > 0) {
+				console.log("Valid new pictures added through drag:\n", valid_pics, "\nUpdating waiting room."); //DUBUG
+				handle_add_pic(e.dataTransfer.files);
+			}
+    }
+	}
+
+	/** TODO */
 	const handle_remove_pic = (idx) => {
 
 		console.log("Remove picture from index: " + idx); //DEBUG
@@ -622,23 +693,31 @@ export default function UploadPage(props) {
 		<div className="PageBox PageBox_Upload">
 			<div className="UploadWaitingRoom">
 				<UploadControl
-					handle_add_pic={handle_add_pic}
-					numAddedPics={props.addedPics.length}
+					add_pic_by_click={add_pic_by_click}
+					add_pic_by_drag={add_pic_by_drag}
 					addingPic={addingPic}
+					draggingActive={draggingActive}
+					dragToAddInvalid={dragToAddInvalid}
+					numAddedPics={props.addedPics.length}
 					uploadingPic={uploadingPic}
 					setAddingPic={setAddingPic}
 					upload_all_valid_images={upload_all_valid_images}
 					uploadDisabled={uploadDisabled}
 				/>
-				<WaitingRoom
-					unify_image_format={unify_image_format}
-					handle_remove_pic={handle_remove_pic}
-					addedPics={props.addedPics}
-					addedPicsUrl={props.addedPicsUrl}
-					completePercentages={props.completePercentages}
-					addedLabels={props.addedLabels}
-					setClickedUrl={setClickedUrl}
-				/>
+				{props.addedPics.length > 0 ?
+					<WaitingRoom
+						add_pic_by_drag={add_pic_by_drag}
+						draggingActive={draggingActive}
+						dragToAddInvalid={dragToAddInvalid}
+						unify_image_format={unify_image_format}
+						handle_remove_pic={handle_remove_pic}
+						addedPics={props.addedPics}
+						addedPicsUrl={props.addedPicsUrl}
+						completePercentages={props.completePercentages}
+						addedLabels={props.addedLabels}
+						setClickedUrl={setClickedUrl}
+					/>
+				: null }
 			</div>
 			{(clickedUrl!="") ? (
 				<UploadPopUp

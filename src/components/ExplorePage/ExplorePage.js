@@ -8,12 +8,11 @@ import ExploreDetails from "./ExploreDetails";
 import { FilterStructure, FetchLabelList_helper } from "../components";
 import _, { map } from "underscore";
 
-/* Assets: */
-import ArrowLeft from "../../assets/ArrowLeft.png";
-import ArrowRight from "../../assets/ArrowRight.png";
-import ExploreDetailsCloseBtn from "../../assets/ExploreDetailsCloseBtn.png";
+
 
 export var searchDataCopy = []; //TODO
+
+
 
 export default function ExplorePage() {
 
