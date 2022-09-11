@@ -23,6 +23,7 @@
     "firebase-tools": "^11.4.2",
     "fuse.js": "^6.6.2",
     "heic2any": "^0.0.3",
+    "iconify": "^1.4.0",
     "image-size-from-url": "^1.0.2",
     "node-sass": "^7.0.1",
     "rc-slider": "^10.0.1",

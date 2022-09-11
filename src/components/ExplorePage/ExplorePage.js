@@ -202,7 +202,7 @@ export default function ExplorePage() {
 
 
 /**--- Search ---**/
-	const locationColor = "#80aa54";
+	const locationColor = "#A0D568";
 	const postureColor = "#AC92EB";
 	const demographicColor = "#ED5564";
 	const spectatorColor = "#FFCE54";
