@@ -6,7 +6,7 @@ import Facet from "./Facet";
 import ExploreGallery from "./ExploreGallery";
 import ExploreDetails from "./ExploreDetails";
 import { FilterStructure, FetchLabelList_helper } from "../components";
-import _, { map } from "underscore";
+import _, { filter, map } from "underscore";
 import Fuse from 'fuse.js';
 import { labels_data } from "../labels_data.js";
 
@@ -247,6 +247,7 @@ export default function ExplorePage() {
 		console.log("searchData: ", searchData);
 		const inputArr = input.split(' ').map(item => item.trim());
 		console.log("ALL ROLES: ", allRoles);
+		let existingResult = [];
 
 		//Add searchbar content to applied filters
 		if (inputArr.length !== 0) {
@@ -284,9 +285,10 @@ export default function ExplorePage() {
 				result.sort(function(a, b){
 					return a.score - b.score;
 				});
+
 				//TODO: Mark the category of each result and change filter directly
 				if(result.length !== 0){
-					if (allPostures.includes(result[0].item)) {
+					if (allPostures.includes(result[0].item) && !existingResult.includes(result[0].item)) {
 						filter_change_handler(result[0].item, 0, "posture", "posture", postureColor, false);
 					} else if (allSites.includes(result[0].item)) {
 						filter_change_handler(result[0].item, 0, "location", "site", locationColor, false, true);
@@ -306,11 +308,91 @@ export default function ExplorePage() {
 						filter_change_handler("spectators density: " + result[0].item, 0, "spectators", "density", spectatorColor, false);
 					}
 				}
+				existingResult.push(result[0].item);
 				console.log("RESULT: ", result);
 			}
 			
 			
 		}
+	}
+
+	function search_helper (subFilterList) {
+		const db = getDatabase()
+		const dbRef = ref_db(db, 'images');
+		let filtered = [];
+		var matchDict = {};
+		onValue(dbRef, (snapshot) => {
+			const data = snapshot.val();
+			for (const [imgKey, labels] of Object.entries(data)) {
+				for (const facetLabel of subFilterList) {
+					switch (facetLabel.category) {
+						case 'posture':
+							if (labels.posture !== undefined && String(labels.posture).includes(facetLabel.label)) {
+								matchDict[imgKey] = (matchDict[imgKey] === undefined) ? true : (true && matchDict[imgKey]);
+							} else {matchDict[imgKey] = (matchDict[imgKey] === undefined) ? false : false && matchDict[imgKey];}
+							break;
+						case 'demographic':
+							if (facetLabel.subcategory === "age") {
+								if (labels.demographic.age !== undefined && labels.demographic.age === facetLabel.label) {
+									matchDict[imgKey] = (matchDict[imgKey] === undefined) ? true : (true && matchDict[imgKey]);
+								} else {matchDict[imgKey] = (matchDict[imgKey] === undefined) ? false : false && matchDict[imgKey];}
+							} else if (facetLabel.subcategory === "sex") {
+								if (labels.demographic.sex !== undefined && labels.demographic.sex === facetLabel.label) {
+									matchDict[imgKey] = (matchDict[imgKey] === undefined) ? true : (true && matchDict[imgKey]);
+								} else {matchDict[imgKey] = (matchDict[imgKey] === undefined) ? false : false && matchDict[imgKey];}
+							} else {
+								if (String(labels.demographic.social_role).includes(facetLabel.label)) {
+									matchDict[imgKey] = (matchDict[imgKey] === undefined) ? true : (true && matchDict[imgKey]);
+								} else {matchDict[imgKey] = (matchDict[imgKey] === undefined) ? false : false && matchDict[imgKey];}
+							}
+							break;
+						case 'modality':
+							var avail = facetLabel.label.split(' ')[facetLabel.label.split(' ').length - 1];
+							if (labels.modality[facetLabel.subcategory] === Boolean(avail === 'available')) {
+								matchDict[imgKey] = (matchDict[imgKey] === undefined) ? true : (true && matchDict[imgKey]);
+							} else {matchDict[imgKey] = (matchDict[imgKey] === undefined) ? false : false && matchDict[imgKey];}
+							break;
+						case 'spectators':
+							var value = facetLabel.label.split(' ')[2];
+							if (facetLabel.subcategory === "quantity") {
+								if (labels.spectators.quantity === value) {
+									matchDict[imgKey] = (matchDict[imgKey] === undefined) ? true : (true && matchDict[imgKey]);
+								} else {matchDict[imgKey] = (matchDict[imgKey] === undefined) ? false : false && matchDict[imgKey];}
+							} else if (facetLabel.subcategory === "density") {
+								if (labels.spectators.density === value) {
+									matchDict[imgKey] = (matchDict[imgKey] === undefined) ? true : (true && matchDict[imgKey]);
+								} else {matchDict[imgKey] = (matchDict[imgKey] === undefined) ? false : false && matchDict[imgKey];}
+							} else {
+								if (labels.spectators.attentive === value) {
+									matchDict[imgKey] = (matchDict[imgKey] === undefined) ? true : (true && matchDict[imgKey]);
+								} else {matchDict[imgKey] = (matchDict[imgKey] === undefined) ? false : false && matchDict[imgKey];}
+							}
+							break;
+						case 'location':
+							if (facetLabel.subcategory === "site") {
+								if (String(labels.location.site).includes(facetLabel.label)) {
+									matchDict[imgKey] = (matchDict[imgKey] === undefined) ? true : (true && matchDict[imgKey]);
+								} else {matchDict[imgKey] = (matchDict[imgKey] === undefined) ? false : false && matchDict[imgKey];}
+							} else if (facetLabel.subcategory === "archi_compo") {
+								if (String(labels.location.archi_compo).includes(facetLabel.label)) {
+									matchDict[imgKey] = (matchDict[imgKey] === undefined) ? true : (true && matchDict[imgKey]);
+								} else {matchDict[imgKey] = (matchDict[imgKey] === undefined) ? false : false && matchDict[imgKey];}
+							} else {
+								if (labels.location.in_outdoor === facetLabel.label) {
+									matchDict[imgKey] = (matchDict[imgKey] === undefined) ? true : (true && matchDict[imgKey]);
+								} else {matchDict[imgKey] = (matchDict[imgKey] === undefined) ? false : false && matchDict[imgKey];}
+							}
+							break;
+						default:
+					}
+				}
+				if (matchDict[imgKey] === true) {
+					filtered.push([imgKey, labels]);
+				}
+			}
+			console.log("Match: ", matchDict);
+		})
+		return filtered;
 	}
 
 	/**
@@ -323,77 +405,21 @@ export default function ExplorePage() {
 		onValue(dbRef, (snapshot) => {
 			const data = snapshot.val();
 			let filtered = [];
-			for (const [imgKey, labels] of Object.entries(data)) {
-				//match labels in searchbar query
-				if (filterList[0] === undefined) {
+			//match labels in searchbar query
+			if (filterList[0] === undefined) {
+				for (const [imgKey, labels] of Object.entries(data)) {
 					filtered.push([imgKey, labels]);
-				} else {
-					for (const facetLabel of filterList) {
-						switch (facetLabel.category) {
-							case 'posture':
-								if (labels.posture !== undefined && String(labels.posture).includes(facetLabel.label)) {
-									filtered.push([imgKey, labels]);
-								}
-								break;
-							case 'demographic':
-								if (facetLabel.subcategory === "age") {
-									if (labels.demographic.age !== undefined && labels.demographic.age === facetLabel.label) {
-										filtered.push([imgKey, labels]);
-									}
-								} else if (facetLabel.subcategory === "sex") {
-									if (labels.demographic.sex !== undefined && labels.demographic.sex === facetLabel.label) {
-										filtered.push([imgKey, labels]);
-									}
-								} else {
-									if (String(labels.demographic.social_role).includes(facetLabel.label)) {
-										filtered.push([imgKey, labels]);
-									}
-								}
-								break;
-							case 'modality':
-								var avail = facetLabel.label.split(' ')[facetLabel.label.split(' ').length - 1];
-								if (labels.modality[facetLabel.subcategory] === Boolean(avail === 'available')) {
-									filtered.push([imgKey, labels]);
-								}
-								break;
-							case 'spectators':
-								var value = facetLabel.label.split(' ')[2];
-								if (facetLabel.subcategory === "quantity") {
-									if (labels.spectators.quantity === value) {
-										filtered.push([imgKey, labels]);
-									}
-								} else if (facetLabel.subcategory === "density") {
-									if (labels.spectators.density === value) {
-										filtered.push([imgKey, labels]);
-									}
-								} else {
-									if (labels.spectators.attentive === value) {
-										filtered.push([imgKey, labels]);
-									}
-								}
-								break;
-							case 'location':
-								if (facetLabel.subcategory === "site") {
-									if (String(labels.location.site).includes(facetLabel.label)) {
-										filtered.push([imgKey, labels]);
-									}
-								} else if (facetLabel.subcategory === "archi_compo") {
-									if (String(labels.location.archi_compo).includes(facetLabel.label)) {
-										filtered.push([imgKey, labels]);
-									}
-								} else {
-									if (labels.location.in_outdoor === facetLabel.label) {
-										filtered.push([imgKey, labels]);
-									}
-								}
-								break;
-							default:
-
-						}
+				}
+			} else {
+				// filtered = [...search_helper(filterList)];
+				for (let j = 0; j < filterList.length; j++){
+					for (let i = filterList.length; i > j; i--) {
+						console.log(filterList.slice(j, i));
+						filtered = [..._.difference(search_helper(filterList.slice(j, i)), filtered)];
 					}
-					
 				}
 			}
+			
 			if (filtered.length !== 0) {
 				setImageList(_.uniq(filtered, false, function (arr) {return arr[0];}));
 			} else if (filterList[0] === undefined) {
