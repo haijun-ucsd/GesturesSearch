@@ -415,7 +415,8 @@ export default function ExplorePage() {
 				for (let j = 0; j < filterList.length; j++){
 					for (let i = filterList.length; i > j; i--) {
 						console.log(filterList.slice(j, i));
-						filtered = [..._.difference(search_helper(filterList.slice(j, i)), filtered)];
+						filtered.push(..._.difference(search_helper(filterList.slice(j, i)), filtered));
+						console.log(filtered)
 					}
 				}
 			}
