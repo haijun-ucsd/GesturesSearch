@@ -15,9 +15,9 @@ import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 
 /* Assets: */
-import HintText_ArrowUp from "../../assets/HintText_ArrowUp.png";
-import ZeroProgressAddLabel from "../../assets/ZeroProgressAddLabel.png";
-import NoBtn from "../../assets/NoBtn.png";
+import HintText_ArrowUp from "../../assets/HintText_ArrowUp@2x.png";
+import ZeroProgressAddLabel from "../../assets/ZeroProgressAddLabel@2x.png";
+import NoBtn from "../../assets/NoBtn@2x.png";
 
 
 
@@ -58,11 +58,15 @@ export default function WaitingRoom(props) {
 
 	/* Render */
 	return (
-		<>
+		<div
+			className="WaitingRoom"
+			style={{backgroundColor: props.draggingActive==true ? "#CCCCCC"/*gray-mid*/ : "#EDECED"/*gray-bg*/}}
+			onDragEnter={props.add_pic_by_drag}
+		>
 			{props.addedPics.length!==0 ? // check for empty addedPics list. TODO: display tutorial if empty?
 				<Masonry
 					breakpointCols={{default: galleryNumCol}}
-					className="WaitingRoomGallery Gallery"
+					className="Gallery"
 					style={{justifyContent: (galleryNumCol >= props.addedPics.length) ? "left" : "center"}}
 					columnClassName="GalleryColumn"
 				>
@@ -71,12 +75,13 @@ export default function WaitingRoom(props) {
 						<div className="WaitingPic_container">
 							<div className="WaitingPicProgress">
 								{props.completePercentages[idx]===0 ?
-									<input
-										type="image" src={ZeroProgressAddLabel}
+									<img
+										srcSet={ZeroProgressAddLabel+" 2x"}
 										onClick={(e) => {
 											e.preventDefault();
 											props.setClickedUrl(url);
 										}}
+										className="Btn"
 									/>
 								:
 									<div className="DescriptionHover">
@@ -119,7 +124,7 @@ export default function WaitingRoom(props) {
 								>
 									<img
 										className="WaitingPicRemover"
-										src={NoBtn}
+										srcSet={NoBtn+" 2x"}
 									/>
 								</div>
 							</div>
@@ -140,11 +145,21 @@ export default function WaitingRoom(props) {
 			:
 				<div className="WaitingRoomGallery">
 					<div className="HintText">
-						<img src={HintText_ArrowUp} />
+						<img srcSet={HintText_ArrowUp+" 2x"} />
 						No picture added yet. Click here to start!
 					</div>
 				</div>
 			}
-		</>
+			{/* Div that temporarily covers the entire upload area to help dragging */
+			props.draggingActive==true ?
+				<div
+					style={{ position:"absolute", top: "0", left: "0", width:"100%", height:"100%" }}
+					onDragEnter={props.add_pic_by_drag}
+					onDragLeave={props.add_pic_by_drag}
+					onDragOver={props.add_pic_by_drag}
+					onDrop={props.add_pic_by_drag}
+				></div> // empty div to cover the draggable field and help the add_pic_by_drag function
+			: null }
+		</div>
 	);
 }

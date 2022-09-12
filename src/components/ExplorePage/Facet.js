@@ -7,8 +7,8 @@ import { Filter, Checkbox, CheckLabel, AccordionSection, FetchLabelList_helper }
 import BodyComponent from '../BodyComponent';
 
 /* Assets: */
-import NoBtn from "../../assets/NoBtn.png";
-import SearchBtn from "../../assets/SearchBtn.png";
+import NoBtn from "../../assets/NoBtn@2x.png";
+import SearchBtn from "../../assets/SearchBtn@2x.png";
 
 
 
@@ -22,6 +22,7 @@ import SearchBtn from "../../assets/SearchBtn.png";
  * so they are made into separate components at the end of this file.
  *
  * parent props:
+ *	- facetDisabled
  *  - [filterList, setFilterList]
  *	- filter_change_handler (label, label_id, category, subcategory, color): to update appliedFilters according to change in facet.
  *  - remove_filter(): To help remove from filterList.
@@ -94,6 +95,9 @@ export default function Facet(props) {
 					handleSearch={props.handleSearch}
 				/>
 			</div>
+			{props.facetDisabled ?
+				<div className="FacetOverlay"/>
+			: null }
 		</div>
 	);
 }
@@ -112,19 +116,11 @@ export default function Facet(props) {
  */
 function ExploreSearch(props) {
 
-	// const [searchData, setSearchData] = useState('');
+	const [searchText, setSearchText] = useState(''); // the dynamically input text
+	useEffect(() => { console.log("searchText is: " + searchText); }, [searchText]); //DEBUG
 
-	const [searchText, setSearchText] = useState('');
-	// DEBUG
-	useEffect(() => {
-		console.log("searchText is: " + searchText);
-	}, [searchText]);
-
-	const [submittedSearchText, setSubmittedSearchText] = useState('');
-	// DEBUG
-	useEffect(() => {
-		console.log("submittedSearchText is: " + submittedSearchText);
-	}, [submittedSearchText]);
+	const [submittedSearchText, setSubmittedSearchText] = useState(''); // text that is a snapshot to submit for search
+	useEffect(() => { console.log("submittedSearchText is: " + submittedSearchText); }, [submittedSearchText]); //DEBUG
 
 	// const handleSearch = (input) => {
 	// 	setSearchData(input);
@@ -201,9 +197,9 @@ function ExploreSearch(props) {
 						}}
 					/>
 					{searchText.length > 0 ?
-						<input
-							type="image" src={NoBtn}
-							className="SearchBar_clearbtn"
+						<img
+							srcSet={NoBtn+" 2x"}
+							className="SearchBar_clearbtn Btn"
 							onClick={(e) => { // clear input field
 								e.preventDefault();
 								setSearchText('');
@@ -211,9 +207,9 @@ function ExploreSearch(props) {
 							}}
 						/>
 					: null }
-					<input
-						type="image" src={SearchBtn}	// <input type="image"> defines an image as a submit button
-						className="SearchBar_searchbtn"
+					<img
+						srcSet={SearchBtn+" 2x"}	// <input type="image"> defines an image as a submit button
+						className="SearchBar_searchbtn Btn"
 						onClick={(e) => {
 							e.preventDefault();
 							setSubmittedSearchText(searchText);

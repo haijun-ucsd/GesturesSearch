@@ -77,7 +77,7 @@
 ### "users"
 > "users" folder records all user names and passwords. \[TODO: Add this folder to help login.\]
 - username (for each user in the system)
-	- "password": password
+	- "pwd": password
 
 ## Storage:
 All pictures are stored under an "images" folder.

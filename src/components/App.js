@@ -12,6 +12,8 @@ import ExplorePage from './ExplorePage/ExplorePage';
 import AboutPage from './AboutPage/AboutPage';
 import LoginPage from './Login/LoginPage';
 import SignUpPage from './Login/SignUpPage';
+import { FilterStructure } from "./components";
+
 
 /**
  * references:
@@ -19,7 +21,7 @@ import SignUpPage from './Login/SignUpPage';
  */
 export default function App() {
 
-  /* Hooks for UploadPage */
+/**--- Hooks for UploadPage ---**/
   const [addedPics, setAddedPics] = useState([]);
   const [addedPicsUrl, setAddedPicsUrl] = useState([]);
   const [formDataList, setFormDataList] = useState([]);
@@ -32,27 +34,59 @@ export default function App() {
 	const [success, setSuccess] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
  
+	// DEBUG
+	useEffect(() => {
+		console.log("addedPics list has changed.");
+		console.log("current addedPics list:", addedPics);
+		console.log("current addedPicsUrl list:", addedPicsUrl);
+		console.log("current formDataList list:", formDataList);
+	}, [addedPics]);
+	useEffect(() => {
+		console.log("formDataList has been updated:", formDataList);
+	}, [formDataList])
+	useEffect(() => {
+		console.log("picAnnotation has been updated:", picAnnotation);
+	}, [picAnnotation])
 
-  // DEBUG
-  useEffect(() => {
-    console.log("addedPics list has changed.");
-    console.log("current addedPics list:", addedPics);
-    console.log("current addedPicsUrl list:", addedPicsUrl);
-    console.log("current formDataList list:", formDataList);
-  }, [addedPics]);
-  useEffect(() => {
-    console.log("formDataList has been updated:", formDataList);
-  }, [formDataList])
-  useEffect(() => {
-    console.log("picAnnotation has been updated:", picAnnotation);
-  }, [picAnnotation])
 
-  /* Render */
-  return (
-    <Router>
-      <Navbar />
-      <Routes>
-        <Route path='/' element={<AboutPage />} />
+/**--- Hooks for ExplorePage ---**/
+	/**
+	 * filterList
+	 * List of currently applied filters.
+	 * Structure of each filter item: { label, label_id, category, subcategory, color }
+	 */
+	const [filterList, setFilterList] = useState([]);
+	// DEBUG
+	useEffect(() => {
+		console.log("updated filterList:");
+		console.log(filterList);
+	}, [filterList]);
+
+	/**
+	 * facetList
+	 * List of states in the facet sections (Location, Modality, Posture, Spectators, Demongraphic).
+	 * Default as: FilterStructure
+	 */
+	const [facetList, setFacetList] = useState(() => {
+		let initialFacetList = { ...FilterStructure };
+		for (let bodypart in initialFacetList["modality"]) { // set modality default value: "any"
+			initialFacetList["modality"][bodypart] = "any";
+		};
+		return initialFacetList;
+	});
+	// DEBUG
+	useEffect(() => {
+		console.log("updated facetList:");
+		console.log(facetList);
+	}, [facetList]);
+
+
+/**--- Render --**/
+	return (
+		<Router>
+			<Navbar />
+			<Routes>
+				<Route path='/' element={<AboutPage />} />
         <Route path='/Login' element={<LoginPage
           user={user}
           setUser={setUser}
@@ -92,8 +126,17 @@ export default function App() {
             // setSuccess={setSuccess}
           />}
         />
-        <Route path='/explore' exact element={<ExplorePage />} />
-      </Routes>
-    </Router>
-  );
+				<Route
+					path='/explore'
+					exact
+					element={<ExplorePage
+						filterList={filterList}
+						setFilterList={setFilterList}
+						facetList={facetList}
+						setFacetList={setFacetList}
+					/>}
+				/>
+			</Routes>
+		</Router>
+	);
 }

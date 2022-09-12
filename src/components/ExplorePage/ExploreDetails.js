@@ -4,7 +4,7 @@ import { labels_data } from "../labels_data.js";
 import BodyComponent from '../BodyComponent';
 
 /* Assets: */
-import ExploreDetailsCloseBtn from "../../assets/ExploreDetailsCloseBtn.png";
+import ExploreDetailsCloseBtn from "../../assets/ExploreDetailsCloseBtn@2x.png";
 
 
 
@@ -79,8 +79,8 @@ export default function ExploreDetails(props) {
 				onClick={props.close_exploredetails}
 			>
 				<img
-					className="ExploreDetailsCloseBtn"
-					src={ExploreDetailsCloseBtn}
+					className="ExploreDetailsCloseBtn Btn"
+					srcSet={ExploreDetailsCloseBtn+" 2x"}
 				/>
 			</div>
 			<div className="ExploreDetailsPic_container">

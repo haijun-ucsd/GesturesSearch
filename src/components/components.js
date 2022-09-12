@@ -8,14 +8,14 @@ import Fuse from 'fuse.js';
 import useResizeAware from 'react-resize-aware';
 
 /* Assets: */
-import RemovableLabel_removebtn from "../assets/RemovableLabel_removebtn.png";
-import YesBtn from "../assets/YesBtn.png";
-import NoBtn from "../assets/NoBtn.png";
-import SearchBtn from "../assets/SearchBtn.png";
-import ArrowUp_primary from "../assets/ArrowUp_primary.png";
-import ArrowDown_primary from "../assets/ArrowDown_primary.png";
-import ArrowUp_tiny from "../assets/ArrowUp_tiny.png";
-import ArrowDown_tiny from "../assets/ArrowDown_tiny.png";
+import RemovableLabel_removebtn from "../assets/RemovableLabel_removebtn@2x.png";
+//import YesBtn from "../assets/YesBtn@2x.png";
+import NoBtn from "../assets/NoBtn@2x.png";
+import SearchBtn from "../assets/SearchBtn@2x.png";
+import ArrowUp_primary from "../assets/ArrowUp_primary@2x.png";
+import ArrowDown_primary from "../assets/ArrowDown_primary@2x.png";
+import ArrowUp_tiny from "../assets/ArrowUp_tiny@2x.png";
+import ArrowDown_tiny from "../assets/ArrowDown_tiny@2x.png";
 
 const db = getDatabase();
 
@@ -68,15 +68,17 @@ class Label extends React.Component {
  *
  * parent props:
  *	- value: string
- *	- color: string
+ *	- color: string, optional
+ *	- dashed: boolean, optional
+ *			Whether the border of the CheckLabel should be dashed.
  *	- onchange_handler()
  *			If checkedState is provided, onchange_handler(), no argument needed;
  *			If not provided, onchange_handler(e, checked, category, subcategory)
  *	- category: category name, to use in onchange_handler
  *	- subcategory: subcategory name, to use in onchange_handler
- *	- defaultChecked: boolean
- *			Optional, no need to provide when checkedState is provided.
- *	- checkedState: boolean
+ *	- defaultChecked: boolean, optional
+ *			No need to provide when checkedState is provided.
+ *	- checkedState: boolean, optional
  *			Prioritized over the checked hook if provided.
  *
  * hooks:
@@ -99,9 +101,9 @@ function CheckLabel(props) {
 			<label
 				className="Label CheckLabel"
 				style={{
-					cursor:"pointer",
 					borderColor: props.checkedState ? props.color : "#CCCCCC",
-					backgroundColor: props.checkedState ? props.color+14 : "transparent"	// +14 = 8% opacity
+					backgroundColor: props.checkedState ? props.color+14 : "transparent",	// +14 = 8% opacity
+					borderStyle: (props.dashed!==undefined && props.dashed==true) ? "dashed" : "solid",
 				}}
 			>
 				<input
@@ -128,7 +130,8 @@ function CheckLabel(props) {
 				className="Label CheckLabel"
 				style={{
 					borderColor: checked ? props.color : "#CCCCCC",
-					backgroundColor: checked ? props.color+14 : "transparent"	// +14 = 8% opacity
+					backgroundColor: checked ? props.color+14 : "transparent",	// +14 = 8% opacity
+					borderStyle: (props.dashed!==undefined && props.dashed==true) ? "dashed" : "solid",
 				}}
 			>
 				<input
@@ -183,9 +186,9 @@ function RemovableLabel(props) {
 			<div className="LabelText">
 				{props.label}
 			</div>
-			<input
-				type="image" src={RemovableLabel_removebtn}
-				className="RemovableLabel_removebtn"
+			<img
+				srcSet={RemovableLabel_removebtn+" 2x"}
+				className="RemovableLabel_removebtn Btn"
 				onClick={(e) => {
 					e.preventDefault();
 					props.remove_filter(props.label);
@@ -302,7 +305,7 @@ function Checkbox(props) {
  *	- color
  *	- category
  *	- subcategory: optional.
- *	- label_change_handler()
+ *	- label_add_handler()
  *	- label_remove_handler()
  * 
  * Searchable drop-down in Upload page. Will do:
@@ -322,10 +325,11 @@ function Checkbox(props) {
  *	https://www.robinwieruch.de/react-custom-hook-check-if-overflow/
  *	https://stackoverflow.com/questions/32553158/detect-click-outside-react-component
  *	https://stackoverflow.com/questions/50431477/react-js-how-to-call-a-method-after-another-method-is-fully-executed
+ *	https://stackoverflow.com/questions/34901593/how-to-filter-an-array-from-all-elements-of-another-array
  */
 function SearchableDropdown(props) {
 
-	/* UI state */
+	/**--- UI state ---**/
 
 	// Whether the dropdown is expanded.
 	const [expanded, setExpanded] = useState(false);
@@ -370,7 +374,7 @@ function SearchableDropdown(props) {
 	}, [dropdownRef]);
 
 
-	/* Content of search */
+	/**--- Content of search ---**/
 
 	const searchRange = FetchLabelList_helper(props.category, props.subcategory);
 	const minMatchCharLength = 2; // ignore single character matches. to allow, set to 1
@@ -401,15 +405,33 @@ function SearchableDropdown(props) {
 	const get_search_result = () => {
 		const submittedSearchText = searchText; // take a snapshot of the current searchText upon submission
 		//console.log("search '" + submittedSearchText + "' in range : ", searchRange); //DEBUG
-		const newSearchResult =
+
+		// Use fuzzy search to get all matching labels within searchRange.
+		let newSearchResult =
 			fuzzy_search_helper.search(submittedSearchText) // structure of Fuse result: [{item: "XXX" (label name), refIndex: N (index in searchRange)}, ...]
 				.map((item) => item.item );
+
+		// Eliminate the already selected ones.
+		newSearchResult = newSearchResult.filter(item => !props.selectedLabels.includes(item));
+
+		// Reset searchResult.
 		console.log("newSearchResult:", newSearchResult); //DEBUG
 		setSearchResultList(newSearchResult);
 	}
 
 	/** TODO */
-	const add_customized_label = () => { // trigger when no search result is found
+	const accept_first_search_result = () => {
+		if (searchResultList.length > 0) {
+			props.label_add_handler(searchResultList[0], props.category, props.subcategory);
+			clear_search_input_field();
+		} else if (searchText.length > 0) {
+			add_customized_label();
+			clear_search_input_field();
+		}
+	}
+
+	/** TODO */
+	const add_customized_label = () => {
 		const newLabel = searchText; // take snapshot of current entered label
 		if (!(props.selectedLabels.some(item => item===newLabel))) { // check for existence in the list of selected labels
 			props.label_add_handler(newLabel, props.category, props.subcategory); // if not exists yet, add it
@@ -425,7 +447,7 @@ function SearchableDropdown(props) {
 	}
 
 
-	/* Render */
+	/**--- Render ---**/
 	return (
 		<div
 			className="SearchableDropdown"
@@ -433,9 +455,9 @@ function SearchableDropdown(props) {
 		>
 			{(expanded==false) ?
 				<>
-					<input
-						className="SearchableDropdown_ecbtn"
-						type="image" src={ArrowDown_tiny} 
+					<img
+						srcSet={ArrowDown_tiny+" 2x"} 
+						className="SearchableDropdown_ecbtn Btn"
 						onClick={(e) => {
 							e.preventDefault();
 							setExpanded(true);
@@ -462,9 +484,9 @@ function SearchableDropdown(props) {
 				</>
 			:
 				<>
-					<input
+					<img
+						srcSet={ArrowUp_tiny+" 2x"} 
 						className="SearchableDropdown_ecbtn"
-						type="image" src={ArrowUp_tiny} 
 						onClick={(e) => {
 							e.preventDefault();
 							collapse_dropdown();
@@ -508,23 +530,23 @@ function SearchableDropdown(props) {
 							}}
 							onKeyDown={(e) => {	// pressing ENTER == clicking search icon
 								if (e.key==='Enter') {
-									e.preventDefault(); // seems to need this to avoid collpasing
-									get_search_result();
+									e.preventDefault(); // need this line to avoid collpasing
+									accept_first_search_result();
 								}
 							}}
 						/>
 						{searchText.length > 0 ?
-							<input
-								type="image" src={NoBtn}
-								className="SearchBar_clearbtn"
+							<img
+								srcSet={NoBtn+" 2x"}
+								className="SearchBar_clearbtn Btn"
 								onClick={(e) => {
 									e.preventDefault();
 									clear_search_input_field();
 								}}
 							/>
 						: null }
-						<input
-							type="image" src={SearchBtn}
+						<img
+							srcSet={SearchBtn+" 2x"}
 							className="SearchBar_searchbtn"
 							onClick={(e) => {
 								e.preventDefault();
@@ -532,48 +554,37 @@ function SearchableDropdown(props) {
 							}}
 						/>
 					</div>
-					{searchText.length >= minMatchCharLength ?
-						<>{searchResultList.length !== 0 ?
-							<div className="LabelList">
-								{searchResultList.map((label) => {
-									if (!(props.selectedLabels.some(item => item===label))) {
-										return (
-											<CheckLabel
-												value={label}
-												color={props.color}
-												//key={label.refIndex}
-												category={props.category}
-												subcategory={props.subcategory}
-												onchange_handler={(e, checked, categoryname, subcategoryname) => { // TODO: better way?
-													props.label_change_handler(e, checked, categoryname, subcategoryname);
-													clear_search_input_field();
-												}}
-											/>
-										);
-									}
-								})}
-							</div>
-						:
-							<>
-								<div className="SearchBar_noresult HintText">
-									No existing label found.
-								</div>
-								<div className="CustomizeLabel_container">
-									<div className="CustomizeLabel_hint HintText">
-										Save "{searchText}" as customize label?
-									</div>
-									<btn
-										className="Btn_small"
-										onClick={(e) => {
-											e.preventDefault();
-											add_customized_label();
+					{searchText.length > 0 ?
+						<div className="LabelList">
+							{searchText.length >= minMatchCharLength ?
+								<>{searchResultList.map((label) =>
+									<CheckLabel
+										value={label}
+										color={props.color}
+										//key={label.refIndex}
+										category={props.category}
+										subcategory={props.subcategory}
+										onchange_handler={() => {
+											props.label_add_handler(label, props.category, props.subcategory);
+											clear_search_input_field();
 										}}
-									>
-										<img src={YesBtn} />
-									</btn>
-								</div>
-							</>
-						}</>
+									/>
+								)}</>
+							: null }
+							{!searchResultList.includes(searchText) ?
+								<CheckLabel
+									value={searchText}
+									color={props.color}
+									dashed={true}
+									category={props.category}
+									subcategory={props.subcategory}
+									onchange_handler={(e, checked, categoryname, subcategoryname) => { // TODO: better way?
+										add_customized_label();
+										clear_search_input_field();
+									}}
+								/>
+							: null }
+						</div>
 					: null }
 				</div>
 			</div>
@@ -619,16 +630,16 @@ function AccordionSection(props) {
 					}
 				</div>
 				{expanded ?
-					<input
-						type="image" src={ArrowUp_primary} 
+					<img
+						srcSet={ArrowUp_primary+" 2x"} 
 						onClick={(e) => {
 							e.preventDefault();
 							setExpanded(false);
 						}}
 					/>
 				:
-					<input
-						type="image" src={ArrowDown_primary} 
+					<img
+						srcSet={ArrowDown_primary+" 2x"} 
 						onClick={(e) => {
 							e.preventDefault();
 							setExpanded(true);

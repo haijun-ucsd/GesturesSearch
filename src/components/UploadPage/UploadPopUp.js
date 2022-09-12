@@ -8,9 +8,9 @@ import { labels_data } from "../labels_data.js";
 import BodyComponent from '../BodyComponent';
 
 /* Assets: */
-//import PopUpCloseBtn from "../assets/PopUpCloseBtn.png";
-import YesBtn from "../../assets/YesBtn.png";
-import EditPicIcon from "../../assets/EditPicIcon.png";
+//import PopUpCloseBtn from "../assets/PopUpCloseBtn@2x.png";
+import YesBtn from "../../assets/YesBtn@2x.png";
+import EditPicIcon from "../../assets/EditPicIcon@2x.png";
 
 
 
@@ -511,7 +511,7 @@ export default function UploadPopUp(props) {
 					</div></div>
 					<AnnotationForm
 						form_change_handler_type1={form_change_handler_type1}
-						form_change_handler_type2={form_change_handler_type2}
+						//form_change_handler_type2={form_change_handler_type2}
 						add_label_handler_type2={add_label_handler_type2}
 						remove_label_handler_type2={remove_label_handler_type2}
 						form_change_handler_type3={form_change_handler_type3}
@@ -521,10 +521,10 @@ export default function UploadPopUp(props) {
 					/>
 				</div>
 				<btn
-					className="PopUpClose Btn_primary"
+					className="PopUpClose Btn_primary Btn_green"
 					onClick={close_pop_and_save}
 				>
-					<img src={YesBtn} />
+					<img srcSet={YesBtn+" 2x"} />
 					Save
 				</btn>
 			</div>
@@ -758,7 +758,7 @@ function AnnotationForm(props) {
 								:
 									subcategory.subcategory
 							}
-							label_change_handler={props.form_change_handler_type2}
+							//label_change_handler={props.form_change_handler_type2}
 							label_add_handler={props.add_label_handler_type2}
 							label_remove_handler={props.remove_label_handler_type2}
 						/>
@@ -794,7 +794,7 @@ function AnnotationForm(props) {
 		>
 			<div className="FormCategory">
 				<div className="HintTextWithIcon_container">
-					<img src={EditPicIcon} />
+					<img srcSet={EditPicIcon+" 2x"} />
 					<span className="HintText">
 						Multiple persons in the picture?<br/>
 						Drag to draw rectangle around the one that you are labelling.
