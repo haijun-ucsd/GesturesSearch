@@ -392,9 +392,9 @@ export default function ExplorePage(props) {
 				// filtered = [...search_helper(props.filterList)];
 				for (let j = 0; j < props.filterList.length; j++){
 					for (let i = props.filterList.length; i > j; i--) {
-						console.log(props.filterList.slice(j, i));
+						console.log("Subfilter List: ", props.filterList.slice(j, i));
 						filtered.push(..._.difference(search_helper(props.filterList.slice(j, i)), filtered));
-						console.log(filtered)
+						console.log("Filtering result: ", filtered);
 					}
 				}
 			}
