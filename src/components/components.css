@@ -13,6 +13,7 @@
 :root {
 	--img-container-bg: rgb(234, 197, 197);
 	--link-color: #A9C7D9;
+	--green-btn: #A0D568;
 	--demographic-color: #ED5564;
 	--spectators-color: #FFCE54;
 	--location-color: #A0D568;
@@ -130,16 +131,6 @@
 	gap: 8px;
 }
 
-.FilterList {
-	/* as a container*/
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	align-content: flex-start;
-	min-height: 30px; /* 28px label height + 2 * 1px border */
-	gap: 16px;
-}
-
 
 /* Btn */
 
@@ -168,6 +159,7 @@
 	box-shadow: none;
 }
 .Btn_primary:disabled {
+	background: var(--gray-bg);
 	box-shadow: none;
 	cursor: auto;
 }
@@ -192,6 +184,7 @@
 	box-shadow: none;
 }
 .Btn_secondary:disabled {
+	background: var(--gray-bg);
 	box-shadow: none;
 	cursor: auto;
 }
@@ -215,8 +208,17 @@
 	box-shadow: none;
 }
 .Btn_small:disabled {
+	background: var(--gray-bg);
 	box-shadow: none;
 	cursor: auto;
+}
+
+.Btn_green {
+	background: #F7FCF3; /* = var(--green-btn) with 8% opacity on white background */
+	border: 1px solid var(--green-btn);
+}
+.Btn_green:not(:disabled):hover {
+	background: #F7FCF3;
 }
 
 .Link {
@@ -626,7 +628,7 @@
 	fill: var(--occupied-modality-color);
 }
 .Humanfigure_highlights svg.any path {
-	fill: #F1FAFD; /* = #4FC1E8 with 8% opacity on white background */
+	fill: #F1FAFD; /* = var(--modality-color) with 8% opacity on white background */
 }
 
 .Humanfigure_highlights svg {
@@ -1045,12 +1047,14 @@
 	gap: 24px;
 }
 
-.WaitingRoomGallery {
+.WaitingRoom {
 	/* as an item */
 	align-self: stretch;
 	flex-grow: 1;
 	/* as a container */
 	background-color: var(--gray-bg); /* matches with About page */
+	position: relative;
+	overflow-y: scroll;
 }
 
 .WaitingPic_container {
@@ -1108,7 +1112,7 @@
 
 /* PopUp Labeling Window */
 
-.PopUpOverlay {  /* old name "modal" */
+.PopUpOverlay {
 	position: fixed;
 	z-index: 12;
 	width: 100%;
@@ -1118,7 +1122,7 @@
 	-webkit-backdrop-filter: blur(8px);
 }
 
-.UploadPopUpModal {  /* old name modal_content */
+.UploadPopUpModal {
 	/* as a container */
 	display: flex;
 	background-color: white;
@@ -1356,19 +1360,125 @@
 }
 
 .AppliedFilters {
+	/* as an item */
+	align-self: stretch;
 	/* as a container */
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	align-items: flex-start;
 	gap: 16px;
 }
+.AppliedFilters_collapsed {
+	flex-direction: row;
+	align-items: center;
+}
+
+.AppliedFilters_hinttext {
+	flex-grow: 0;
+	flex-shrink: 0;
+}
 
 .AppliedFiltersList {
-	overflow-y: hidden;
+	/* as a container*/
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-content: flex-start;
+	gap: 16px;
+}
+
+.AppliedFiltersList_collapsed {
+	flex-grow: 1;
+	overflow-x: hidden;
+	/*overflow-x: scroll; /*DEBUG*/
+	flex-wrap: nowrap;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	max-height: 72px;
-	/*overflow-y: scroll;*/
+	max-height: 28px; /* label height */
+}
+
+.AppliedFilters_bins {
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-content: flex-start;
+	gap: 24px;
+	min-height: 80px;
+}
+
+.AppliedFilters_bin {
+	/* as an item */
+	align-self: stretch;
+	flex-grow: 1;
+	border-radius: 8px;
+	/* as a container */
+	display: flex;
+	flex-direction: column;
+	align-content: flex-start;
+	padding: 8px;
+	gap: 8px;
+}
+
+.AppliedFilters_bin_must {
+	background-color: var(--img-container-bg);
+}
+
+.AppliedFilters_bin_optional {
+	background-color: var(--white);
+}
+
+
+
+
+.UploadControl_addpic_bigbox { /* reference: https://developer.mozilla.org/en-US/docs/Web/CSS/border-image */
+	/* as an item */
+	align-self: stretch;
+	position: absolute;
+	transform: translate(-50%, -50%); top: 50%; left: 50%; /* centerize */
+	width: 70%; min-width: 400px;
+	height: 80%;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 16px;
+	/* border styling */
+	border: 2px dashed var(--gray-bg); border-radius: 20px; /* specify a separate border-style in case the border image fails to load */
+	border-image:
+		url("../assets/DashedBorder_big.svg") /* source */
+		30% /* slice = border width ÷ src img width */ /
+		26px /* width = border width (above) */ /
+		0px /* outset: distance from the div border */
+		round /* repeat: round = round up to full dashes */
+	;
+}
+
+.AddPicBigBox_cover {
+	position: absolute;
+	top: 0; left: 0;
+	width: 100%; height: 100%;
+}
+
+
+
+
+.AppliedFilters_btns_div {
+	/* as an item */
+	flex-grow: 0;
+	flex-shrink: 0;
+	height: 0; /* ignore btn height in the row */
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 32px;
+}
+
+.DraggableLabel {
+	cursor: grab;
 }
 
 
@@ -1390,12 +1500,21 @@
 	flex-direction: column;
 	align-items: flex-start;
 	z-index: 1;
+	position: relative;
 }
 
 .Facet {
 	overflow-y: scroll;
 	/* as an item */
 	align-self: stretch;
+}
+
+.FacetOverlay {
+	position: absolute;
+	z-index: 2;
+	top: 0; left: 0;
+	width: 100%; height: 100%;
+	background-color: #00000080; /* #XXXXXX80 = 50% opacity */
 }
 
 .FacetAttentiveSlider {

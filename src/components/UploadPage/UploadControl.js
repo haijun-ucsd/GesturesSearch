@@ -67,6 +67,7 @@ export default function UploadControl(props) {
 							style={{ display: "none" }}
 						/>
 					</div>
+
 					{/* Div that temporarily covers the entire upload area to help dragging */
 					props.draggingActive==true ?
 						<div
@@ -77,6 +78,7 @@ export default function UploadControl(props) {
 							onDrop={props.add_pic_by_drag}
 						></div> // empty div to cover the draggable field and help the add_pic_by_drag function
 					: null }
+
 					{/* Notification when some of the drag-to-add pictures is invalid */
 					props.dragToAddInvalid==true ?
 						<div className="AddPicBigBox_notification">
@@ -91,7 +93,7 @@ export default function UploadControl(props) {
 					<div className="UploadControl_addpic_div">
 						<div className="UploadControl_addpic">
 							<label htmlFor="add-pic-btn" className="Btn_secondary">
-								<img srcset={AddPicture+" 2x"}/>
+								<img srcSet={AddPicture+" 2x"}/>
 								Add picture
 							</label>
 							<input
@@ -117,7 +119,7 @@ export default function UploadControl(props) {
 								if (props.uploadingPic === "succeed") {
 									return (
 										<>
-											<img srcset={SucceedIcon+" 2x"} />
+											<img srcSet={SucceedIcon+" 2x"} />
 											<span style={{color: "#A0D568"}}>
 												Pictures have been uploaded!
 											</span>
@@ -138,6 +140,15 @@ export default function UploadControl(props) {
 										<>
 											<Icon icon="line-md:loading-twotone-loop" />
 											Adding Pictures...
+										</>
+									);
+								}
+
+								// priority 3: invalid adding
+								if (props.dragToAddInvalid == true) {
+									return (
+										<>
+											Some or all added picture is invalid.
 										</>
 									);
 								}
@@ -168,7 +179,7 @@ export default function UploadControl(props) {
 								disabled={props.uploadDisabled}
 							>
 								<img
-									srcset={PublishPicture+" 2x"}
+									srcSet={PublishPicture+" 2x"}
 									style={{opacity: props.uploadDisabled ? "20%" : "100%"}}
 								/>
 								Publish

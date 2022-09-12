@@ -80,7 +80,7 @@ export default function ExploreDetails(props) {
 			>
 				<img
 					className="ExploreDetailsCloseBtn Btn"
-					srcset={ExploreDetailsCloseBtn+" 2x"}
+					srcSet={ExploreDetailsCloseBtn+" 2x"}
 				/>
 			</div>
 			<div className="ExploreDetailsPic_container">

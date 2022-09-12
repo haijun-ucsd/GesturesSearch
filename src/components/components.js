@@ -9,7 +9,7 @@ import useResizeAware from 'react-resize-aware';
 
 /* Assets: */
 import RemovableLabel_removebtn from "../assets/RemovableLabel_removebtn@2x.png";
-import YesBtn from "../assets/YesBtn@2x.png";
+//import YesBtn from "../assets/YesBtn@2x.png";
 import NoBtn from "../assets/NoBtn@2x.png";
 import SearchBtn from "../assets/SearchBtn@2x.png";
 import ArrowUp_primary from "../assets/ArrowUp_primary@2x.png";
@@ -187,7 +187,7 @@ function RemovableLabel(props) {
 				{props.label}
 			</div>
 			<img
-				srcset={RemovableLabel_removebtn+" 2x"}
+				srcSet={RemovableLabel_removebtn+" 2x"}
 				className="RemovableLabel_removebtn Btn"
 				onClick={(e) => {
 					e.preventDefault();
@@ -456,7 +456,7 @@ function SearchableDropdown(props) {
 			{(expanded==false) ?
 				<>
 					<img
-						srcset={ArrowDown_tiny+" 2x"} 
+						srcSet={ArrowDown_tiny+" 2x"} 
 						className="SearchableDropdown_ecbtn Btn"
 						onClick={(e) => {
 							e.preventDefault();
@@ -485,7 +485,7 @@ function SearchableDropdown(props) {
 			:
 				<>
 					<img
-						srcset={ArrowUp_tiny+" 2x"} 
+						srcSet={ArrowUp_tiny+" 2x"} 
 						className="SearchableDropdown_ecbtn"
 						onClick={(e) => {
 							e.preventDefault();
@@ -537,7 +537,7 @@ function SearchableDropdown(props) {
 						/>
 						{searchText.length > 0 ?
 							<img
-								srcset={NoBtn+" 2x"}
+								srcSet={NoBtn+" 2x"}
 								className="SearchBar_clearbtn Btn"
 								onClick={(e) => {
 									e.preventDefault();
@@ -546,7 +546,7 @@ function SearchableDropdown(props) {
 							/>
 						: null }
 						<img
-							srcset={SearchBtn+" 2x"}
+							srcSet={SearchBtn+" 2x"}
 							className="SearchBar_searchbtn"
 							onClick={(e) => {
 								e.preventDefault();
@@ -631,7 +631,7 @@ function AccordionSection(props) {
 				</div>
 				{expanded ?
 					<img
-						srcset={ArrowUp_primary+" 2x"} 
+						srcSet={ArrowUp_primary+" 2x"} 
 						onClick={(e) => {
 							e.preventDefault();
 							setExpanded(false);
@@ -639,7 +639,7 @@ function AccordionSection(props) {
 					/>
 				:
 					<img
-						srcset={ArrowDown_primary+" 2x"} 
+						srcSet={ArrowDown_primary+" 2x"} 
 						onClick={(e) => {
 							e.preventDefault();
 							setExpanded(true);

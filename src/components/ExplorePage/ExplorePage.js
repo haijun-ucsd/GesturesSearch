@@ -5,49 +5,31 @@ import "../components.css";
 import Facet from "./Facet";
 import ExploreGallery from "./ExploreGallery";
 import ExploreDetails from "./ExploreDetails";
-import { FilterStructure, FetchLabelList_helper } from "../components";
+import { FetchLabelList_helper } from "../components";
 import _, { map } from "underscore";
 
-
-
-export var searchDataCopy = []; //TODO
+//export var searchDataCopy = []; //TODO
 
 
 
-export default function ExplorePage() {
+/**
+ * UploadPage
+ *
+ * hooks stored at App level:
+ *  - [addedPics, setAddedPics]
+ *  - [addedPicsUrl, setAddedPicsUrl]
+ *  - [formDataList, setFormDataList]
+ *  - [completePercentages, setCompletePercentages]
+ *  - [addedLabels, setAddedLabels]
+ *  - [picAnnotation, setPicAnnotation]
+ *
+ * TODO: clean up the code to combine the 6 hooks.
+ */
+export default function ExplorePage(props) {
 
 /**--- Filters from Facet (search & filters) ---**/
 
-	/**
-	 * filterList
-	 * List of currently applied filters.
-	 * Structure of each filter item: { label, label_id, category, subcategory, color }
-	 */
-	const [filterList, setFilterList] = useState([]);
-	//const [filterList, setFilterList] = useState([ { label: "library", label_id: 0, category: "location", subcategory: "site", color: "#A0D568" }, { label: "hospital", label_id: 1, category: "location", subcategory: "site", color: "#A0D568" }, ]); //DEBUG
-	// DEBUG
-	useEffect(() => {
-		console.log("updated filterList:");
-		console.log(filterList);
-	}, [filterList]);
-
-	/**
-	 * facetList
-	 * List of states in the facet sections (Location, Modality, Posture, Spectators, Demongraphic).
-	 * Default as: FilterStructure
-	 */
-	const [facetList, setFacetList] = useState(() => {
-		let initialFacetList = { ...FilterStructure };
-		for (let bodypart in initialFacetList["modality"]) { // set modality default value: "any"
-			initialFacetList["modality"][bodypart] = "any";
-		};
-		return initialFacetList;
-	});
-	// DEBUG
-	useEffect(() => {
-		console.log("updated facetList:");
-		console.log(facetList);
-	}, [facetList]);
+	const [facetDisabled, setFacetDisabled] = useState(false);
 
 	/**
 	 * filter_change_handler
@@ -72,7 +54,7 @@ export default function ExplorePage() {
 
 		// Check for existence.
 		// Toggle: if exists, then remove; if doesn't exist, the add.
-		if (filterList.some(
+		if (props.filterList.some(
 			(item) => item.label === label
 		)) {
 			if (removable){
@@ -91,12 +73,12 @@ export default function ExplorePage() {
 				['subcategory']: subcategory,
 				['color']: color,
 			};
-			setFilterList (prev => ([
+			props.setFilterList (prev => ([
 				...prev,
 				newFilter,
 			]));
 			if(!location){
-				setFacetList(prev => ({
+				props.setFacetList(prev => ({
 					...prev,
 					[category]: {
 						...prev[category],
@@ -125,14 +107,14 @@ export default function ExplorePage() {
 	 *  https://stackoverflow.com/questions/35338961/how-to-remove-the-li-element-on-click-from-the-list-in-reactjs
 	 */
 	const remove_filter = (label) => {
-		let filterToRemove = filterList.find((item) => item.label === label);
+		let filterToRemove = props.filterList.find((item) => item.label === label);
 		let category = filterToRemove.category;
 		let subcategory = filterToRemove.subcategory;
 
 		// Reset facetList to update the corresponding facet section.
 		// Special case: Modality.
 		if (category === "modality") {
-			setFacetList((prev) => {
+			props.setFacetList((prev) => {
 				return {
 					...prev,
 					[category]: {
@@ -142,7 +124,7 @@ export default function ExplorePage() {
 				};
 			});
 		} else {
-			setFacetList((prev) => {
+			props.setFacetList((prev) => {
 				let newSubcategoryList = prev[category][subcategory].filter(
 					(item) => item !== label
 				);
@@ -158,7 +140,7 @@ export default function ExplorePage() {
 		}
 
 		// Reset filterList to remove the current filter from AppliedFilter.
-		setFilterList (prev => {
+		props.setFilterList (prev => {
 			let newFilterList = prev.filter((item) => item.label !== label);
 			return newFilterList;
 		});
@@ -258,10 +240,10 @@ export default function ExplorePage() {
 			let filtered = [];
 			for (const [imgKey, labels] of Object.entries(data)) {
 				//match labels in searchbar query
-				if (filterList[0] === undefined) {
+				if (props.filterList[0] === undefined) {
 					filtered.push([imgKey, labels]);
 				} else {
-					for (const facetLabel of filterList) {
+					for (const facetLabel of props.filterList) {
 						switch (facetLabel.category) {
 							case 'posture':
 								if (labels.posture !== undefined && String(labels.posture).includes(facetLabel.label)) {
@@ -329,21 +311,20 @@ export default function ExplorePage() {
 			}
 			if (filtered.length !== 0) {
 				setImageList(_.uniq(filtered, false, function (arr) {return arr[0];}));
-			} else if (filterList[0] === undefined) {
+			} else if (props.filterList[0] === undefined) {
 				console.log('all!');
 			} else {
 				setImageList(filtered);
 			}
 		})
 	}
-	useEffect(() => { handle_search(); }, [searchData, filterList])
+	useEffect(() => { handle_search(); }, [searchData, props.filterList])
 
 
 /**--- Click to view details of a picture ---**/
 
 	const [pictureClicked, setPictureClicked] = useState(undefined);
-	console.log("pictureClicked:");
-	console.log(pictureClicked); //DEBUG
+	useEffect(() => { console.log("pictureClicked: ", pictureClicked); }, [pictureClicked]); //DEBUG
 
 	const click_picture = (labelData) => {
 
@@ -368,18 +349,21 @@ export default function ExplorePage() {
 	return (
 		<div className="PageBox PageBox_Explore">
 			<Facet
-				setFilterList={setFilterList}
-				filterList={filterList}
+				facetDisabled={facetDisabled}
+				setFilterList={props.setFilterList}
+				filterList={props.filterList}
 				filter_change_handler={filter_change_handler}
 				remove_filter={remove_filter}
-				setFacetList={setFacetList}
-				facetList={facetList}
+				setFacetList={props.setFacetList}
+				facetList={props.facetList}
 				handleSearch={handle_searchbar}
 			/>
 			<ExploreGallery
 				imageList={imageList}
-				filterList={filterList}
+				setFilterList={props.setFilterList}
+				filterList={props.filterList}
 				remove_filter={remove_filter}
+				setFacetDisabled={setFacetDisabled}
 				click_picture={click_picture}
 				pictureClicked={pictureClicked}
 			/>

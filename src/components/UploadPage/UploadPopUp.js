@@ -521,10 +521,10 @@ export default function UploadPopUp(props) {
 					/>
 				</div>
 				<btn
-					className="PopUpClose Btn_primary"
+					className="PopUpClose Btn_primary Btn_green"
 					onClick={close_pop_and_save}
 				>
-					<img srcset={YesBtn+" 2x"} />
+					<img srcSet={YesBtn+" 2x"} />
 					Save
 				</btn>
 			</div>
@@ -794,7 +794,7 @@ function AnnotationForm(props) {
 		>
 			<div className="FormCategory">
 				<div className="HintTextWithIcon_container">
-					<img srcset={EditPicIcon+" 2x"} />
+					<img srcSet={EditPicIcon+" 2x"} />
 					<span className="HintText">
 						Multiple persons in the picture?<br/>
 						Drag to draw rectangle around the one that you are labelling.

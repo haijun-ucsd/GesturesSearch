@@ -22,6 +22,7 @@ import SearchBtn from "../../assets/SearchBtn@2x.png";
  * so they are made into separate components at the end of this file.
  *
  * parent props:
+ *	- facetDisabled
  *  - [filterList, setFilterList]
  *	- filter_change_handler (label, label_id, category, subcategory, color): to update appliedFilters according to change in facet.
  *  - remove_filter(): To help remove from filterList.
@@ -94,6 +95,9 @@ export default function Facet(props) {
 					handleSearch={props.handleSearch}
 				/>
 			</div>
+			{props.facetDisabled ?
+				<div className="FacetOverlay"/>
+			: null }
 		</div>
 	);
 }
@@ -202,7 +206,7 @@ function ExploreSearch(props) {
 					/>
 					{searchText.length > 0 ?
 						<img
-							srcset={NoBtn+" 2x"}
+							srcSet={NoBtn+" 2x"}
 							className="SearchBar_clearbtn Btn"
 							onClick={(e) => { // clear input field
 								e.preventDefault();
@@ -212,7 +216,7 @@ function ExploreSearch(props) {
 						/>
 					: null }
 					<img
-						srcset={SearchBtn+" 2x"}	// <input type="image"> defines an image as a submit button
+						srcSet={SearchBtn+" 2x"}	// <input type="image"> defines an image as a submit button
 						className="SearchBar_searchbtn Btn"
 						onClick={(e) => {
 							e.preventDefault();

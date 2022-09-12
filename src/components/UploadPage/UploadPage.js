@@ -192,7 +192,7 @@ export default function UploadPage(props) {
 	const add_pic_by_drag = (e) => {
 		e.preventDefault();
 		e.stopPropagation(); // prevents propagation, which means "bubbling up to parent elements or capturing down to child elements"
-		console.log("Dragging. Drag type: " + e.type);
+		//console.log("Dragging. Drag type: " + e.type); //DEBUG
 
 		// During the dragging process.
 		if (e.type === "dragenter" || e.type === "dragover") {
@@ -219,7 +219,7 @@ export default function UploadPage(props) {
 			}
 			if (valid_pics.length > 0) {
 				console.log("Valid new pictures added through drag:\n", valid_pics, "\nUpdating waiting room."); //DUBUG
-				handle_add_pic(e.dataTransfer.files);
+				handle_add_pic(valid_pics);
 			}
     }
 	}

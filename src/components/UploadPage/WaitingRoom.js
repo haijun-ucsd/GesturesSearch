@@ -58,11 +58,15 @@ export default function WaitingRoom(props) {
 
 	/* Render */
 	return (
-		<>
+		<div
+			className="WaitingRoom"
+			style={{backgroundColor: props.draggingActive==true ? "#CCCCCC"/*gray-mid*/ : "#EDECED"/*gray-bg*/}}
+			onDragEnter={props.add_pic_by_drag}
+		>
 			{props.addedPics.length!==0 ? // check for empty addedPics list. TODO: display tutorial if empty?
 				<Masonry
 					breakpointCols={{default: galleryNumCol}}
-					className="WaitingRoomGallery Gallery"
+					className="Gallery"
 					style={{justifyContent: (galleryNumCol >= props.addedPics.length) ? "left" : "center"}}
 					columnClassName="GalleryColumn"
 				>
@@ -72,7 +76,7 @@ export default function WaitingRoom(props) {
 							<div className="WaitingPicProgress">
 								{props.completePercentages[idx]===0 ?
 									<img
-										srcset={ZeroProgressAddLabel+" 2x"}
+										srcSet={ZeroProgressAddLabel+" 2x"}
 										onClick={(e) => {
 											e.preventDefault();
 											props.setClickedUrl(url);
@@ -120,7 +124,7 @@ export default function WaitingRoom(props) {
 								>
 									<img
 										className="WaitingPicRemover"
-										srcset={NoBtn+" 2x"}
+										srcSet={NoBtn+" 2x"}
 									/>
 								</div>
 							</div>
@@ -141,11 +145,21 @@ export default function WaitingRoom(props) {
 			:
 				<div className="WaitingRoomGallery">
 					<div className="HintText">
-						<img srcset={HintText_ArrowUp+" 2x"} />
+						<img srcSet={HintText_ArrowUp+" 2x"} />
 						No picture added yet. Click here to start!
 					</div>
 				</div>
 			}
-		</>
+			{/* Div that temporarily covers the entire upload area to help dragging */
+			props.draggingActive==true ?
+				<div
+					style={{ position:"absolute", top: "0", left: "0", width:"100%", height:"100%" }}
+					onDragEnter={props.add_pic_by_drag}
+					onDragLeave={props.add_pic_by_drag}
+					onDragOver={props.add_pic_by_drag}
+					onDrop={props.add_pic_by_drag}
+				></div> // empty div to cover the draggable field and help the add_pic_by_drag function
+			: null }
+		</div>
 	);
 }
