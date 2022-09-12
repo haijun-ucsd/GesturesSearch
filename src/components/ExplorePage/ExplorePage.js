@@ -238,13 +238,13 @@ export default function ExplorePage() {
 	const fuseQuantity = new Fuse(allQuantities, options);
 	const fuseDensity = new Fuse(allDensities, options);
 
-	const [searchData, setSearchData] = useState([""]);
+	// const [searchData, setSearchData] = useState([""]);
 
 	const handle_searchbar = (input) => {
-		console.log('search input:', input);
+		// console.log('search input:', input);
 		
-		setSearchData((prev) => input.split(', ').map(item => item.trim()));
-		console.log("searchData: ", searchData);
+		// setSearchData((prev) => input.split(', ').map(item => item.trim()));
+		// console.log("searchData: ", searchData);
 		const inputArr = input.split(' ').map(item => item.trim());
 		console.log("ALL ROLES: ", allRoles);
 		let existingResult = [];
@@ -429,7 +429,7 @@ export default function ExplorePage() {
 			}
 		})
 	}
-	useEffect(() => { handle_search(); }, [searchData, filterList])
+	useEffect(() => { handle_search(); }, [filterList])
 
 
 /**--- Click to view details of a picture ---**/
