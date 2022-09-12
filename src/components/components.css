@@ -4,6 +4,7 @@
  *  https://stackoverflow.com/questions/15831657/creating-css-global-variables-stylesheet-theme-management
  *  https://stackoverflow.com/questions/40010597/how-do-i-apply-opacity-to-a-css-color-variable
  *	https://www.w3schools.com/cssref/sel_attribute_value.asp
+ *	https://stackoverflow.com/questions/7699621/display-image-at-50-of-its-native-size
  */
 
 
@@ -11,6 +12,8 @@
 
 :root {
 	--img-container-bg: rgb(234, 197, 197);
+	--link-color: #A9C7D9;
+	--green-btn: #A0D568;
 	--demographic-color: #ED5564;
 	--spectators-color: #FFCE54;
 	--location-color: #A0D568;
@@ -128,18 +131,12 @@
 	gap: 8px;
 }
 
-.FilterList {
-	/* as a container*/
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	align-content: flex-start;
-	min-height: 30px; /* 28px label height + 2 * 1px border */
-	gap: 16px;
-}
-
 
 /* Btn */
+
+.Btn {
+	cursor: pointer;
+}
 
 .Btn_primary {
 	background: var(--gray-light);
@@ -162,6 +159,7 @@
 	box-shadow: none;
 }
 .Btn_primary:disabled {
+	background: var(--gray-bg);
 	box-shadow: none;
 	cursor: auto;
 }
@@ -186,6 +184,7 @@
 	box-shadow: none;
 }
 .Btn_secondary:disabled {
+	background: var(--gray-bg);
 	box-shadow: none;
 	cursor: auto;
 }
@@ -209,9 +208,33 @@
 	box-shadow: none;
 }
 .Btn_small:disabled {
+	background: var(--gray-bg);
 	box-shadow: none;
 	cursor: auto;
 }
+
+.Btn_green {
+	background: #F7FCF3; /* = var(--green-btn) with 8% opacity on white background */
+	border: 1px solid var(--green-btn);
+}
+.Btn_green:not(:disabled):hover {
+	background: #F7FCF3;
+}
+
+.Link {
+	cursor: pointer;
+	color: var(--link-color);
+	text-decoration: none;
+}
+.Link:not(:disabled):hover {
+	filter: brightness(110%);
+	text-decoration: underline;
+}
+.Link:disabled {
+	background: var(--gray-bg);
+	cursor: auto;
+}
+
 
 
 /* Checkbox */
@@ -605,7 +628,7 @@
 	fill: var(--occupied-modality-color);
 }
 .Humanfigure_highlights svg.any path {
-	fill: #F1FAFD; /* = #4FC1E8 with 8% opacity on white background */
+	fill: #F1FAFD; /* = var(--modality-color) with 8% opacity on white background */
 }
 
 .Humanfigure_highlights svg {
@@ -975,7 +998,7 @@
 	padding:10%;
 }
 
-input[type="text"],
+/*input[type="text"],
 input[type="password"],
 button,
 textarea {
@@ -998,7 +1021,7 @@ button {
   padding: 0.5rem;
   display:block;
   margin-top:5px;
-}
+}*/
 
 .errmsg {
     background-color: lightpink;
@@ -1041,8 +1064,16 @@ button {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	align-items: flex-end;
+	align-items: center;
 	padding: 24px 40px;
+}
+
+.UploadControl_addpic_div {
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 24px;
 }
 
 .UploadControl_addpic {
@@ -1050,10 +1081,50 @@ button {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	gap: 24px;
+	gap: 8px;
+	/* border styling
+	border: 2px dashed var(--gray-bg); border-radius: 8px;
+	border-image: url("../assets/DashedBorder_small.svg") 30% / 14px / 8px round; */
 }
 
-.UploadControl_selectpic {  /* right now same as UploadControl_addpic */
+.UploadControl_addpic_bigbox { /* reference: https://developer.mozilla.org/en-US/docs/Web/CSS/border-image */
+	/* as an item */
+	align-self: stretch;
+	position: absolute;
+	transform: translate(-50%, -50%); top: 50%; left: 50%; /* centerize */
+	width: 70%; min-width: 400px;
+	height: 80%;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 16px;
+	/* border styling */
+	border: 2px dashed var(--gray-bg); border-radius: 20px; /* specify a separate border-style in case the border image fails to load */
+	border-image:
+		url("../assets/DashedBorder_big.svg") /* source */
+		30% /* slice = border width ÷ src img width */ /
+		26px /* width = border width (above) */ /
+		0px /* outset: distance from the div border */
+		round /* repeat: round = round up to full dashes */
+	;
+}
+
+.AddPicBigBox_cover {
+	position: absolute;
+	top: 0; left: 0;
+	width: 100%; height: 100%;
+}
+
+.AddPicBigBox_notification {
+	position: absolute;
+	transform: translate(-50%, -50%);
+	left: 50%; top: 24px;
+	width: 100%; text-align: center;
+}
+
+.UploadControl_uploadpic_div {  /* right now same as UploadControl_addpic */
 	/* as a container */
 	display: flex;
 	flex-direction: row;
@@ -1061,20 +1132,14 @@ button {
 	gap: 24px;
 }
 
-.UploadControl_uploadpic {  /* right now same as UploadControl_addpic */
-	/* as a container */
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 24px;
-}
-
-.WaitingRoomGallery {
+.WaitingRoom {
 	/* as an item */
 	align-self: stretch;
 	flex-grow: 1;
 	/* as a container */
 	background-color: var(--gray-bg); /* matches with About page */
+	position: relative;
+	overflow-y: scroll;
 }
 
 .WaitingPic_container {
@@ -1107,8 +1172,7 @@ button {
 .WaitingPicRemover_innercontainer {
 	padding: 0px;
 	background-color: var(--white);
-	border-radius: 100px;
-	cursor: pointer;
+	border-radius: 50%;
 	z-index: 1;
 }
 
@@ -1118,7 +1182,7 @@ button {
 	display: none;
 	/*display: inline-flex; /*DEBUG*/
 	padding: 16px; /* modify this range according to achieve the best experience */
-	border-radius: 100px;
+	border-radius: 50%;
 	z-index: 1;
 }
 
@@ -1133,7 +1197,7 @@ button {
 
 /* PopUp Labeling Window */
 
-.PopUpOverlay {  /* old name "modal" */
+.PopUpOverlay {
 	position: fixed;
 	z-index: 12;
 	width: 100%;
@@ -1143,7 +1207,7 @@ button {
 	-webkit-backdrop-filter: blur(8px);
 }
 
-.UploadPopUpModal {  /* old name modal_content */
+.UploadPopUpModal {
 	/* as a container */
 	display: flex;
 	background-color: white;
@@ -1199,7 +1263,6 @@ button {
 }
 
 .PopUpClose {
-	cursor: pointer;
 	position: absolute;
 	transform: translateX(100%);
 	right: -24px;
@@ -1382,19 +1445,114 @@ button {
 }
 
 .AppliedFilters {
+	/* as an item */
+	align-self: stretch;
 	/* as a container */
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	align-items: flex-start;
 	gap: 16px;
 }
+.AppliedFilters_collapsed {
+	flex-direction: row;
+	align-items: center;
+}
+
+.AppliedFilters_hinttext {
+	flex-grow: 0;
+	flex-shrink: 0;
+}
 
 .AppliedFiltersList {
-	overflow-y: hidden;
+	/* as a container*/
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-content: flex-start;
+	gap: 16px;
+}
+
+.AppliedFiltersList_collapsed {
+	flex-grow: 1;
+	overflow-x: hidden;
+	/*overflow-x: scroll; /*DEBUG*/
+	flex-wrap: nowrap;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	max-height: 72px;
-	/*overflow-y: scroll;*/
+	max-height: 28px; /* label height */
+}
+
+.AppliedFilters_btns_div {
+	/* as an item */
+	flex-grow: 0;
+	flex-shrink: 0;
+	height: 0; /* ignore btn height in the row */
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 32px;
+}
+
+.AppliedFilters_rearrange_btns_div {
+	/* as an item */
+	flex-grow: 0;
+	flex-shrink: 0;
+	height: 0; /* ignore btn height in the row */
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 16px;
+}
+
+.DraggableLabel {
+	cursor: grab;
+}
+.DraggableLabel:hover {
+	box-shadow:
+		0px 4px 8px rgba(170, 170, 170, 0.16),
+		0px 0px 16px rgba(170, 170, 170, 0.08);
+}
+
+.LabelWithPriorityNum {
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 4px;
+}
+
+.AppliedFilters_bins {
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-content: flex-start;
+	gap: 24px;
+	min-height: 80px;
+}
+
+.AppliedFilters_bin {
+	/* as an item */
+	align-self: stretch;
+	flex-grow: 1;
+	border-radius: 8px;
+	/* as a container */
+	display: flex;
+	flex-direction: column;
+	align-content: flex-start;
+	padding: 8px;
+	gap: 8px;
+}
+
+.AppliedFilters_bin_must {
+	background-color: var(--img-container-bg);
+}
+
+.AppliedFilters_bin_optional {
+	background-color: var(--white);
 }
 
 
@@ -1416,12 +1574,21 @@ button {
 	flex-direction: column;
 	align-items: flex-start;
 	z-index: 1;
+	position: relative;
 }
 
 .Facet {
 	overflow-y: scroll;
 	/* as an item */
 	align-self: stretch;
+}
+
+.FacetOverlay {
+	position: absolute;
+	z-index: 2;
+	top: 0; left: 0;
+	width: 100%; height: 100%;
+	background-color: #00000080; /* #XXXXXX80 = 50% opacity */
 }
 
 .FacetAttentiveSlider {
@@ -1501,8 +1668,7 @@ button {
 	left: 8px;
 	padding: 8px;
 	background-color: var(--img-container-bg);
-	border-radius: 100px;
-	cursor: pointer;
+	border-radius: 50%;
 	z-index: 1;
 }
 
@@ -1638,69 +1804,69 @@ button {
 /* About Page*/
 
 .AboutPageBox {
-  background-color: var(--gray-bg);
+	background-color: var(--gray-bg);
 }
 
 .Stats {
-  margin-top: 50px;
-  display: flex;
-  position: relative;
-  height: 325px;
+	margin-top: 50px;
+	display: flex;
+	position: relative;
+	height: 325px;
 }
 
 .HistoryTitle {
-  margin-top: 0px;
-  display: flex;
-  position: relative;
-  height: 50px;
+	margin-top: 0px;
+	display: flex;
+	position: relative;
+	height: 50px;
 }
 
 .HistoryTitle h5 {
-  margin-left: 400px;
-  margin-right: 100px;
+	margin-left: 400px;
+	margin-right: 100px;
 }
 
 .LineChart {
-  margin-left: 100px;
-  margin-right: 50px;
+	margin-left: 100px;
+	margin-right: 50px;
 }
 
 /* .BarChar {
-  margin-left: 1200px;
+	margin-left: 1200px;
 } */
 
 .Vis {
-  margin-top: 0px;
-  display: flex;
-  position: relative;
-  height: 400px;
+	margin-top: 0px;
+	display: flex;
+	position: relative;
+	height: 400px;
 }
 
 /* .VisBar {
-  margin-top: 0px;
-  display: flex;
-  position: relative;
-  height: 400px;
+	margin-top: 0px;
+	display: flex;
+	position: relative;
+	height: 400px;
 } */
 
 .RoleBar {
-  margin-left: 1100px;
-  margin-top: 50px;
-  margin-bottom: 150px;
+	margin-left: 1100px;
+	margin-top: 50px;
+	margin-bottom: 150px;
 }
 
 .Age{
-  margin-left: 800px;
-  margin-top: 100px;
-  height: 250px;
-  width: 250px;
+	margin-left: 800px;
+	margin-top: 100px;
+	height: 250px;
+	width: 250px;
 }
 
 .Pie {
-  margin-top: 100px;
-  margin-left: 80px;
-  height: 250px;
-  width: 250px;
+	margin-top: 100px;
+	margin-left: 80px;
+	height: 250px;
+	width: 250px;
 }
 
 .Intro {
@@ -1749,16 +1915,16 @@ button {
 }
 
 .Box {
-  -webkit-border-radius: 20px;
-  -moz-border-radius: 20px;
-  border-radius: 20px;
-  overflow: hidden;
-  width: 700px;
-  height: 350px;
-  margin-top: 50px;
-  margin-left: auto;
-  margin-right: auto;
-  background-color: var(--gray-bg);
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+	border-radius: 20px;
+	overflow: hidden;
+	width: 700px;
+	height: 350px;
+	margin-top: 50px;
+	margin-left: auto;
+	margin-right: auto;
+	background-color: var(--gray-bg);
 }
 
 .Box p {
@@ -1818,11 +1984,11 @@ button {
 }
 
 .Contributor {
-  margin-top: 100px;
-  margin-left: 400px;
-  width: 150px;
-  height: auto;
-  align-self: center;
+	margin-top: 100px;
+	margin-left: 400px;
+	width: 150px;
+	height: auto;
+	align-self: center;
 }
 
 .ContributorTitle{
@@ -1832,21 +1998,21 @@ button {
 }
 
 .Contributor p {
-  margin-left: 25px;
-  color: #174ea6;
+	margin-left: 25px;
+	color: #174ea6;
 }
 
 .Contributor h1 {
-  margin-left: 25px;
-  font-size: 30px;
+	margin-left: 25px;
+	font-size: 30px;
 }
 
 .Images {
-  margin-top: 100px;
-  margin-left: 150px;
-  width: 150px;
-  height: auto;
-  align-self: center;
+	margin-top: 100px;
+	margin-left: 150px;
+	width: 150px;
+	height: auto;
+	align-self: center;
 }
 
 .ImageTitle {
@@ -1856,35 +2022,35 @@ button {
 }
 
 .Images p {
-  margin-left: 25px;
-  color: #ED5564;
+	margin-left: 25px;
+	color: #ED5564;
 }
 
 .Images h1 {
-  margin-left: 0px;
-  font-size: 30px;
+	margin-left: 0px;
+	font-size: 30px;
 }
 
 .Locations {
-  margin-top: 100px;
-  margin-left: 150px;
-  width: 150px;
-  height: auto;
-  align-self: center;
+	margin-top: 100px;
+	margin-left: 150px;
+	width: 150px;
+	height: auto;
+	align-self: center;
 }
 
 .LocationTitle {
-  margin-left: -10px;
-  font-size: 25px;
-  font-weight: bold;
+	margin-left: -10px;
+	font-size: 25px;
+	font-weight: bold;
 }
 
 .Locations h1 {
-  margin-left: 20px;
-  font-size: 30px;
+	margin-left: 20px;
+	font-size: 30px;
 }
 
 .Locations p {
-  margin-left: 30px;
-  color: #A0D568;
+	margin-left: 30px;
+	color: #A0D568;
 }
