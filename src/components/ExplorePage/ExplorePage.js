@@ -290,21 +290,21 @@ export default function ExplorePage() {
 				if(result.length !== 0){
 					if (allPostures.includes(result[0].item) && !existingResult.includes(result[0].item)) {
 						filter_change_handler(result[0].item, 0, "posture", "posture", postureColor, false);
-					} else if (allSites.includes(result[0].item)) {
+					} else if (allSites.includes(result[0].item) && !existingResult.includes(result[0].item)) {
 						filter_change_handler(result[0].item, 0, "location", "site", locationColor, false, true);
-					} else if (allArchi_compo.includes(result[0].item)) {
+					} else if (allArchi_compo.includes(result[0].item) && !existingResult.includes(result[0].item)) {
 						filter_change_handler(result[0].item, 0, "location", "archi_compo", locationColor, false, true);
-					} else if (allIn_outdoor.includes(result[0].item)) {
+					} else if (allIn_outdoor.includes(result[0].item) && !existingResult.includes(result[0].item)) {
 						filter_change_handler(result[0].item, 0, "location", "in_outdoor", locationColor, false, true);
-					} else if (allSex.includes(result[0].item)) {
+					} else if (allSex.includes(result[0].item) && !existingResult.includes(result[0].item)) {
 						filter_change_handler(result[0].item, 0, "demographic", "sex", demographicColor, false);
-					} else if (allAge.includes(result[0].item)) {
+					} else if (allAge.includes(result[0].item) && !existingResult.includes(result[0].item)) {
 						filter_change_handler(result[0].item, 0, "demographic", "age", demographicColor, false);
-					} else if (allRoles.includes(result[0].item)) {
+					} else if (allRoles.includes(result[0].item) && !existingResult.includes(result[0].item)) {
 						filter_change_handler(result[0].item, 0, "demographic", "social_role", demographicColor, false, true);
-					} else if (allQuantities.includes(result[0].item)) {
+					} else if (allQuantities.includes(result[0].item) && !existingResult.includes(result[0].item)) {
 						filter_change_handler("spectators quantity: " + result[0].item, 0, "spectators", "quantity", spectatorColor, false);
-					} else if (allDensities.includes(result[0].item)) {
+					} else if (allDensities.includes(result[0].item) && !existingResult.includes(result[0].item)) {
 						filter_change_handler("spectators density: " + result[0].item, 0, "spectators", "density", spectatorColor, false);
 					}
 				}
@@ -390,7 +390,6 @@ export default function ExplorePage() {
 					filtered.push([imgKey, labels]);
 				}
 			}
-			console.log("Match: ", matchDict);
 		})
 		return filtered;
 	}
@@ -414,9 +413,9 @@ export default function ExplorePage() {
 				// filtered = [...search_helper(filterList)];
 				for (let j = 0; j < filterList.length; j++){
 					for (let i = filterList.length; i > j; i--) {
-						console.log(filterList.slice(j, i));
+						console.log("Filter in effect: ", filterList.slice(j, i));
 						filtered.push(..._.difference(search_helper(filterList.slice(j, i)), filtered));
-						console.log(filtered)
+						console.log("SubFilter result: ", filtered);
 					}
 				}
 			}
