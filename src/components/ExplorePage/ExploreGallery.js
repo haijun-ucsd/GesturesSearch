@@ -339,9 +339,9 @@ function FilterRearrange(props) {
 				<div className="HintText AppliedFilters_hinttext">
 					Drag to rearrange filter priority:
 				</div>
-				<div className="AppliedFilters_btns_div">
+				<div className="AppliedFilters_rearrange_btns_div">
 					<btn
-						className="Btn_primary Btn_green"
+						className="Btn_small Btn_green"
 						onClick={(e) => {
 							e.preventDefault();
 							props.setFilterList(tempFilterList);
@@ -352,7 +352,7 @@ function FilterRearrange(props) {
 						save
 					</btn>
 					<btn
-						className="Btn_secondary"
+						className="Btn_small"
 						onClick={(e) => {
 							e.preventDefault();
 							props.exitRearrangePriorityMode(); // exist directly without updating FilterList
@@ -364,19 +364,24 @@ function FilterRearrange(props) {
 			</div>
 			<div className="AppliedFiltersList">
 				{tempFilterList.map((item, idx) =>
-					<div
-						className="Label DraggableLabel"
-						draggable
-						onDragStart={(e) => drag_starts(e, idx)}
-						onDragOver={() => dragging_over(idx)}
-						onDragEnd={drag_ends}
-						style={{
-							borderColor: item.color,
-							backgroundColor: item.color+14, // +14 = 8% opacity
-							borderRadius: "14px", opacity: "0.999" // need this to ensure corner radius
-						}}
-					>
-						{item.label}
+					<div className="LabelWithPriorityNum">
+						<span className="HintText">
+							{idx+1 /* idx 0 = 1st priority */}:
+						</span>
+						<div
+							className="Label DraggableLabel"
+							draggable
+							onDragStart={(e) => drag_starts(e, idx)}
+							onDragOver={() => dragging_over(idx)}
+							onDragEnd={drag_ends}
+							style={{
+								borderColor: item.color,
+								backgroundColor: item.color+14, // +14 = 8% opacity
+								borderRadius: "14px", opacity: "0.999" // need this to ensure corner radius
+							}}
+						>
+							{item.label}
+						</div>
 					</div>
 				)}
 			</div>
@@ -462,9 +467,9 @@ function FilterTwoBins(props) {
 				<div className="HintText AppliedFilters_hinttext">
 					Drag to change importance of filters:
 				</div>
-				<div className="AppliedFilters_btns_div">
+				<div className="AppliedFilters_rearrange_btns_div">
 					<btn
-						className="Btn_primary Btn_green"
+						className="Btn_small Btn_green"
 						onClick={(e) => {
 							e.preventDefault();
 							//props.setFilterList(...);
@@ -475,7 +480,7 @@ function FilterTwoBins(props) {
 						save
 					</btn>
 					<btn
-						className="Btn_secondary"
+						className="Btn_small"
 						onClick={(e) => {
 							e.preventDefault();
 							props.exitTwoBinPriorityMode(); // exist directly without updating FilterList

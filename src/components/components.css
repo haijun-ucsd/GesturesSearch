@@ -946,12 +946,97 @@
 	margin-right:0;*/
 }
 
+.PageBox_Login {
+	flex-direction: column;
+}
+
 .PageBox_Upload {
 	flex-direction: column;
 }
 
 .PageBox_Explore {
 	flex-direction: row;
+}
+
+/* LogIn Page*/
+.Login_body{
+    -webkit-tap-highlight-color: transparent;
+    color: #d93025;
+    font-family: roboto,"Noto Sans Myanmar UI",arial,sans-serif;
+    direction: ltr;
+    font-size: 60px;
+    line-height: 1;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+	height:80vh;
+    position: relative;
+	margin: auto;
+}
+
+.Login_box{
+	-webkit-tap-highlight-color: transparent;
+    color: #bf98f6;
+    font-family: roboto,"Noto Sans Myanmar UI",arial,sans-serif;
+    font-size: 22px;
+    line-height: 1.5;
+    flex-direction: row;
+	width: 600px;
+    max-width: 100%;
+    position: relative;
+    z-index: 2;
+    transition: .2s;
+    background: #fff;
+    border: 1px solid #3b68c1;
+    border-radius: 8px;
+    display: block;
+    flex-shrink: 0;
+    margin: auto;
+	height: 80vh;
+	box-sizing: border-box;
+	margin-top: 10% ;
+	padding:10%;
+}
+
+/*input[type="text"],
+input[type="password"],
+button,
+textarea {
+  font-family: 'Nunito', sans-serif;
+  font-size: 22px;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+  display: block;
+}
+
+label,
+button {
+  margin-top: 1rem;
+  font-size: 22px;
+  display: block;
+  margin:auto;
+}
+
+button {
+  padding: 0.5rem;
+  display:block;
+  margin-top:5px;
+}*/
+
+.errmsg {
+    background-color: lightpink;
+    color: firebrick;
+    font-weight: bold;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.successmsg {
+    background-color: rgb(202,253,243);
+    color: lightseagreen;
+    font-weight: bold;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
 
@@ -1397,6 +1482,47 @@
 	max-height: 28px; /* label height */
 }
 
+.AppliedFilters_btns_div {
+	/* as an item */
+	flex-grow: 0;
+	flex-shrink: 0;
+	height: 0; /* ignore btn height in the row */
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 32px;
+}
+
+.AppliedFilters_rearrange_btns_div {
+	/* as an item */
+	flex-grow: 0;
+	flex-shrink: 0;
+	height: 0; /* ignore btn height in the row */
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 16px;
+}
+
+.DraggableLabel {
+	cursor: grab;
+}
+.DraggableLabel:hover {
+	box-shadow:
+		0px 4px 8px rgba(170, 170, 170, 0.16),
+		0px 0px 16px rgba(170, 170, 170, 0.08);
+}
+
+.LabelWithPriorityNum {
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 4px;
+}
+
 .AppliedFilters_bins {
 	/* as an item */
 	align-self: stretch;
@@ -1427,58 +1553,6 @@
 
 .AppliedFilters_bin_optional {
 	background-color: var(--white);
-}
-
-
-
-
-.UploadControl_addpic_bigbox { /* reference: https://developer.mozilla.org/en-US/docs/Web/CSS/border-image */
-	/* as an item */
-	align-self: stretch;
-	position: absolute;
-	transform: translate(-50%, -50%); top: 50%; left: 50%; /* centerize */
-	width: 70%; min-width: 400px;
-	height: 80%;
-	/* as a container */
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: center;
-	gap: 16px;
-	/* border styling */
-	border: 2px dashed var(--gray-bg); border-radius: 20px; /* specify a separate border-style in case the border image fails to load */
-	border-image:
-		url("../assets/DashedBorder_big.svg") /* source */
-		30% /* slice = border width ÷ src img width */ /
-		26px /* width = border width (above) */ /
-		0px /* outset: distance from the div border */
-		round /* repeat: round = round up to full dashes */
-	;
-}
-
-.AddPicBigBox_cover {
-	position: absolute;
-	top: 0; left: 0;
-	width: 100%; height: 100%;
-}
-
-
-
-
-.AppliedFilters_btns_div {
-	/* as an item */
-	flex-grow: 0;
-	flex-shrink: 0;
-	height: 0; /* ignore btn height in the row */
-	/* as a container */
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 32px;
-}
-
-.DraggableLabel {
-	cursor: grab;
 }
 
 

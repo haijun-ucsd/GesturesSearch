@@ -116,19 +116,11 @@ export default function Facet(props) {
  */
 function ExploreSearch(props) {
 
-	// const [searchData, setSearchData] = useState('');
+	const [searchText, setSearchText] = useState(''); // the dynamically input text
+	useEffect(() => { console.log("searchText is: " + searchText); }, [searchText]); //DEBUG
 
-	const [searchText, setSearchText] = useState('');
-	// DEBUG
-	useEffect(() => {
-		console.log("searchText is: " + searchText);
-	}, [searchText]);
-
-	const [submittedSearchText, setSubmittedSearchText] = useState('');
-	// DEBUG
-	useEffect(() => {
-		console.log("submittedSearchText is: " + submittedSearchText);
-	}, [submittedSearchText]);
+	const [submittedSearchText, setSubmittedSearchText] = useState(''); // text that is a snapshot to submit for search
+	useEffect(() => { console.log("submittedSearchText is: " + submittedSearchText); }, [submittedSearchText]); //DEBUG
 
 	// const handleSearch = (input) => {
 	// 	setSearchData(input);
@@ -191,7 +183,7 @@ function ExploreSearch(props) {
 						options={locationLabels}
 						sx={{ width: 300 }}
 						renderInput={
-							(params) => <TextField {...params} label="location, demographic, posture...(split with ',')"/>
+							(params) => <TextField {...params} label="Search"/>
 						}
 						onKeyPress= {(e, value) => {
 							if (e.key === 'Enter') {

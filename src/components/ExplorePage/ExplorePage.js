@@ -5,8 +5,10 @@ import "../components.css";
 import Facet from "./Facet";
 import ExploreGallery from "./ExploreGallery";
 import ExploreDetails from "./ExploreDetails";
-import { FetchLabelList_helper } from "../components";
-import _, { map } from "underscore";
+import { FilterStructure, FetchLabelList_helper } from "../components";
+import _, { filter, map } from "underscore";
+import Fuse from 'fuse.js';
+import { labels_data } from "../labels_data.js";
 
 //export var searchDataCopy = []; //TODO
 
@@ -123,7 +125,8 @@ export default function ExplorePage(props) {
 					},
 				};
 			});
-		} else {
+		} else if (category === "location" || subcategory === "social_role") {}
+		else {
 			props.setFacetList((prev) => {
 				let newSubcategoryList = prev[category][subcategory].filter(
 					(item) => item !== label
@@ -180,6 +183,41 @@ export default function ExplorePage(props) {
 
 
 /**--- Search ---**/
+	const locationColor = "#A0D568";
+	const postureColor = "#AC92EB";
+	const demographicColor = "#ED5564";
+	const spectatorColor = "#FFCE54";
+
+	const allSites = FetchLabelList_helper("location", "site");
+	const allArchi_compo = FetchLabelList_helper("location", "archi_compo");
+	const allIn_outdoor = FetchLabelList_helper("location", "in_outdoor");
+
+	const allSex = FetchLabelList_helper("demographic", "sex");
+	const allAge = FetchLabelList_helper("demographic", "age");
+	const allRoles = FetchLabelList_helper("demographic", "social_role");
+
+	const allPostures = FetchLabelList_helper("posture", undefined);
+
+	const allQuantities = FetchLabelList_helper("spectators", "quantity");
+	const allDensities = FetchLabelList_helper("spectators", "density");
+	//fuse.js
+	const options = {
+		includeScore: true,
+		threshold: 0.3,
+		minMatchCharLength: 3
+	};
+	const fuseSite = new Fuse(allSites, options);
+	const fuseArchi = new Fuse(allArchi_compo, options);
+	const fuseIn_outdoor = new Fuse(allIn_outdoor, options);
+
+	const fuseSex = new Fuse(allSex, options);
+	const fuseAge = new Fuse(allAge, options);
+	const fuseRole = new Fuse(allRoles, options);
+
+	const fusePosture = new Fuse(allPostures, options);
+
+	const fuseQuantity = new Fuse(allQuantities, options);
+	const fuseDensity = new Fuse(allDensities, options);
 
 	const [searchData, setSearchData] = useState([""]);
 
@@ -188,44 +226,152 @@ export default function ExplorePage(props) {
 		
 		setSearchData((prev) => input.split(', ').map(item => item.trim()));
 		console.log("searchData: ", searchData);
+		const inputArr = input.split(' ').map(item => item.trim());
+		console.log("ALL ROLES: ", allRoles);
+		let existingResult = [];
 
 		//Add searchbar content to applied filters
-		const locationColor = "#80aa54";
-		const postureColor = "#AC92EB";
-		const demographicColor = "#ED5564";
-
-		const inputArr = input.split(', ').map(item => item.trim());
-		console.log('search input Arr:', inputArr);
-
-		const allSites = FetchLabelList_helper("location", "site");
-		const allArchi_compo = FetchLabelList_helper("location", "archi_compo");
-		const allIn_outdoor = FetchLabelList_helper("location", "in_outdoor");
-
-		const allSex = FetchLabelList_helper("demographic", "sex");
-		const allAge = FetchLabelList_helper("demographic", "age");
-		const allRoles = FetchLabelList_helper("demographic", "social_role");
-
-		const allPostures = FetchLabelList_helper("posture", undefined);
-		
 		if (inputArr.length !== 0) {
+			// result = [];
 			for (const searchField of inputArr) {
-				if (allPostures.includes(searchField)) {
-					filter_change_handler(searchField, 0, "posture", "posture", postureColor, false);
-				} else if (allSites.includes(searchField)) {
-					filter_change_handler(searchField, 0, "location", "site", locationColor, false, true);
-				} else if (allArchi_compo.includes(searchField)) {
-					filter_change_handler(searchField, 0, "location", "archi_compo", locationColor, false, true);
-				} else if (allIn_outdoor.includes(searchField)) {
-					filter_change_handler(searchField, 0, "location", "in_outdoor", locationColor, false, true);
-				} else if (allSex.includes(searchField)) {
-					filter_change_handler(searchField, 0, "demographic", "sex", demographicColor, false);
-				} else if (allAge.includes(searchField)) {
-					filter_change_handler(searchField, 0, "demographic", "age", demographicColor, false);
-				} else if (allRoles.includes(searchField)) {
-					filter_change_handler(searchField, 0, "demographic", "social_role", demographicColor, false, true);
+				const result = [];
+				if (fuseSite.search(searchField).length !== 0) {
+					result.push(...fuseSite.search(searchField));
 				}
+				if (fuseArchi.search(searchField).length !== 0) {
+					result.push(...fuseArchi.search(searchField));
+				}
+				if (fuseIn_outdoor.search(searchField).length !== 0) {
+					result.push(...fuseIn_outdoor.search(searchField));
+				}
+				if (fuseSex.search(searchField).length !== 0) {
+					result.push(...fuseSex.search(searchField));
+				}
+				if (fuseAge.search(searchField).length !== 0) {
+					result.push(...fuseAge.search(searchField));
+				}
+				if (fuseRole.search(searchField).length !== 0) {
+					result.push(...fuseRole.search(searchField));
+				}
+				if (fusePosture.search(searchField).length !== 0) {
+					result.push(...fusePosture.search(searchField));
+				}
+				if (fuseQuantity.search(searchField).length !== 0) {
+					result.push(...fuseQuantity.search(searchField));
+				}
+				if (fuseDensity.search(searchField).length !== 0) {
+					result.push(...fuseDensity.search(searchField));
+				}
+
+				result.sort(function(a, b){
+					return a.score - b.score;
+				});
+
+				//TODO: Mark the category of each result and change filter directly
+				if(result.length !== 0){
+					if (allPostures.includes(result[0].item) && !existingResult.includes(result[0].item)) {
+						filter_change_handler(result[0].item, 0, "posture", "posture", postureColor, false);
+					} else if (allSites.includes(result[0].item)) {
+						filter_change_handler(result[0].item, 0, "location", "site", locationColor, false, true);
+					} else if (allArchi_compo.includes(result[0].item)) {
+						filter_change_handler(result[0].item, 0, "location", "archi_compo", locationColor, false, true);
+					} else if (allIn_outdoor.includes(result[0].item)) {
+						filter_change_handler(result[0].item, 0, "location", "in_outdoor", locationColor, false, true);
+					} else if (allSex.includes(result[0].item)) {
+						filter_change_handler(result[0].item, 0, "demographic", "sex", demographicColor, false);
+					} else if (allAge.includes(result[0].item)) {
+						filter_change_handler(result[0].item, 0, "demographic", "age", demographicColor, false);
+					} else if (allRoles.includes(result[0].item)) {
+						filter_change_handler(result[0].item, 0, "demographic", "social_role", demographicColor, false, true);
+					} else if (allQuantities.includes(result[0].item)) {
+						filter_change_handler("spectators quantity: " + result[0].item, 0, "spectators", "quantity", spectatorColor, false);
+					} else if (allDensities.includes(result[0].item)) {
+						filter_change_handler("spectators density: " + result[0].item, 0, "spectators", "density", spectatorColor, false);
+					}
+				}
+				existingResult.push(result[0].item);
+				console.log("RESULT: ", result);
 			}
 		}
+	}
+
+	function search_helper (subFilterList) {
+		const db = getDatabase()
+		const dbRef = ref_db(db, 'images');
+		let filtered = [];
+		var matchDict = {};
+		onValue(dbRef, (snapshot) => {
+			const data = snapshot.val();
+			for (const [imgKey, labels] of Object.entries(data)) {
+				for (const facetLabel of subFilterList) {
+					switch (facetLabel.category) {
+						case 'posture':
+							if (labels.posture !== undefined && String(labels.posture).includes(facetLabel.label)) {
+								matchDict[imgKey] = (matchDict[imgKey] === undefined) ? true : (true && matchDict[imgKey]);
+							} else {matchDict[imgKey] = (matchDict[imgKey] === undefined) ? false : false && matchDict[imgKey];}
+							break;
+						case 'demographic':
+							if (facetLabel.subcategory === "age") {
+								if (labels.demographic.age !== undefined && labels.demographic.age === facetLabel.label) {
+									matchDict[imgKey] = (matchDict[imgKey] === undefined) ? true : (true && matchDict[imgKey]);
+								} else {matchDict[imgKey] = (matchDict[imgKey] === undefined) ? false : false && matchDict[imgKey];}
+							} else if (facetLabel.subcategory === "sex") {
+								if (labels.demographic.sex !== undefined && labels.demographic.sex === facetLabel.label) {
+									matchDict[imgKey] = (matchDict[imgKey] === undefined) ? true : (true && matchDict[imgKey]);
+								} else {matchDict[imgKey] = (matchDict[imgKey] === undefined) ? false : false && matchDict[imgKey];}
+							} else {
+								if (String(labels.demographic.social_role).includes(facetLabel.label)) {
+									matchDict[imgKey] = (matchDict[imgKey] === undefined) ? true : (true && matchDict[imgKey]);
+								} else {matchDict[imgKey] = (matchDict[imgKey] === undefined) ? false : false && matchDict[imgKey];}
+							}
+							break;
+						case 'modality':
+							var avail = facetLabel.label.split(' ')[facetLabel.label.split(' ').length - 1];
+							if (labels.modality[facetLabel.subcategory] === Boolean(avail === 'available')) {
+								matchDict[imgKey] = (matchDict[imgKey] === undefined) ? true : (true && matchDict[imgKey]);
+							} else {matchDict[imgKey] = (matchDict[imgKey] === undefined) ? false : false && matchDict[imgKey];}
+							break;
+						case 'spectators':
+							var value = facetLabel.label.split(' ')[2];
+							if (facetLabel.subcategory === "quantity") {
+								if (labels.spectators.quantity === value) {
+									matchDict[imgKey] = (matchDict[imgKey] === undefined) ? true : (true && matchDict[imgKey]);
+								} else {matchDict[imgKey] = (matchDict[imgKey] === undefined) ? false : false && matchDict[imgKey];}
+							} else if (facetLabel.subcategory === "density") {
+								if (labels.spectators.density === value) {
+									matchDict[imgKey] = (matchDict[imgKey] === undefined) ? true : (true && matchDict[imgKey]);
+								} else {matchDict[imgKey] = (matchDict[imgKey] === undefined) ? false : false && matchDict[imgKey];}
+							} else {
+								if (labels.spectators.attentive === value) {
+									matchDict[imgKey] = (matchDict[imgKey] === undefined) ? true : (true && matchDict[imgKey]);
+								} else {matchDict[imgKey] = (matchDict[imgKey] === undefined) ? false : false && matchDict[imgKey];}
+							}
+							break;
+						case 'location':
+							if (facetLabel.subcategory === "site") {
+								if (String(labels.location.site).includes(facetLabel.label)) {
+									matchDict[imgKey] = (matchDict[imgKey] === undefined) ? true : (true && matchDict[imgKey]);
+								} else {matchDict[imgKey] = (matchDict[imgKey] === undefined) ? false : false && matchDict[imgKey];}
+							} else if (facetLabel.subcategory === "archi_compo") {
+								if (String(labels.location.archi_compo).includes(facetLabel.label)) {
+									matchDict[imgKey] = (matchDict[imgKey] === undefined) ? true : (true && matchDict[imgKey]);
+								} else {matchDict[imgKey] = (matchDict[imgKey] === undefined) ? false : false && matchDict[imgKey];}
+							} else {
+								if (labels.location.in_outdoor === facetLabel.label) {
+									matchDict[imgKey] = (matchDict[imgKey] === undefined) ? true : (true && matchDict[imgKey]);
+								} else {matchDict[imgKey] = (matchDict[imgKey] === undefined) ? false : false && matchDict[imgKey];}
+							}
+							break;
+						default:
+					}
+				}
+				if (matchDict[imgKey] === true) {
+					filtered.push([imgKey, labels]);
+				}
+			}
+			console.log("Match: ", matchDict);
+		})
+		return filtered;
 	}
 
 	/**
@@ -238,77 +384,22 @@ export default function ExplorePage(props) {
 		onValue(dbRef, (snapshot) => {
 			const data = snapshot.val();
 			let filtered = [];
-			for (const [imgKey, labels] of Object.entries(data)) {
-				//match labels in searchbar query
-				if (props.filterList[0] === undefined) {
+			//match labels in searchbar query
+			if (props.filterList[0] === undefined) {
+				for (const [imgKey, labels] of Object.entries(data)) {
 					filtered.push([imgKey, labels]);
-				} else {
-					for (const facetLabel of props.filterList) {
-						switch (facetLabel.category) {
-							case 'posture':
-								if (labels.posture !== undefined && String(labels.posture).includes(facetLabel.label)) {
-									filtered.push([imgKey, labels]);
-								}
-								break;
-							case 'demographic':
-								if (facetLabel.subcategory === "age") {
-									if (labels.demographic.age !== undefined && labels.demographic.age === facetLabel.label) {
-										filtered.push([imgKey, labels]);
-									}
-								} else if (facetLabel.subcategory === "sex") {
-									if (labels.demographic.sex !== undefined && labels.demographic.sex === facetLabel.label) {
-										filtered.push([imgKey, labels]);
-									}
-								} else {
-									if (String(labels.demographic.social_role).includes(facetLabel.label)) {
-										filtered.push([imgKey, labels]);
-									}
-								}
-								break;
-							case 'modality':
-								var avail = facetLabel.label.split(' ')[facetLabel.label.split(' ').length - 1];
-								if (labels.modality[facetLabel.subcategory] === Boolean(avail === 'available')) {
-									filtered.push([imgKey, labels]);
-								}
-								break;
-							case 'spectators':
-								var value = facetLabel.label.split(' ')[2];
-								if (facetLabel.subcategory === "quantity") {
-									if (labels.spectators.quantity === value) {
-										filtered.push([imgKey, labels]);
-									}
-								} else if (facetLabel.subcategory === "density") {
-									if (labels.spectators.density === value) {
-										filtered.push([imgKey, labels]);
-									}
-								} else {
-									if (labels.spectators.attentive === value) {
-										filtered.push([imgKey, labels]);
-									}
-								}
-								break;
-							case 'location':
-								if (facetLabel.subcategory === "site") {
-									if (String(labels.location.site).includes(facetLabel.label)) {
-										filtered.push([imgKey, labels]);
-									}
-								} else if (facetLabel.subcategory === "archi_compo") {
-									if (String(labels.location.archi_compo).includes(facetLabel.label)) {
-										filtered.push([imgKey, labels]);
-									}
-								} else {
-									if (labels.location.in_outdoor === facetLabel.label) {
-										filtered.push([imgKey, labels]);
-									}
-								}
-								break;
-							default:
-
-						}
+				}
+			} else {
+				// filtered = [...search_helper(props.filterList)];
+				for (let j = 0; j < props.filterList.length; j++){
+					for (let i = props.filterList.length; i > j; i--) {
+						console.log(props.filterList.slice(j, i));
+						filtered.push(..._.difference(search_helper(props.filterList.slice(j, i)), filtered));
+						console.log(filtered)
 					}
-					
 				}
 			}
+			
 			if (filtered.length !== 0) {
 				setImageList(_.uniq(filtered, false, function (arr) {return arr[0];}));
 			} else if (props.filterList[0] === undefined) {

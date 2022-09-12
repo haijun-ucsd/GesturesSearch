@@ -148,6 +148,7 @@ export default function UploadPage(props) {
 	};
 
 	// DEBUG
+	console.log("userName:"+ props.user)
 	useEffect(() => {
 		console.log("\n「");
 		console.log("addedPics:", props.addedPics);
@@ -417,7 +418,7 @@ export default function UploadPage(props) {
 			}
 
 			// Create space at proper index for this image.
-			set(ref_db(db, ("images/"+finalPicIndex+"/index")), finalPicIndex);
+			set(ref_db(db, `images/${finalPicIndex}/index`), finalPicIndex);
 		});
 
 		// Store picture to firebase storage, and then data to realtime database.
@@ -433,7 +434,8 @@ export default function UploadPage(props) {
 					timestamp: Math.floor(Date.now() / 1000), // upload time
 					...props.formDataList[idx],
 					annotation: props.picAnnotation[idx],
-				};
+					userID: props.user,
+				}
 				console.log("[Upload Step 1] Upload image, labels, and annotation."
 					+ "\nindex: " + finalPicIndex
 					+ "\nurl: " + url +
@@ -517,8 +519,13 @@ export default function UploadPage(props) {
 						}
 					}
 				}
+				
+				
+				
 			});
 		});
+		
+		
 
 		// Prepare to clear the uploaded picture.
 		// For now, maintain a tombstone at the index to facilitate the upload loop.
