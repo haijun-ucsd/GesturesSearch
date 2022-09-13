@@ -217,13 +217,13 @@ export default function ExplorePage(props) {
 	const fuseQuantity = new Fuse(allQuantities, options);
 	const fuseDensity = new Fuse(allDensities, options);
 
-	const [searchData, setSearchData] = useState([""]);
+	// const [searchData, setSearchData] = useState([""]);
 
 	const handle_searchbar = (input) => {
-		console.log('search input:', input); //DEBUG
+		console.log('search input:', input);
 		
-		setSearchData((prev) => input.split(', ').map(item => item.trim()));
-		console.log("searchData: ", searchData); //DEBUG
+		// setSearchData((prev) => input.split(', ').map(item => item.trim()));
+		// console.log("searchData: ", searchData);
 		const inputArr = input.split(' ').map(item => item.trim());
 		console.log("inputArr: ", inputArr); //DEBUG
 		let existingResult = [];
@@ -390,9 +390,9 @@ export default function ExplorePage(props) {
 				// filtered = [...search_helper(props.filterList)];
 				for (let j = 0; j < props.filterList.length; j++){
 					for (let i = props.filterList.length; i > j; i--) {
-						console.log(props.filterList.slice(j, i));
+						console.log("Subfilter List: ", props.filterList.slice(j, i));
 						filtered.push(..._.difference(search_helper(props.filterList.slice(j, i)), filtered));
-						console.log(filtered)
+						console.log("Filtering result: ", filtered);
 					}
 				}
 			}
@@ -406,7 +406,7 @@ export default function ExplorePage(props) {
 			}
 		})
 	}
-	useEffect(() => { handle_search(); }, [searchData, props.filterList])
+	useEffect(() => { handle_search(); }, [props.filterList])
 
 
 /**--- Click to view details of a picture ---**/
