@@ -126,76 +126,27 @@ function ExploreSearch(props) {
 	// 	setSearchData(input);
 	// }
 
-	// Examples:
-	// TODO: make this not hard-coded
-	const locationLabels = [
-		{ label: 'library'},
-		{ label: 'hospital'},
-		{ label: 'shopping'},
-		{ label: 'public transportation'},
-		{ label: 'entertainment'},
-		{ label: 'sport'},
-		{ label: 'nature'},
-		{ label: 'parking lot'},
-		{ label: 'street'},
-		{ label: 'pedestrian'},
-		{ label: 'restaurant'},
-		{ label: 'work space'},
-		{ label: 'hostpital'},
-		{ label: 'indoor'},
-		{ label: 'outdoor'},
-		{ label: 'entrance'},
-		{ label: 'corridor'},
-		{ label: 'bench'},
-		{ label: 'cabin'},
-		{ label: 'waiting room'},
-		{ label: 'shelf'},
-		{ label: 'pool'},
-		{ label: 'poolside'},
-		{ label: 'table'},
-		{ label: 'zebra walk'},
-		{ label: 'rock climbing wall'}
-	];
-
 	/* Render */
 	return (
-		<div className="Module">
+		<div className="Module ExploreSearchSection">
 			<div className="SearchBar_container">
 				<div className="SearchBar">
-					{/* <input
+					<input
 						type="text"
 						className="SearchBarInput"
 						id={props.id} name={props.id}
-						placeholder=""
+						placeholder="eg. student sitting in library"
 						value={searchText}
 						onChange={(e) => {
 							setSearchText(e.target.value);
 						}}
 						onKeyDown={(e) => {	// pressing ENTER == clicking search icon
 							if (e.key==='Enter') {
-								setSubmittedSearchText(searchText);
+								//setSubmittedSearchText(searchText);
+								props.handleSearch(searchText);
 							}
 						}}
-					/> */}
-					<Autocomplete
-						disablePortal
-						id="combo-box-demo"
-						options={locationLabels}
-						sx={{ width: 300 }}
-						renderInput={
-							(params) => <TextField {...params} label="Search"/>
-						}
-						onKeyPress= {(e, value) => {
-							if (e.key === 'Enter') {
-								console.log('Enter key pressed');
-								// write your functionality here
-								// search for relevant images here
-								// send inputed location back to Facet and re-render images
-								// console.log(e.target.value);
-								props.handleSearch(e.target.value);
-							}
-						}}
-					/>
+					/> 
 					{searchText.length > 0 ?
 						<img
 							srcSet={NoBtn+" 2x"}

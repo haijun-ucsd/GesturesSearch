@@ -605,7 +605,7 @@ function SearchableDropdown(props) {
  *	https://reactjs.org/docs/composition-vs-inheritance.html
  */
 function AccordionSection(props) {
-	const [expanded, setExpanded] = useState(true);	// whether the current AccordionSection is expanded, default as true.
+	const [expanded, setExpanded] = useState(false);	// whether the current AccordionSection is expanded, default as true.
 	return (
 		<div className="AccordionSection">
 			<div className="AccordionSectionHeaderBar">
@@ -631,7 +631,7 @@ function AccordionSection(props) {
 				</div>
 				{expanded ?
 					<img
-						srcSet={ArrowUp_primary+" 2x"} 
+						srcSet={ArrowDown_primary+" 2x"} 
 						onClick={(e) => {
 							e.preventDefault();
 							setExpanded(false);
@@ -639,7 +639,7 @@ function AccordionSection(props) {
 					/>
 				:
 					<img
-						srcSet={ArrowDown_primary+" 2x"} 
+						srcSet={ArrowUp_primary+" 2x"} 
 						onClick={(e) => {
 							e.preventDefault();
 							setExpanded(true);

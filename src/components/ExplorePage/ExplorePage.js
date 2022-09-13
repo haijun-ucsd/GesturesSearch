@@ -10,8 +10,6 @@ import _, { filter, map } from "underscore";
 import Fuse from 'fuse.js';
 import { labels_data } from "../labels_data.js";
 
-//export var searchDataCopy = []; //TODO
-
 
 
 /**
@@ -222,12 +220,12 @@ export default function ExplorePage(props) {
 	const [searchData, setSearchData] = useState([""]);
 
 	const handle_searchbar = (input) => {
-		console.log('search input:', input);
+		console.log('search input:', input); //DEBUG
 		
 		setSearchData((prev) => input.split(', ').map(item => item.trim()));
-		console.log("searchData: ", searchData);
+		console.log("searchData: ", searchData); //DEBUG
 		const inputArr = input.split(' ').map(item => item.trim());
-		console.log("ALL ROLES: ", allRoles);
+		console.log("inputArr: ", inputArr); //DEBUG
 		let existingResult = [];
 
 		//Add searchbar content to applied filters

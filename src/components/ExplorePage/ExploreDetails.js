@@ -129,12 +129,12 @@ export default function ExploreDetails(props) {
 													backgroundColor: categoryobj.color+14 // +14 = 8% opacity
 												}}
 											>
-												<span>{subcategory}</span>
+												<span className="LabelText">{subcategory}</span>
 												<div
 													className="SeparationLine_V"
 													style={{ borderColor: categoryobj.color }}
 												/>
-												<span>{props.pictureClicked[categoryobj.category][subcategory]}</span>
+												<span className="LabelText">{props.pictureClicked[categoryobj.category][subcategory]}</span>
 											</div>
 										)}</>
 									);
@@ -159,7 +159,7 @@ export default function ExploreDetails(props) {
 													backgroundColor: categoryobj.color+14 // +14 = 8% opacity
 												}}
 											>
-												{bodypart}
+												<span className="LabelText">{bodypart}</span>
 											</div>
 										)}</>
 									);
@@ -181,7 +181,7 @@ export default function ExploreDetails(props) {
 																backgroundColor: categoryobj.color+14 // +14 = 8% opacity
 															}}
 														>
-															{label}
+															<span className="LabelText">{label}</span>
 														</div>
 													)}</>
 												);
@@ -197,7 +197,7 @@ export default function ExploreDetails(props) {
 																backgroundColor: categoryobj.color+14 // +14 = 8% opacity
 															}}
 														>
-															{label}
+															<span className="LabelText">{label}</span>
 														</div>
 													);
 												}

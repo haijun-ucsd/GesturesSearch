@@ -30,6 +30,8 @@
 	--gray-light: #EEEEEE;
 	--gray-bg: #EDECED;
 	--pic-width: 200px; /* value should be changed together along the "GalleryColumn_helper" function in components.js. */
+	--header-font-size: 16px;
+	--body-font-size: 14px;
 }
 
 
@@ -50,7 +52,7 @@
 	font-family: "Google Sans",Roboto,Arial,sans-serif;
 	font-style: normal;
 	font-weight: 400;
-	font-size: 16px;
+	font-size: var(--body-font-size);
 	line-height: 120%;
 	letter-spacing: 0.01em;
 	color: var(--gray-dark);
@@ -117,7 +119,7 @@
 	font-family: "Google Sans",Roboto,Arial,sans-serif;
 	font-style: normal;
 	font-weight: 400;
-	font-size: 16px;
+	font-size: var(--body-font-size);
 	line-height: 120%;
 	letter-spacing: 0.01em;
 }
@@ -255,7 +257,7 @@
 	font-family: "Google Sans",Roboto,Arial,sans-serif;
 	font-style: normal;
 	font-weight: 400;
-	font-size: 16px;
+	font-size: var(--body-font-size);
 	line-height: 120%;
 	letter-spacing: 0.01em;
 	color: var(--faded-black);
@@ -365,7 +367,7 @@
 	font-family: "Google Sans",Roboto,Arial,sans-serif;
 	font-style: normal;
 	font-weight: 400;
-	font-size: 16px;
+	font-size: var(--body-font-size);
 	line-height: 120%;
 	letter-spacing: 0.01em;
 	color: var(--faded-black);
@@ -388,6 +390,17 @@
 	background: var(--white);
 	border: 1px solid var(--gray-mid);
 	border-radius: 8px;
+}
+
+::placeholder { /* searchbar placeholder text color */
+	color: var(--gray-mid); /* Firefox */
+	opacity: 1;
+}
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+ color: var(--gray-mid);
+}
+::-ms-input-placeholder { /* Microsoft Edge */
+ color: var(--gray-mid);
 }
 
 .SearchBarInput {
@@ -814,14 +827,14 @@
 	gap: 8px;
 }
 
-.AccordionSection {  /* collapsable, right now the same as Module */
+.AccordionSection {
 	/* as an item */
 	align-self: stretch;
 	/* as a container */
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	padding: 24px;
+	padding: 16px 24px;
 	gap: 16px;
 	border-bottom: 1px solid var(--gray-mid);
 }
@@ -852,7 +865,7 @@
 	font-family: "Google Sans",Roboto,Arial,sans-serif;
 	font-style: normal;
 	font-weight: 500;
-	font-size: 18px;
+	font-size: var(--header-font-size);
 	line-height: 120%;
 	letter-spacing: 0.01em;
 	color: var(--black); /* default color: black */
@@ -891,7 +904,7 @@
 	font-family: "Google Sans",Roboto,Arial,sans-serif;
 	font-style: normal;
 	font-weight: 400;
-	font-size: 16px;
+	font-size: var(--body-font-size);
 	line-height: 120%;
 	letter-spacing: 0.01em;
 	color: var(--gray-dark);
@@ -1318,7 +1331,7 @@ button {
 	font-family: "Google Sans",Roboto,Arial,sans-serif;
 	font-style: normal;
 	font-weight: 500;
-	font-size: 18px;
+	font-size: var(--header-font-size);
 	line-height: 120%;
 	letter-spacing: 0.01em;
 	filter: brightness(80%); /* darkern the colors a bit for readability */
@@ -1335,24 +1348,34 @@ button {
 	background-color: var(--categoryicon-color, var(--black));  /* default color: black */
 }
 .CategoryIcon_Location {
-	mask-image: url("../assets/CategoryIcon_Location.png");
-	-webkit-mask-image: url("../assets/CategoryIcon_Location.png");
+	mask-image: url("../assets/CategoryIcon_Location@2x.png");
+	-webkit-mask-image: url("../assets/CategoryIcon_Location@2x.png");
+	mask-size:contain;
+	-webkit-mask-size:contain;
 }
 .CategoryIcon_Spectators {
-	mask-image: url("../assets/CategoryIcon_Spectators.png");
-	-webkit-mask-image: url("../assets/CategoryIcon_Spectators.png");
+	mask-image: url("../assets/CategoryIcon_Spectators@2x.png");
+	-webkit-mask-image: url("../assets/CategoryIcon_Spectators@2x.png");
+	mask-size:contain;
+	-webkit-mask-size:contain;
 }
 .CategoryIcon_Demographic {
-	mask-image: url("../assets/CategoryIcon_Demographic.png");
-	-webkit-mask-image: url("../assets/CategoryIcon_Demographic.png");
+	mask-image: url("../assets/CategoryIcon_Demographic@2x.png");
+	-webkit-mask-image: url("../assets/CategoryIcon_Demographic@2x.png");
+	mask-size:contain;
+	-webkit-mask-size:contain;
 }
 .CategoryIcon_Modality {
-	mask-image: url("../assets/CategoryIcon_Modality.png");
-	-webkit-mask-image: url("../assets/CategoryIcon_Modality.png");
+	mask-image: url("../assets/CategoryIcon_Modality@2x.png");
+	-webkit-mask-image: url("../assets/CategoryIcon_Modality@2x.png");
+	mask-size:contain;
+	-webkit-mask-size:contain;
 }
 .CategoryIcon_Posture {
-	mask-image: url("../assets/CategoryIcon_Posture.png");
-	-webkit-mask-image: url("../assets/CategoryIcon_Posture.png");
+	mask-image: url("../assets/CategoryIcon_Posture@2x.png");
+	-webkit-mask-image: url("../assets/CategoryIcon_Posture@2x.png");
+	mask-size:contain;
+	-webkit-mask-size:contain;
 }
 
 .FormSubcategories {  /* container for all subcategories */
@@ -1390,7 +1413,7 @@ button {
 	font-family: "Google Sans",Roboto,Arial,sans-serif;
 	font-style: normal;
 	font-weight: 400;
-	font-size: 16px;
+	font-size: var(--body-font-size);
 	line-height: 120%;
 	letter-spacing: 0.01em;
 	color: var(--gray-dark);
@@ -1573,8 +1596,13 @@ button {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
+	justify-content: space-between;
 	z-index: 1;
 	position: relative;
+}
+
+.ExploreSearchSection {
+	flex-grow: 1;
 }
 
 .Facet {
@@ -1636,7 +1664,7 @@ button {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 32px;
+	gap: 24px;
 	z-index: 1;
 }
 
@@ -1645,7 +1673,7 @@ button {
 	align-self: stretch;
 	/* as a container */
 	position: relative;
-	flex: 0 0 400px;
+	flex: 0 0 320px;
 	background: var(--img-container-bg);
 	border: 4px solid var(--img-container-bg);
 }
@@ -1693,7 +1721,7 @@ button {
 	flex-direction: column;
 	align-items: flex-start;
 	margin-bottom: 24px; /* make sure the last labels won't be stucked on the bottom of screen */
-	gap: 32px;
+	gap: 24px;
 }
 
 .DetailsCategory {
@@ -1703,33 +1731,42 @@ button {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: 12px;
+	gap: 8px;
 }
 
 .DetailsCategoryIcon {
-	height: 18px;
-	width: 18px; /* height and width according to CategoryIcons@75%x */
+	height: 18px; width: 18px; /* height and width according to CategoryIcons@75%x */
 	background-color: var(--gray-dark);
 }
 .CategoryIcon_Location_small {
-	mask-image: url("../assets/CategoryIcon_Location@75%x.png");
-	-webkit-mask-image: url("../assets/CategoryIcon_Location@75%x.png");
+	mask-image: url("../assets/CategoryIcon_Location@2x.png");
+	-webkit-mask-image: url("../assets/CategoryIcon_Location@2x.png");
+	mask-size:contain;
+	-webkit-mask-size:contain;
 }
 .CategoryIcon_Spectators_small {
-	mask-image: url("../assets/CategoryIcon_Spectators@75%x.png");
-	-webkit-mask-image: url("../assets/CategoryIcon_Spectators@75%x.png");
+	mask-image: url("../assets/CategoryIcon_Spectators@2x.png");
+	-webkit-mask-image: url("../assets/CategoryIcon_Spectators@2x.png");
+	mask-size:contain;
+	-webkit-mask-size:contain;
 }
 .CategoryIcon_Demographic_small {
-	mask-image: url("../assets/CategoryIcon_Demographic@75%x.png");
-	-webkit-mask-image: url("../assets/CategoryIcon_Demographic@75%x.png");
+	mask-image: url("../assets/CategoryIcon_Demographic@2x.png");
+	-webkit-mask-image: url("../assets/CategoryIcon_Demographic@2x.png");
+	mask-size:contain;
+	-webkit-mask-size:contain;
 }
 .CategoryIcon_Modality_small {
-	mask-image: url("../assets/CategoryIcon_Modality@75%x.png");
-	-webkit-mask-image: url("../assets/CategoryIcon_Modality@75%x.png");
+	mask-image: url("../assets/CategoryIcon_Modality@2x.png");
+	-webkit-mask-image: url("../assets/CategoryIcon_Modality@2x.png");
+	mask-size:contain;
+	-webkit-mask-size:contain;
 }
 .CategoryIcon_Posture_small {
-	mask-image: url("../assets/CategoryIcon_Posture@75%x.png");
-	-webkit-mask-image: url("../assets/CategoryIcon_Posture@75%x.png");
+	mask-image: url("../assets/CategoryIcon_Posture@2x.png");
+	-webkit-mask-image: url("../assets/CategoryIcon_Posture@2x.png");
+	mask-size:contain;
+	-webkit-mask-size:contain;
 }
 
 .CollapsedMenu {
@@ -1788,7 +1825,7 @@ button {
 	font-family: "Google Sans",Roboto,Arial,sans-serif;
 	font-style: normal;
 	font-weight: 400;
-	font-size: 18px;
+	font-size: var(--header-font-size);
 	line-height: 150%;
 	letter-spacing: 0.01em;
 	color: var(--black);
