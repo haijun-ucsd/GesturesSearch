@@ -65,31 +65,58 @@ export default function ExplorePage(props) {
 				remove_filter(label); // remove from both filterList and facetList
 			}
 		} else {
+			if(category === "modality") {
+				const bodypart_displaytext =
+					labels_data.find((categoryobj) =>
+						categoryobj.category === "modality"
+					)["subcategories"].find((subcategoryobj) =>
+						subcategoryobj.subcategory === subcategory
+					).subcategory_displaytext;
 
-			// Add.
-			console.log("label doesn't exists yet, add."); //DEBUG
-			const newFilter = {
-				['label']: label,
-				['label_id']: label_id,
-				['category']: category,
-				['subcategory']: subcategory,
-				['color']: color,
-			};
-			props.setFilterList (prev => ([
-				...prev,
-				newFilter,
-			]));
-			if(!location){
-				props.setFacetList(prev => ({
+				const newFilter = {
+					['label']: bodypart_displaytext + " " + label,
+					['label_id']: 0,
+					['category']: "modality",
+					['subcategory']: subcategory,
+					['color']: "#4FC1E8",
+				};
+				props.setFilterList (prev => ([
 					...prev,
-					[category]: {
-						...prev[category],
-						[subcategory]: [
-							...prev[category][subcategory],
-							label,
-						]
+					newFilter,
+				]));
+				props.setFacetList((prev) => ({
+					...prev,
+					["modality"]: {
+						...prev["modality"],
+						[subcategory]: label,
 					},
 				}));
+			} else {
+				// Add.
+				console.log("label doesn't exists yet, add."); //DEBUG
+				const newFilter = {
+					['label']: label,
+					['label_id']: label_id,
+					['category']: category,
+					['subcategory']: subcategory,
+					['color']: color,
+				};
+				props.setFilterList (prev => ([
+					...prev,
+					newFilter,
+				]));
+				if(!location){
+					props.setFacetList(prev => ({
+						...prev,
+						[category]: {
+							...prev[category],
+							[subcategory]: [
+								...prev[category][subcategory],
+								label,
+							]
+						},
+					}));
+				}
 			}
 		}
 
@@ -187,6 +214,7 @@ export default function ExplorePage(props) {
 	const postureColor = "#AC92EB";
 	const demographicColor = "#ED5564";
 	const spectatorColor = "#FFCE54";
+	const modalityColor = "#4FC1E8";
 
 	const allSites = FetchLabelList_helper("location", "site");
 	const allArchi_compo = FetchLabelList_helper("location", "archi_compo");
@@ -200,12 +228,124 @@ export default function ExplorePage(props) {
 
 	const allQuantities = FetchLabelList_helper("spectators", "quantity");
 	const allDensities = FetchLabelList_helper("spectators", "density");
+
+	const allModality = [
+							{
+								"text": "head available",
+								"label": "available",
+								"bodypart": "head"
+							},
+							{
+								"text": "head unavailable",
+								"label": "unavailable",
+								"bodypart": "head"
+							},
+							{
+								"text": "eyes available",
+								"label": "available",
+								"bodypart": "eyes"
+							},
+							{
+								"text": "eyes unavailable",
+								"label": "unavailable",
+								"bodypart": "eyes"
+							},
+							{
+								"text": "voice available",
+								"label": "available",
+								"bodypart": "voice"
+							},
+							{
+								"text": "voice unavailable",
+								"label": "unavailable",
+								"bodypart": "voice"
+							},
+							{
+								"text": "facial expression available",
+								"label": "available",
+								"bodypart": "facial expression"
+							},
+							{
+								"text": "facial expression unavailable",
+								"label": "unavailable",
+								"bodypart": "facial expression"
+							},
+							{
+								"text": "right arm available",
+								"label": "available",
+								"bodypart": "r_arm"
+							},
+							{
+								"text": "right arm unavailable",
+								"label": "unavailable",
+								"bodypart": "r_arm"
+							},
+							{
+								"text": "left arm available",
+								"label": "available",
+								"bodypart": "l_arm"
+							},
+							{
+								"text": "left arm unavailable",
+								"label": "unavailable",
+								"bodypart": "l_arm"
+							},
+							{
+								"text": "right hand available",
+								"label": "available",
+								"bodypart": "r_hand"
+							},
+							{
+								"text": "right hand unavailable",
+								"label": "unavailable",
+								"bodypart": "r_hand"
+							},
+							{
+								"text": "left hand available",
+								"label": "available",
+								"bodypart": "l_hand"
+							},
+							{
+								"text": "left hand unavailable",
+								"label": "unavailable",
+								"bodypart": "l_hand"
+							},
+							{
+								"text": "leg available",
+								"label": "available",
+								"bodypart": "legs"
+							},
+							{
+								"text": "leg unavailable",
+								"label": "unavailable",
+								"bodypart": "legs"
+							},
+							{
+								"text": "feet available",
+								"label": "available",
+								"bodypart": "feet"
+							},
+							{
+								"text": "feet unavailable",
+								"label": "unavailable",
+								"bodypart": "feet"
+							},
+						];
+
 	//fuse.js
 	const options = {
 		includeScore: true,
-		threshold: 0.3,
+		threshold: 0.4,
+		ignoreLocation: false,
 		minMatchCharLength: 3
 	};
+
+	const modalityOptions = {
+		includeScore: true,
+		threshold: 0.3,
+		keys: ['text']
+	};
+
 	const fuseSite = new Fuse(allSites, options);
 	const fuseArchi = new Fuse(allArchi_compo, options);
 	const fuseIn_outdoor = new Fuse(allIn_outdoor, options);
@@ -219,6 +359,8 @@ export default function ExplorePage(props) {
 	const fuseQuantity = new Fuse(allQuantities, options);
 	const fuseDensity = new Fuse(allDensities, options);
 
+	const fuseModality = new Fuse(allModality, modalityOptions);
+
 	// const [searchData, setSearchData] = useState([""]);
 
 	const handle_searchbar = (input) => {
@@ -227,40 +369,82 @@ export default function ExplorePage(props) {
 		// setSearchData((prev) => input.split(', ').map(item => item.trim()));
 		// console.log("searchData: ", searchData);
 		const inputArr = input.split(' ').map(item => item.trim());
-		console.log("ALL ROLES: ", allRoles);
+		console.log("ALL Postures: ", allPostures);
+		console.log("INPUTARR: ", inputArr);
 		let existingResult = [];
 
 		//Add searchbar content to applied filters
 		if (inputArr.length !== 0) {
-			// result = [];
-			for (const searchField of inputArr) {
-				const result = [];
-				if (fuseSite.search(searchField).length !== 0) {
-					result.push(...fuseSite.search(searchField));
+			var result = [];
+			//Search by words
+			for (var i = 0; i < inputArr.length; i++) {
+				//Search by 3-gram phrase
+				if(i < inputArr.length - 2){
+					const phrase = inputArr[i] + ' ' + inputArr[i+1] + ' ' + inputArr[i+2];
+					if (fuseModality.search(phrase).length !== 0) {
+						result.push(...fuseModality.search(phrase));
+						inputArr.splice(i, 1, '-1');
+						inputArr.splice(i+1, 1, '-1');
+						inputArr.splice(i+2, 1, '-1');
+
+					}
+					console.log("3-gram RESULT: ", result, inputArr);
 				}
-				if (fuseArchi.search(searchField).length !== 0) {
-					result.push(...fuseArchi.search(searchField));
+				//Search by 2-gram phrase
+				if(i < inputArr.length - 1 && inputArr[i] !== -1){
+					const phrase = inputArr[i] + ' ' + inputArr[i+1];
+					// if (fuseSite.search(phrase).length !== 0) {
+					// 	result.push(...fuseSite.search(phrase));
+					// }
+					// if (fuseArchi.search(phrase).length !== 0) {
+					// 	result.push(...fuseArchi.search(phrase));
+					// }
+					// if (fuseAge.search(phrase).length !== 0) {
+					// 	result.push(...fuseAge.search(phrase));
+					// }
+					// if (fuseRole.search(phrase).length !== 0) {
+					// 	result.push(...fuseRole.search(phrase));
+					// }
+					if (fusePosture.search(phrase).length !== 0) {
+						result.push(...fusePosture.search(phrase));
+						inputArr.splice(i, 1, '-1');
+						inputArr.splice(i+1, 1, '-1');
+					}
+					if (fuseModality.search(phrase).length !== 0) {
+						result.push(...fuseModality.search(phrase));
+						inputArr.splice(i, 1, '-1');
+						inputArr.splice(i+1, 1, '-1');
+					}
+					console.log("2-gram RESULT: ", result, inputArr);
 				}
-				if (fuseIn_outdoor.search(searchField).length !== 0) {
-					result.push(...fuseIn_outdoor.search(searchField));
+
+				//Search by words
+				if (fuseSite.search(inputArr[i]).length !== 0) {
+					result.push(...fuseSite.search(inputArr[i]));
 				}
-				if (fuseSex.search(searchField).length !== 0) {
-					result.push(...fuseSex.search(searchField));
+				if (fuseArchi.search(inputArr[i]).length !== 0) {
+					result.push(...fuseArchi.search(inputArr[i]));
 				}
-				if (fuseAge.search(searchField).length !== 0) {
-					result.push(...fuseAge.search(searchField));
+				if (fuseIn_outdoor.search(inputArr[i]).length !== 0) {
+					result.push(...fuseIn_outdoor.search(inputArr[i]));
 				}
-				if (fuseRole.search(searchField).length !== 0) {
-					result.push(...fuseRole.search(searchField));
+				if (fuseSex.search(inputArr[i]).length !== 0) {
+					result.push(...fuseSex.search(inputArr[i]));
 				}
-				if (fusePosture.search(searchField).length !== 0) {
-					result.push(...fusePosture.search(searchField));
+				if (fuseAge.search(inputArr[i]).length !== 0) {
+					result.push(...fuseAge.search(inputArr[i]));
 				}
-				if (fuseQuantity.search(searchField).length !== 0) {
-					result.push(...fuseQuantity.search(searchField));
+				if (fuseRole.search(inputArr[i]).length !== 0) {
+					result.push(...fuseRole.search(inputArr[i]));
 				}
-				if (fuseDensity.search(searchField).length !== 0) {
-					result.push(...fuseDensity.search(searchField));
+				if (fusePosture.search(inputArr[i]).length !== 0) {
+					result.push(...fusePosture.search(inputArr[i]));
+				}
+				if (fuseQuantity.search(inputArr[i]).length !== 0) {
+					result.push(...fuseQuantity.search(inputArr[i]));
+				}
+				if (fuseDensity.search(inputArr[i]).length !== 0) {
+					result.push(...fuseDensity.search(inputArr[i]));
 				}
 
 				result.sort(function(a, b){
@@ -268,7 +452,7 @@ export default function ExplorePage(props) {
 				});
 
 				//TODO: Mark the category of each result and change filter directly
-				if(result.length !== 0){
+				if(result.length > 0){
 					if (allPostures.includes(result[0].item) && !existingResult.includes(result[0].item)) {
 						filter_change_handler(result[0].item, 0, "posture", "posture", postureColor, false);
 					} else if (allSites.includes(result[0].item) && !existingResult.includes(result[0].item)) {
@@ -287,10 +471,15 @@ export default function ExplorePage(props) {
 						filter_change_handler("spectators quantity: " + result[0].item, 0, "spectators", "quantity", spectatorColor, false);
 					} else if (allDensities.includes(result[0].item) && !existingResult.includes(result[0].item)) {
 						filter_change_handler("spectators density: " + result[0].item, 0, "spectators", "density", spectatorColor, false);
+					} else if ("text" in result[0].item) {
+						console.log("ADDING MODALITY: ", result[0].item);
+						filter_change_handler(result[0].item["label"], 0, "modality", result[0].item["bodypart"], modalityColor);
 					}
+
+					existingResult.push(result[0].item);
+					console.log("RESULT: ", result);
 				}
-				existingResult.push(result[0].item);
-				console.log("RESULT: ", result);
+				result = [];
 			}
 		}
 	}
@@ -392,9 +581,9 @@ export default function ExplorePage(props) {
 				// filtered = [...search_helper(props.filterList)];
 				for (let j = 0; j < props.filterList.length; j++){
 					for (let i = props.filterList.length; i > j; i--) {
-						console.log("Subfilter List: ", props.filterList.slice(j, i));
+						// console.log("Subfilter List: ", props.filterList.slice(j, i));
 						filtered.push(..._.difference(search_helper(props.filterList.slice(j, i)), filtered));
-						console.log("Filtering result: ", filtered);
+						// console.log("Filtering result: ", filtered);
 					}
 				}
 			}
