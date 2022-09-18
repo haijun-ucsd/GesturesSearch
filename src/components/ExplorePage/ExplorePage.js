@@ -59,6 +59,7 @@ export default function ExplorePage(props) {
 		if (props.filterList.some(
 			(item) => item.label === label
 		)) {
+			console.log("label exists, remove."); //DEBUG
 			if (removable){
 				// Remove.
 				console.log("label exists, remove."); //DEBUG
@@ -66,31 +67,36 @@ export default function ExplorePage(props) {
 			}
 		} else {
 			if(category === "modality") {
-				const bodypart_displaytext =
+				if(props.facetList["modality"][subcategory] === label){
+					console.log("modality label exists, no change.");
+				} else{
+					const bodypart_displaytext =
 					labels_data.find((categoryobj) =>
 						categoryobj.category === "modality"
 					)["subcategories"].find((subcategoryobj) =>
 						subcategoryobj.subcategory === subcategory
 					).subcategory_displaytext;
 
-				const newFilter = {
-					['label']: bodypart_displaytext + " " + label,
-					['label_id']: 0,
-					['category']: "modality",
-					['subcategory']: subcategory,
-					['color']: "#4FC1E8",
-				};
-				props.setFilterList (prev => ([
-					...prev,
-					newFilter,
-				]));
-				props.setFacetList((prev) => ({
-					...prev,
-					["modality"]: {
-						...prev["modality"],
-						[subcategory]: label,
-					},
-				}));
+					const newFilter = {
+						['label']: bodypart_displaytext + " " + label,
+						['label_id']: 0,
+						['category']: "modality",
+						['subcategory']: subcategory,
+						['color']: "#4FC1E8",
+					};
+					props.setFilterList (prev => ([
+						...prev,
+						newFilter,
+					]));
+					props.setFacetList((prev) => ({
+						...prev,
+						["modality"]: {
+							...prev["modality"],
+							[subcategory]: label,
+						},
+					}));
+				}
+				
 			} else {
 				// Add.
 				console.log("label doesn't exists yet, add."); //DEBUG
@@ -231,102 +237,202 @@ export default function ExplorePage(props) {
 
 	const allModality = [
 							{
-								"text": "head available",
+								"text": "available head available",
 								"label": "available",
 								"bodypart": "head"
 							},
 							{
-								"text": "head unavailable",
+								"text": "free head free",
+								"label": "available",
+								"bodypart": "head"
+							},
+							{
+								"text": "unavailable head unavailable",
 								"label": "unavailable",
 								"bodypart": "head"
 							},
 							{
-								"text": "eyes available",
+								"text": "occupied head occupied",
+								"label": "unavailable",
+								"bodypart": "head"
+							},
+							{
+								"text": "available eyes available",
 								"label": "available",
 								"bodypart": "eyes"
 							},
 							{
-								"text": "eyes unavailable",
+								"text": "free eyes free",
+								"label": "available",
+								"bodypart": "eyes"
+							},
+							{
+								"text": "unavailable eyes unavailable",
 								"label": "unavailable",
 								"bodypart": "eyes"
 							},
 							{
-								"text": "voice available",
+								"text": "occupied eyes occupied",
+								"label": "unavailable",
+								"bodypart": "eyes"
+							},
+							{
+								"text": "available voice available",
 								"label": "available",
 								"bodypart": "voice"
 							},
 							{
-								"text": "voice unavailable",
+								"text": "free voice free",
+								"label": "available",
+								"bodypart": "voice"
+							},
+							{
+								"text": "unavailable voice unavailable",
 								"label": "unavailable",
 								"bodypart": "voice"
 							},
 							{
-								"text": "facial expression available",
-								"label": "available",
-								"bodypart": "facial expression"
-							},
-							{
-								"text": "facial expression unavailable",
+								"text": "occupied voice occupied",
 								"label": "unavailable",
-								"bodypart": "facial expression"
+								"bodypart": "voice"
 							},
 							{
-								"text": "right arm available",
+								"text": "available facial expression available",
+								"label": "available",
+								"bodypart": "facial_expression"
+							},
+							{
+								"text": "free facial expression free",
+								"label": "available",
+								"bodypart": "facial_expression"
+							},
+							{
+								"text": "unavailable facial expression unavailable",
+								"label": "unavailable",
+								"bodypart": "facial_expression"
+							},
+							{
+								"text": "occupied facial expression occupied",
+								"label": "unavailable",
+								"bodypart": "facial_expression"
+							},
+							{
+								"text": "available right arm available",
 								"label": "available",
 								"bodypart": "r_arm"
 							},
 							{
-								"text": "right arm unavailable",
+								"text": "free right arm free",
+								"label": "available",
+								"bodypart": "r_arm"
+							},
+							{
+								"text": "unavailable right arm unavailable",
 								"label": "unavailable",
 								"bodypart": "r_arm"
 							},
 							{
-								"text": "left arm available",
+								"text": "occupied right arm occupied",
+								"label": "unavailable",
+								"bodypart": "r_arm"
+							},
+							{
+								"text": "available left arm available",
 								"label": "available",
 								"bodypart": "l_arm"
 							},
 							{
-								"text": "left arm unavailable",
+								"text": "free left arm free",
+								"label": "available",
+								"bodypart": "l_arm"
+							},
+							{
+								"text": "unavailable left arm unavailable",
 								"label": "unavailable",
 								"bodypart": "l_arm"
 							},
 							{
-								"text": "right hand available",
+								"text": "occupied left arm occupied",
+								"label": "unavailable",
+								"bodypart": "l_arm"
+							},
+							{
+								"text": "available right hand available",
 								"label": "available",
 								"bodypart": "r_hand"
 							},
 							{
-								"text": "right hand unavailable",
+								"text": "free right hand free",
+								"label": "available",
+								"bodypart": "r_hand"
+							},
+							{
+								"text": "unavailable right hand unavailable",
 								"label": "unavailable",
 								"bodypart": "r_hand"
 							},
 							{
-								"text": "left hand available",
+								"text": "occupied right hand occupied",
+								"label": "unavailable",
+								"bodypart": "r_hand"
+							},
+							{
+								"text": "available left hand available",
 								"label": "available",
 								"bodypart": "l_hand"
 							},
 							{
-								"text": "left hand unavailable",
+								"text": "free left hand free",
+								"label": "available",
+								"bodypart": "l_hand"
+							},
+							{
+								"text": "unavailable left hand unavailable",
 								"label": "unavailable",
 								"bodypart": "l_hand"
 							},
 							{
-								"text": "leg available",
+								"text": "occupied left hand occupied",
+								"label": "unavailable",
+								"bodypart": "l_hand"
+							},
+							{
+								"text": "available leg available",
 								"label": "available",
 								"bodypart": "legs"
 							},
 							{
-								"text": "leg unavailable",
+								"text": "free leg free",
+								"label": "available",
+								"bodypart": "legs"
+							},
+							{
+								"text": "unavailable leg unavailable",
 								"label": "unavailable",
 								"bodypart": "legs"
 							},
 							{
-								"text": "feet available",
+								"text": "occupied leg occupied",
+								"label": "unavailable",
+								"bodypart": "legs"
+							},
+							{
+								"text": "available feet available",
 								"label": "available",
 								"bodypart": "feet"
 							},
 							{
-								"text": "feet unavailable",
+								"text": "free feet free",
+								"label": "available",
+								"bodypart": "feet"
+							},
+							{
+								"text": "unavailable feet unavailable",
+								"label": "unavailable",
+								"bodypart": "feet"
+							},
+							{
+								"text": "occupied feet occupied",
 								"label": "unavailable",
 								"bodypart": "feet"
 							},
@@ -336,13 +442,14 @@ export default function ExplorePage(props) {
 	const options = {
 		includeScore: true,
 		threshold: 0.4,
-		ignoreLocation: false,
+		ignoreLocation: true,
 		minMatchCharLength: 3
 	};
 
 	const modalityOptions = {
 		includeScore: true,
 		threshold: 0.3,
+		ignoreLocation: true,
 		keys: ['text']
 	};
 
@@ -383,12 +490,14 @@ export default function ExplorePage(props) {
 					const phrase = inputArr[i] + ' ' + inputArr[i+1] + ' ' + inputArr[i+2];
 					if (fuseModality.search(phrase).length !== 0) {
 						result.push(...fuseModality.search(phrase));
+						console.log("Recognized input: ", inputArr[i], inputArr[i+1], inputArr[i+2]);
+						console.log("Recognized filters: ", fuseModality.search(phrase)[0]['item']['text'].split(' ').slice(1).join(' '));
 						inputArr.splice(i, 1, '-1');
 						inputArr.splice(i+1, 1, '-1');
 						inputArr.splice(i+2, 1, '-1');
 
 					}
-					console.log("3-gram RESULT: ", result, inputArr);
+					// console.log("3-gram RESULT: ", result, inputArr);
 				}
 				//Search by 2-gram phrase
 				if(i < inputArr.length - 1 && inputArr[i] !== -1){
@@ -407,11 +516,13 @@ export default function ExplorePage(props) {
 					// }
 					if (fusePosture.search(phrase).length !== 0) {
 						result.push(...fusePosture.search(phrase));
+						console.log("Recognized filters: ", inputArr[i], inputArr[i+1], fusePosture.search(phrase)[0]);
 						inputArr.splice(i, 1, '-1');
 						inputArr.splice(i+1, 1, '-1');
 					}
 					if (fuseModality.search(phrase).length !== 0) {
 						result.push(...fuseModality.search(phrase));
+						console.log("Recognized filters: ", inputArr[i], inputArr[i+1], fuseModality.search(phrase)[0]['item']['text'].split(' ').slice(1).join(' '));
 						inputArr.splice(i, 1, '-1');
 						inputArr.splice(i+1, 1, '-1');
 					}
