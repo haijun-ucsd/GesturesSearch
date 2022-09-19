@@ -325,3 +325,226 @@ export const labels_data = [
 		],
 	},
 ];
+
+export const allModality = [
+	{
+		"text": "available head available",
+		"label": "available",
+		"bodypart": "head"
+	},
+	{
+		"text": "free head free",
+		"label": "available",
+		"bodypart": "head"
+	},
+	{
+		"text": "unavailable head unavailable",
+		"label": "unavailable",
+		"bodypart": "head"
+	},
+	{
+		"text": "occupied head occupied",
+		"label": "unavailable",
+		"bodypart": "head"
+	},
+	{
+		"text": "available eyes available",
+		"label": "available",
+		"bodypart": "eyes"
+	},
+	{
+		"text": "free eyes free",
+		"label": "available",
+		"bodypart": "eyes"
+	},
+	{
+		"text": "unavailable eyes unavailable",
+		"label": "unavailable",
+		"bodypart": "eyes"
+	},
+	{
+		"text": "occupied eyes occupied",
+		"label": "unavailable",
+		"bodypart": "eyes"
+	},
+	{
+		"text": "available voice available",
+		"label": "available",
+		"bodypart": "voice"
+	},
+	{
+		"text": "free voice free",
+		"label": "available",
+		"bodypart": "voice"
+	},
+	{
+		"text": "unavailable voice unavailable",
+		"label": "unavailable",
+		"bodypart": "voice"
+	},
+	{
+		"text": "occupied voice occupied",
+		"label": "unavailable",
+		"bodypart": "voice"
+	},
+	{
+		"text": "available facial expression available",
+		"label": "available",
+		"bodypart": "facial_expression"
+	},
+	{
+		"text": "free facial expression free",
+		"label": "available",
+		"bodypart": "facial_expression"
+	},
+	{
+		"text": "unavailable facial expression unavailable",
+		"label": "unavailable",
+		"bodypart": "facial_expression"
+	},
+	{
+		"text": "occupied facial expression occupied",
+		"label": "unavailable",
+		"bodypart": "facial_expression"
+	},
+	{
+		"text": "available face available",
+		"label": "available",
+		"bodypart": "facial_expression"
+	},
+	{
+		"text": "free face free",
+		"label": "available",
+		"bodypart": "facial_expression"
+	},
+	{
+		"text": "unavailable face unavailable",
+		"label": "unavailable",
+		"bodypart": "facial_expression"
+	},
+	{
+		"text": "occupied face occupied",
+		"label": "unavailable",
+		"bodypart": "facial_expression"
+	},
+	{
+		"text": "available right arm available",
+		"label": "available",
+		"bodypart": "r_arm"
+	},
+	{
+		"text": "free right arm free",
+		"label": "available",
+		"bodypart": "r_arm"
+	},
+	{
+		"text": "unavailable right arm unavailable",
+		"label": "unavailable",
+		"bodypart": "r_arm"
+	},
+	{
+		"text": "occupied right arm occupied",
+		"label": "unavailable",
+		"bodypart": "r_arm"
+	},
+	{
+		"text": "available left arm available",
+		"label": "available",
+		"bodypart": "l_arm"
+	},
+	{
+		"text": "free left arm free",
+		"label": "available",
+		"bodypart": "l_arm"
+	},
+	{
+		"text": "unavailable left arm unavailable",
+		"label": "unavailable",
+		"bodypart": "l_arm"
+	},
+	{
+		"text": "occupied left arm occupied",
+		"label": "unavailable",
+		"bodypart": "l_arm"
+	},
+	{
+		"text": "available right hand available",
+		"label": "available",
+		"bodypart": "r_hand"
+	},
+	{
+		"text": "free right hand free",
+		"label": "available",
+		"bodypart": "r_hand"
+	},
+	{
+		"text": "unavailable right hand unavailable",
+		"label": "unavailable",
+		"bodypart": "r_hand"
+	},
+	{
+		"text": "occupied right hand occupied",
+		"label": "unavailable",
+		"bodypart": "r_hand"
+	},
+	{
+		"text": "available left hand available",
+		"label": "available",
+		"bodypart": "l_hand"
+	},
+	{
+		"text": "free left hand free",
+		"label": "available",
+		"bodypart": "l_hand"
+	},
+	{
+		"text": "unavailable left hand unavailable",
+		"label": "unavailable",
+		"bodypart": "l_hand"
+	},
+	{
+		"text": "occupied left hand occupied",
+		"label": "unavailable",
+		"bodypart": "l_hand"
+	},
+	{
+		"text": "available leg available",
+		"label": "available",
+		"bodypart": "legs"
+	},
+	{
+		"text": "free leg free",
+		"label": "available",
+		"bodypart": "legs"
+	},
+	{
+		"text": "unavailable leg unavailable",
+		"label": "unavailable",
+		"bodypart": "legs"
+	},
+	{
+		"text": "occupied leg occupied",
+		"label": "unavailable",
+		"bodypart": "legs"
+	},
+	{
+		"text": "available feet available",
+		"label": "available",
+		"bodypart": "feet"
+	},
+	{
+		"text": "free feet free",
+		"label": "available",
+		"bodypart": "feet"
+	},
+	{
+		"text": "unavailable feet unavailable",
+		"label": "unavailable",
+		"bodypart": "feet"
+	},
+	{
+		"text": "occupied feet occupied",
+		"label": "unavailable",
+		"bodypart": "feet"
+	},
+];
