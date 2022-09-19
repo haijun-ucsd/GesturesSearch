@@ -734,22 +734,20 @@ export default function UploadPage(props) {
 	return (
 		<div className="PageBox PageBox_Upload">
 			<section>
-                        {/* If no user: show sign in button
-                            If user exists: show log out button */}
-						{/* <h2 class="alert alert-success">Sign-In With Google</h2> */}
-							<div id="signInDiv"></div>
-							{Object.keys(g_user).length>0 &&
-								<button onClick={(e)=> handleSignOut()}>Sign Out</button>
-							}
-							
-							{g_user &&
-							<div>
-								<img src={g_user.picture}></img>
-								<h3>{g_user.name}</h3>
-								
-							</div>
-							}
-						
+				{/* If no user: show sign in button
+					If user exists: show log out button */}
+				{/* <h2 class="alert alert-success" id="loginPrompt">Sign-In With Google</h2> */}
+				<div class="signInDiv" id="signInDiv"></div>
+				{Object.keys(g_user).length>0 &&
+					<button onClick={(e)=> handleSignOut()}>Sign Out</button>
+				}
+				
+				{g_user &&
+				<div class="flex">
+					<img class="ProfilePic" src={g_user.picture}></img>
+					<span>{g_user.name}</span>
+				</div>
+				}
             </section>
 			<section>
 				<div id="uploadAvail"></div>

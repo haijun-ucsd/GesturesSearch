@@ -2064,3 +2064,13 @@ button {
 	margin-left: 30px;
 	color: #A0D568;
 }
+
+.userinfo {
+	flex-direction: row;
+}
+
+.ProfilePic {
+	border-radius: 50%;
+	width: 30px;
+	margin: 1%;
+  }
