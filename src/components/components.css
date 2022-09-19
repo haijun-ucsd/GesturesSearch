@@ -14,11 +14,11 @@
 	--img-container-bg: rgb(234, 197, 197);
 	--link-color: #A9C7D9;
 	--green-btn: #A0D568;
-	--demographic-color: #ED5564;
-	--spectators-color: #FFCE54;
-	--location-color: #A0D568;
-	--posture-color: #AC92EB;
-	--modality-color: #4FC1E8;
+	--demographic-color: #ED5564; --demographic-color-semitrans: #ED556480; /*#XXXXXX40 for 25% opacity */
+	--spectators-color: #FFCE54; --spectators-color-semitrans: #FFCE5480;
+	--location-color: #A0D568; --location-color-semitrans: #A0D56880;
+	--posture-color: #AC92EB; --posture-color-semitrans: #AC92EB80;
+	--modality-color: #4FC1E8; --modality-color-semitrans: #4FC1E880;
 	--available-modality-color: #A0D568; /* right now same green as Location */
 	--occupied-modality-color: #ED5564; /* right now same red as Demographic */
 	--white: #FFFFFF;
@@ -382,14 +382,43 @@
 	align-self: stretch;
 	/* as a container */
 	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	align-items: center;
+	flex-direction: column;
+	align-items: flex-start;
 	padding: 8px 12px;
-	gap: 8px;
 	background: var(--white);
 	border: 1px solid var(--gray-mid);
 	border-radius: 8px;
+	gap: 8px;
+}
+
+
+.SearchBar_container {
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 16px;
+}
+
+.SearchBarInput {
+	border: none;
+	outline: none;
+	background-color: transparent;
+	flex: 1;
+	max-height: 48px; /* max 2 lines */
+	overflow-y: scroll;
+}
+
+.SearchBarInput_container {
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
 }
 
 ::placeholder { /* searchbar placeholder text color */
@@ -403,13 +432,6 @@
  color: var(--gray-mid);
 }
 
-.SearchBarInput {
-	border: none;
-	outline: none;
-	background-color: transparent;
-	flex: 1;
-}
-
 .SearchBar_clearbtn:hover {
 	filter: brightness(60%);
 }
@@ -418,14 +440,40 @@
 	filter: invert(40%); /* brighten black img */
 }
 
-.SearchBar_container {
+.SearchBar_highlighter { border-radius: 100px; }
+.SearchBar_highlighter_demographic { background-color: var(--demographic-color-semitrans); }
+.SearchBar_highlighter_spectators { background-color: var(--spectators-color-semitrans); }
+.SearchBar_highlighter_location { background-color: var(--location-color-semitrans); }
+.SearchBar_highlighter_posture { background-color: var(--posture-color-semitrans); }
+.SearchBar_highlighter_modality { background-color: var(--modality-color-semitrans); }
+
+.SearchBar_rec_container {
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	position: relative;
+}
+
+.SearchBarRecommendations {
 	/* as an item */
 	align-self: stretch;
 	/* as a container */
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: 16px;
+	gap: 8px;
+	padding-top: 8px;
+	border-top: 1px solid var(--gray-mid);
+}
+
+.SearchBarRecommendations_category {
+	/* as an item */
+	align-self: stretch;
+	/* as a container */
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 4px;
 }
 
 .SearchBar_noresult {

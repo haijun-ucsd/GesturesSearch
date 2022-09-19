@@ -1,3 +1,12 @@
+/**
+ * UploadPage.js
+ * 
+ * This file contains the entry point of the Upload page, which is one of the major tabs.
+ * Upload page is used to annotate and upload pictures to the database.
+ */
+
+
+
 import React, { useState, useEffect } from "react";
 //import { Container, Row, Col, Button, InputGroup } from 'react-bootstrap';
 //import 'bootstrap/dist/css/bootstrap.min.css';
@@ -446,7 +455,9 @@ export default function UploadPage(props) {
 				const formData = {...props.formDataList[idx]};
 				console.log("[Upload Step 2] Append image index under associated labels."); //DEBUG
 				const append_to_labels = (label, path) => { // helper function to append image under the correct path within "labels" folder
-					set(ref_db(db, ("labels/" + path + label + "/" + finalPicIndex)), { url: url });
+					let full_path = ("labels/" + path + label + "/" + finalPicIndex);
+					console.log("appendding label '" + label + "' to path: ", full_path); //DEBUG
+					set(ref_db(db, full_path), { url: url });
 				}
 				for (let category in formData) {
 					if (category === "posture") { // special case: posture (no subcategory layer)
@@ -455,11 +466,17 @@ export default function UploadPage(props) {
 						});
 					} else { // default case
 						for (let subcategory in formData[category]) {
-							if (Array.isArray(formData[category][subcategory])) {
+							if (
+								Array.isArray(formData[category][subcategory])
+								&& formData[category][subcategory].length !== 0
+							) {
 								formData[category][subcategory].map(label => {
 									append_to_labels(label, (category + "/" + subcategory + "/"));
 								});
-							} else {
+							} else if (
+								!Array.isArray(formData[category][subcategory])
+								&& formData[category][subcategory] !== ""
+							) {
 								append_to_labels(
 									formData[category][subcategory],
 									(category + "/" + subcategory + "/")

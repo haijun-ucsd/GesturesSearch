@@ -1,13 +1,22 @@
+/**
+ * ExplorePage.js
+ * 
+ * This file contains the entry point of the Explore page, which is one of the major tabs.
+ * Explore page allow users to search through images in the database using filters of their choice.
+ */
+
+
+
 import React, { useState, useEffect } from "react";
 import { getDatabase, onValue, ref as ref_db, set } from "firebase/database";
 import "bootstrap/dist/css/bootstrap.min.css";
+import _, { filter, map } from "underscore";
+import Fuse from 'fuse.js';
 import "../components.css";
 import Facet from "./Facet";
 import ExploreGallery from "./ExploreGallery";
 import ExploreDetails from "./ExploreDetails";
-import { FilterStructure, FetchLabelList_helper } from "../components";
-import _, { filter, map } from "underscore";
-import Fuse from 'fuse.js';
+import { FilterStructure, LabelStructure_category_only, FetchLabelList_helper, colors } from "../components";
 import { labels_data } from "../labels_data.js";
 
 
@@ -16,12 +25,17 @@ import { labels_data } from "../labels_data.js";
  * UploadPage
  *
  * hooks stored at App level:
+ *	- [filterList, setFilterList]
  *  - [addedPics, setAddedPics]
  *  - [addedPicsUrl, setAddedPicsUrl]
  *  - [formDataList, setFormDataList]
  *  - [completePercentages, setCompletePercentages]
  *  - [addedLabels, setAddedLabels]
  *  - [picAnnotation, setPicAnnotation]
+ * 
+ * Usage:
+ *  A new filter in filterList has the following strcuture:
+ *  { label, label_id, category, subcategory, color }
  *
  * TODO: clean up the code to combine the 6 hooks.
  */
@@ -46,7 +60,7 @@ export default function ExplorePage(props) {
 	 *  https://stackoverflow.com/questions/43784554/how-to-add-input-data-to-list-in-react-js
 	 *  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some
 	 */
-	const filter_change_handler = (label, label_id, category, subcategory, color, removable=true, location=false) => {
+	const filter_change_handler = (label, label_id, category, subcategory, color, removable=true, isLocation=false) => {
 		console.log("clicked on filter: " + label); //DEBUG
 
 		// Check for empty.
@@ -77,7 +91,9 @@ export default function ExplorePage(props) {
 				...prev,
 				newFilter,
 			]));
-			if(!location){
+
+			// Special case: Location, no module in facet.
+			if (! (isLocation || category==="location")) {
 				props.setFacetList(prev => ({
 					...prev,
 					[category]: {
@@ -181,116 +197,322 @@ export default function ExplorePage(props) {
 
 
 /**--- Search ---**/
-	const locationColor = "#A0D568";
-	const postureColor = "#AC92EB";
-	const demographicColor = "#ED5564";
-	const spectatorColor = "#FFCE54";
 
-	const allSites = FetchLabelList_helper("location", "site");
-	const allArchi_compo = FetchLabelList_helper("location", "archi_compo");
-	const allIn_outdoor = FetchLabelList_helper("location", "in_outdoor");
+	const [searchText, setSearchText] = useState(""); // searchbar input, plain text
+	const [highlightOptions, setHighlightOptions] = useState([]); // highlight options to use along with HighlightWithinTextarea
+	const [searchbarDefaultResults, setSearchbarDefaultResults] = useState([]); // default search data to be accepted and append to filterList, if the user hits ENTER
+	const [searchbarRecommendations, setSearchbarRecommendations] = useState(LabelStructure_category_only); // recommended labels for selection in the dropdown menu
 
-	const allSex = FetchLabelList_helper("demographic", "sex");
-	const allAge = FetchLabelList_helper("demographic", "age");
-	const allRoles = FetchLabelList_helper("demographic", "social_role");
+	// DEBUG
+	useEffect(() => { console.log("searchText: '", searchText); }, [searchText]);
+	useEffect(() => { console.log("highlightOptions: '", highlightOptions); }, [highlightOptions]);
+	useEffect(() => { console.log("searchbarDefaultResults: '", searchbarDefaultResults); }, [searchbarDefaultResults]);
+	useEffect(() => { console.log("searchbarRecommendations: '", searchbarRecommendations); }, [searchbarRecommendations]);
 
-	const allPostures = FetchLabelList_helper("posture", undefined);
+	// Fetch existing labels dynamically. //TODO: make sure existingLabelList is indeed dynamically updated.
+	const [existingLabelList, setExistingLabelList] = useState([]);
+	useEffect(() => {
+		const db = getDatabase();
+		const existingLabelsRef = ref_db(db, "labels/"); //TODO: should eventually used "reviewed_labels/" instead of "labels/"
+		onValue(existingLabelsRef, (snapshot) => {
+			setExistingLabelList(snapshot.val());
+			console.log("Existing label list fetched: ", existingLabelList); //DEBUG
+		})
+	}, []);
 
-	const allQuantities = FetchLabelList_helper("spectators", "quantity");
-	const allDensities = FetchLabelList_helper("spectators", "density");
-	//fuse.js
-	const options = {
+	// Use the Fuse.js library to perform fuzzy search.
+	const fuse_options = {
 		includeScore: true,
-		threshold: 0.3,
+		shouldSort: true,
+		threshold: 0.2,
 		minMatchCharLength: 3
 	};
-	const fuseSite = new Fuse(allSites, options);
-	const fuseArchi = new Fuse(allArchi_compo, options);
-	const fuseIn_outdoor = new Fuse(allIn_outdoor, options);
 
-	const fuseSex = new Fuse(allSex, options);
-	const fuseAge = new Fuse(allAge, options);
-	const fuseRole = new Fuse(allRoles, options);
+	// Ideal length of recommended labels.
+	const recommendationMaxLength = 3;
 
-	const fusePosture = new Fuse(allPostures, options);
+	// Update searchbar details whenever searchText changes.
+	useEffect(() => { handle_searchbar_input(); }, [searchText, props.filterList]);
 
-	const fuseQuantity = new Fuse(allQuantities, options);
-	const fuseDensity = new Fuse(allDensities, options);
+	/**
+	 * handle_searchbar_input
+	 * 
+	 * To handle inputs to ExploreSearch, identify their categories, highlight, and offer recommendations.
+	 * This function runs whenever searchText changes.
+	 * 
+	 * Usage:
+	 *	Each identified filter should have the following structure for consistency:
+	 *	{ label, label_id, category, subcategory, color }
+	 * 
+	 * references:
+	 *	https://medium.com/@uigalaxy7/how-to-render-html-in-react-7f3c73f5cafc
+	 *	https://stackoverflow.com/questions/65136866/sort-array-but-values-of-nested-arrays
+	 *	https://stackoverflow.com/questions/49600799/react-native-for-loop-getting-index
+	 */
+	const handle_searchbar_input = () => {
 
-	// const [searchData, setSearchData] = useState([""]);
+		// Upon hitting ENTER, exit handle_searchbar_input() and perform handle_searchbar_accept_default().
+		// This function has to be triggerred here because HighlightWithinTextarea seems not detecting key event.
+		if (searchText.indexOf("\n") !== -1) { // searchText contains line break = ENTER
+			handle_searchbar_accept_default();
+			return;
+		}
 
-	const handle_searchbar = (input) => {
-		console.log('search input:', input);
-		
-		// setSearchData((prev) => input.split(', ').map(item => item.trim()));
-		// console.log("searchData: ", searchData);
-		const inputArr = input.split(' ').map(item => item.trim());
+		console.log('search input:', searchText); //DEBUG
+
+		// Clear searchbarDefaultResults and setSearchbarRecommendations before re-appending towards the end of this function.
+		setSearchbarDefaultResults([]);
+		setSearchbarRecommendations(LabelStructure_category_only);
+
+		// Take a snapshot of the current search input and split it into an array of words.
+		const inputArr = searchText.split(' ').map(item => item.trim());
+		const inputArrLength = inputArr.length;
 		console.log("inputArr: ", inputArr); //DEBUG
-		let existingResult = [];
 
-		//Add searchbar content to applied filters
-		if (inputArr.length !== 0) {
-			// result = [];
-			for (const searchField of inputArr) {
-				const result = [];
-				if (fuseSite.search(searchField).length !== 0) {
-					result.push(...fuseSite.search(searchField));
-				}
-				if (fuseArchi.search(searchField).length !== 0) {
-					result.push(...fuseArchi.search(searchField));
-				}
-				if (fuseIn_outdoor.search(searchField).length !== 0) {
-					result.push(...fuseIn_outdoor.search(searchField));
-				}
-				if (fuseSex.search(searchField).length !== 0) {
-					result.push(...fuseSex.search(searchField));
-				}
-				if (fuseAge.search(searchField).length !== 0) {
-					result.push(...fuseAge.search(searchField));
-				}
-				if (fuseRole.search(searchField).length !== 0) {
-					result.push(...fuseRole.search(searchField));
-				}
-				if (fusePosture.search(searchField).length !== 0) {
-					result.push(...fusePosture.search(searchField));
-				}
-				if (fuseQuantity.search(searchField).length !== 0) {
-					result.push(...fuseQuantity.search(searchField));
-				}
-				if (fuseDensity.search(searchField).length !== 0) {
-					result.push(...fuseDensity.search(searchField));
-				}
+		// Check for empty array.
+		if (searchText==="" || inputArrLength === 0) { return; }
 
-				result.sort(function(a, b){
-					return a.score - b.score;
-				});
+		/**
+		 * inputWithCategory
+		 * Helper variable to store input strings that need to be highlighted by category.
+		 * Structure of inputWithCategory: [ [ <exact string>, <category> ], [...] ]
+		 */
+		let inputWithCategory = [];
 
-				//TODO: Mark the category of each result and change filter directly
-				if(result.length !== 0){
-					if (allPostures.includes(result[0].item) && !existingResult.includes(result[0].item)) {
-						filter_change_handler(result[0].item, 0, "posture", "posture", postureColor, false);
-					} else if (allSites.includes(result[0].item) && !existingResult.includes(result[0].item)) {
-						filter_change_handler(result[0].item, 0, "location", "site", locationColor, false, true);
-					} else if (allArchi_compo.includes(result[0].item) && !existingResult.includes(result[0].item)) {
-						filter_change_handler(result[0].item, 0, "location", "archi_compo", locationColor, false, true);
-					} else if (allIn_outdoor.includes(result[0].item) && !existingResult.includes(result[0].item)) {
-						filter_change_handler(result[0].item, 0, "location", "in_outdoor", locationColor, false, true);
-					} else if (allSex.includes(result[0].item) && !existingResult.includes(result[0].item)) {
-						filter_change_handler(result[0].item, 0, "demographic", "sex", demographicColor, false);
-					} else if (allAge.includes(result[0].item) && !existingResult.includes(result[0].item)) {
-						filter_change_handler(result[0].item, 0, "demographic", "age", demographicColor, false);
-					} else if (allRoles.includes(result[0].item) && !existingResult.includes(result[0].item)) {
-						filter_change_handler(result[0].item, 0, "demographic", "social_role", demographicColor, false, true);
-					} else if (allQuantities.includes(result[0].item) && !existingResult.includes(result[0].item)) {
-						filter_change_handler("spectators quantity: " + result[0].item, 0, "spectators", "quantity", spectatorColor, false);
-					} else if (allDensities.includes(result[0].item) && !existingResult.includes(result[0].item)) {
-						filter_change_handler("spectators density: " + result[0].item, 0, "spectators", "density", spectatorColor, false);
+		/**
+		 * recommendations
+		 * Helper variable to store all recommendations for the current input.
+		 * Same structure as searchbarRecommendations.
+		 */
+		let recommendations = { ...LabelStructure_category_only };
+
+		/**
+		 * fuzzy_search
+		 * Helper function to search a word or term within a certain range.
+		 */
+		const fuzzy_search = (term, range) => {
+			range = Object.keys(range).map(label => label); //TODO: This line is an extra step when using the "labels" folder. Delete this line after switching to "reviewed_labels" folder!
+			const fuzzy_search_helper = new Fuse(range, fuse_options);
+			let all_fuzzy_search_outcome = fuzzy_search_helper.search(term);
+			if (all_fuzzy_search_outcome.length > 0) { console.log("fuzzy_search() for term '" + term + "' within search range: ", range, " results in: ", all_fuzzy_search_outcome); } //DEBUG
+			return all_fuzzy_search_outcome;
+		}
+
+		// Search over all words in inputArr and categorize the found labels into inputWithCategory.
+		// TODO: Add function to search multi-word terms.
+		for (let [inputArrIdx, inputArrSingleWord] of inputArr.entries()) { // get index
+			console.log("Performing search on word '" + inputArrSingleWord + "' at idx " + inputArrIdx + ".");
+
+			/**
+			 * result
+			 * Helper variables to store default search results for the current word.
+			 * Will select the closest-relevant result in the end.
+			 * Structure: [ { item, refIndex, score, category, subcategory }, {...} ]
+			 */
+			let result = [];
+
+			/**
+			 * update_result
+			 * Helper function to update result and append to searchbarRecommendations if necessary.
+			 * If called, search_outcome.length must >0.
+			 */
+			const update_result = (search_outcome, category, subcategory) => {
+
+				// Append category and subcategory values to each search_outcome item.
+				for (let i = 0; i < search_outcome.length; i++) {
+					search_outcome[i] = {
+						...search_outcome[i],
+						category: category,
+						subcategory: subcategory,
 					}
 				}
-				existingResult.push(result[0].item);
-				console.log("RESULT: ", result);
+
+				// Use search_outcome[0] as default search result.
+				const top_search_outcome = search_outcome[0];
+				if (! (
+					props.filterList.some(filter => filter.label === top_search_outcome.item)
+					|| result.some(element => element.item === top_search_outcome.item)
+				)) {
+					result.push(top_search_outcome);
+				}
+
+				// Push into searchbarRecommendations if >1 results are found.
+				//search_outcome = search_outcome.slice(1); // can use this line to trim off first element if found necessary
+				if (search_outcome.length > 0) { // if more elements exist
+					console.log("Exists more search_outcome other than the top one: ", search_outcome); //DEBUG
+					let newCategoryRecommendations = [
+						...recommendations[category],
+						...search_outcome
+					];
+					recommendations[category] = newCategoryRecommendations;
+				}
+			}
+
+			// Search through all possible categories.
+			for (let category in existingLabelList) {
+
+				// Special case: Posture, no subcategory.
+				if (category === "posture") {
+
+					// Perform fuzzy search on the current word within the current category.
+					let search_outcome = fuzzy_search(
+						inputArrSingleWord,
+						existingLabelList[category],
+					);
+
+					// If any match is found, update default search result list and recommendations.
+					if (search_outcome.length > 0) {
+						update_result(search_outcome, "posture", "posture");
+					}
+				}
+
+				// Default case.
+				else {
+					for (let subcategory in existingLabelList[category]) {
+
+						// Fuzzy search within the current subcategory.
+						let search_outcome = fuzzy_search(
+							inputArrSingleWord,
+							existingLabelList[category][subcategory],
+						);
+
+						// Again, if any match is found, update default search result list and recommendations.
+						if (search_outcome.length > 0) {
+							update_result(search_outcome, category, subcategory);
+						}
+					}
+				}
+			}
+
+			// Check for existence of result.
+			if (result.length < 1) { continue; }
+
+			// Sort results from all subcategories by their degree of relevance.
+			result.sort((a, b) => (a.score - b.score));
+			console.log("Cross-category results after sorting: ", result); //DEBUG
+
+			// Update inputWithCategory using the category of the most-relevant result item.
+			inputWithCategory.push([inputArrSingleWord, result[0].category]);
+
+			// Update searchbarDefaultResults according to the final result.
+			setSearchbarDefaultResults(prev => [ ...prev, result[0] ]);
+
+
+			// if (fuseSite.search(inputArrSingleWord).length !== 0) {
+			// 	result.push(...fuseSite.search(inputArrSingleWord));
+			// }
+			// if (fuseArchi.search(inputArrSingleWord).length !== 0) {
+			// 	result.push(...fuseArchi.search(inputArrSingleWord));
+			// }
+			// if (fuseIn_outdoor.search(inputArrSingleWord).length !== 0) {
+			// 	result.push(...fuseIn_outdoor.search(inputArrSingleWord));
+			// }
+			// if (fuseSex.search(inputArrSingleWord).length !== 0) {
+			// 	result.push(...fuseSex.search(inputArrSingleWord));
+			// }
+			// if (fuseAge.search(inputArrSingleWord).length !== 0) {
+			// 	result.push(...fuseAge.search(inputArrSingleWord));
+			// }
+			// if (fuseRole.search(inputArrSingleWord).length !== 0) {
+			// 	result.push(...fuseRole.search(inputArrSingleWord));
+			// }
+			// if (fusePosture.search(inputArrSingleWord).length !== 0) {
+			// 	result.push(...fusePosture.search(inputArrSingleWord));
+			// }
+			// if (fuseQuantity.search(inputArrSingleWord).length !== 0) {
+			// 	result.push(...fuseQuantity.search(inputArrSingleWord));
+			// }
+			// if (fuseDensity.search(inputArrSingleWord).length !== 0) {
+			// 	result.push(...fuseDensity.search(inputArrSingleWord));
+			// }
+			// result.sort(function(a, b){
+			// 	return a.score - b.score;
+			// });
+			// console.log("result after splitting and sorting: ", result); //DEBUG TODO:sorting???
+			// //TODO: Mark the category of each result and change filter directly
+			// if(result.length !== 0){
+			// 	if (allPostures.includes(result[0].item) && !props.filterList.includes(result[0].item)) {
+			// 		filter_change_handler(result[0].item, 0, "posture", "posture", postureColor, false);
+			// 	} else if (allSites.includes(result[0].item) && !props.filterList.includes(result[0].item)) {
+			// 		filter_change_handler(result[0].item, 0, "location", "site", locationColor, false, true);
+			// 	} else if (allArchi_compo.includes(result[0].item) && !props.filterList.includes(result[0].item)) {
+			// 		filter_change_handler(result[0].item, 0, "location", "archi_compo", locationColor, false, true);
+			// 	} else if (allIn_outdoor.includes(result[0].item) && !props.filterList.includes(result[0].item)) {
+			// 		filter_change_handler(result[0].item, 0, "location", "in_outdoor", locationColor, false, true);
+			// 	} else if (allSex.includes(result[0].item) && !props.filterList.includes(result[0].item)) {
+			// 		filter_change_handler(result[0].item, 0, "demographic", "sex", demographicColor, false);
+			// 	} else if (allAge.includes(result[0].item) && !props.filterList.includes(result[0].item)) {
+			// 		filter_change_handler(result[0].item, 0, "demographic", "age", demographicColor, false);
+			// 	} else if (allRoles.includes(result[0].item) && !props.filterList.includes(result[0].item)) {
+			// 		filter_change_handler(result[0].item, 0, "demographic", "social_role", demographicColor, false, true);
+			// 	} else if (allQuantities.includes(result[0].item) && !props.filterList.includes(result[0].item)) {
+			// 		filter_change_handler("spectators quantity: " + result[0].item, 0, "spectators", "quantity", spectatorColor, false);
+			// 	} else if (allDensities.includes(result[0].item) && !props.filterList.includes(result[0].item)) {
+			// 		filter_change_handler("spectators density: " + result[0].item, 0, "spectators", "density", spectatorColor, false);
+			// 	}
+			// }
+			// props.filterList.push(result[0].item);
+			// console.log("RESULT: ", result);
+		}
+
+		// Update searchbar highlights according to inputWithCategory.
+		// Structure of inputWithCategory is: [ [ <exact string>, <category> ], [...] ]
+		console.log("inputWithCategory : ", inputWithCategory); //DEBUG
+		setHighlightOptions([
+			...(inputWithCategory.map(item => {
+				const exactstring = item[0];
+				const classname = "SearchBar_highlighter SearchBar_highlighter_" + item[1]/*category*/;
+				return ({
+					highlight: exactstring,
+					className: classname
+				});
+			}))
+		]);
+
+		// Sort and trim recommendations to the ideal length.
+		let newSearchbarRecommendations = recommendations; // take a snapshot
+		Object.entries(newSearchbarRecommendations).map(([category, recs]) => {
+			recs.sort((a, b) => (a.score - b.score)); // sort
+			console.log(recs);
+			let uniqueRecs = [];
+			for (let i = 0; i < recs.length; i++) { // remove duplicates
+				if (! uniqueRecs.some(element => element.item===recs[i].item)) {
+					uniqueRecs.push(recs[i]);
+					console.log(uniqueRecs);
+				}
+			}
+			if (uniqueRecs.length > recommendationMaxLength) {
+				newSearchbarRecommendations[category]
+					= uniqueRecs.slice(0, recommendationMaxLength);
+			} else {
+				newSearchbarRecommendations[category] = uniqueRecs;
+			}
+		});
+		setSearchbarRecommendations(newSearchbarRecommendations);
+	}
+
+	function handle_searchbar_accept_default() {
+
+		// Take a snapshot of searchbarDefaultResults.
+		const currSearchbarDefaultResults = searchbarDefaultResults;
+		console.log("Current searchbarDefaultResults when calling handle_searchbar_accept_default(): ", currSearchbarDefaultResults); //DEBUG
+
+		// Add to filterList and update facetList.
+		for (let element of currSearchbarDefaultResults) {
+			if (element.category === "location") {
+				filter_change_handler(element.item, 0, element.category, element.subcategory, colors[element.category], false, true);
+			} else if (element.category === "spectators") {
+				filter_change_handler("spectators "+element.subcategory+": "+element.item, 0, element.category, element.subcategory, colors[element.category], false);
+			} else { // default
+				filter_change_handler(element.item, 0, element.category, element.subcategory, colors[element.category], false);
 			}
 		}
+
+		// Clear all dynamic fields.
+		setSearchText("");
+		setHighlightOptions([]);
+		setSearchbarDefaultResults([]);
+		setSearchbarRecommendations(LabelStructure_category_only);
 	}
 
 	function search_helper (subFilterList) {
@@ -368,6 +590,7 @@ export default function ExplorePage(props) {
 				}
 			}
 		})
+
 		return filtered;
 	}
 
@@ -442,9 +665,14 @@ export default function ExplorePage(props) {
 				filterList={props.filterList}
 				filter_change_handler={filter_change_handler}
 				remove_filter={remove_filter}
-				setFacetList={props.setFacetList}
+				searchText={searchText}
+				setSearchText={setSearchText}
+				handle_searchbar_input={handle_searchbar_input}
+				handle_searchbar_accept_default={handle_searchbar_accept_default}
+				highlightOptions={highlightOptions}
+				searchbarRecommendations={searchbarRecommendations}
 				facetList={props.facetList}
-				handleSearch={handle_searchbar}
+				setFacetList={props.setFacetList}
 			/>
 			<ExploreGallery
 				imageList={imageList}
