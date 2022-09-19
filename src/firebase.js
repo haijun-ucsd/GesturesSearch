@@ -4,13 +4,17 @@ import firebase from 'firebase/compat/app';
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getStorage } from 'firebase/storage'
+import React, { useEffect, useContext } from "react";
+import AuthContext from "./components/Login/AuthProvider";
+
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
+let firebaseConfig = null;
+const firebaseConfig_public = {
   apiKey: "AIzaSyAL5oQ-HfVf_xybE0VDWDGMCqhZzN0J4BQ",
   authDomain: "ubigesture.firebaseapp.com",
   projectId: "ubigesture",
@@ -30,9 +34,25 @@ const firebaseConfig_test = {
   measurementId: "G-DY6MXLBJGD"
 };
 
+
+export default function SwitchDatabase (IsAuth){
+  console.log("Inside firebase.js~~~~~~~~~", typeof IsAuth);
+  if (IsAuth==true){
+    console.log("SWITCH TO TEST");
+    firebaseConfig = firebaseConfig_test;
+  }
+  else{
+    console.log("SWITCH TO PUBLIC");
+    firebaseConfig = firebaseConfig_public;
+  }
+  return;
+}
+
+
+
 // Initialize Firebase
 // const app = initializeApp(firebaseConfig); // leave this line uncommented for *actual annotation*
-const app = initializeApp(firebaseConfig_test); // leave this line uncommented for *testing*
+const app = initializeApp(firebaseConfig_public); // leave this line uncommented for *testing*
 const analytics = getAnalytics(app);
 const storage = getStorage(app);
 export {firebase, storage};

@@ -1016,6 +1016,29 @@ button {
     margin-bottom: 0.5rem;
 }
 
+.data {
+    display: none;
+}
+
+.g-signin2 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -50px;
+    margin-left: -50px;
+}
+
+section {
+	height: 100%;
+	width: 100%;
+	display:inline-block;
+  }
+  *{
+	padding:0px;
+	margin:0px;
+  }
+
+
 
 /* UploadPage WaitingRoom */
 

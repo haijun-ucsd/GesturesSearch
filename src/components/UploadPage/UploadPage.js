@@ -13,7 +13,7 @@ import WaitingRoom from "./WaitingRoom";
 import UploadControl from "./UploadControl";
 import UploadPopUp from "./UploadPopUp";
 import { LabelStructure, LabelStructure_type2_only } from "../components";
-
+import jwt_decode from "jwt-decode"; //decode json web token
 
 
 /**
@@ -624,29 +624,81 @@ export default function UploadPage(props) {
 	};
 
 
+	/*----Google OAuth----*/
+    const [ g_user, setG_user] = useState({});
+    const handleCallbackResponse=(res)=>{
+        console.log("Encoded JWT ID token:"+res.credential); //credential is the json web token
+        var userObject = jwt_decode(res.credential); //decoding the token
+        console.log(userObject);
+        setG_user(userObject);
+        document.getElementById("signInDiv").hidden = true;
+		document.getElementById("uploadAvail").hidden = false;
+    }
+    const handleSignOut=(e)=>{
+        setG_user({});
+        document.getElementById("signInDiv").hidden = false;
+		
+    }
+    useEffect(()=>{
+        /*global google*/
+        google.accounts.id.initialize({
+            client_id:"1040045622206-ivnovfjcd4jq58rbrcrm49qd7ra52d2l.apps.googleusercontent.com",
+            callback: handleCallbackResponse //a function called after logged in
+        });
+        google.accounts.id.renderButton(
+            document.getElementById("signInDiv"),
+            {theme:"outline",size:"large"}
+        );
+        // google.accounts.id.prompt();
+    },[]);
+
+
 /**--- Render ---**/
 	return (
-		<div className="PageBox PageBox_Upload">
-			<div className="UploadWaitingRoom">
-				<UploadControl
-					handle_add_pic={handle_add_pic}
-					numAddedPics={props.addedPics.length}
-					addingPic={addingPic}
-					uploadingPic={uploadingPic}
-					setAddingPic={setAddingPic}
-					upload_all_valid_images={upload_all_valid_images}
-					uploadDisabled={uploadDisabled}
-				/>
-				<WaitingRoom
-					unify_image_format={unify_image_format}
-					handle_remove_pic={handle_remove_pic}
-					addedPics={props.addedPics}
-					addedPicsUrl={props.addedPicsUrl}
-					completePercentages={props.completePercentages}
-					addedLabels={props.addedLabels}
-					setClickedUrl={setClickedUrl}
-				/>
-			</div>
+		<div className="PageBox PageBox_Upload" >
+			<section>
+                        {/* If no user: show sign in button
+                            If user exists: show log out button */}
+						<h2 class="alert alert-success">Sign-In With Google</h2>
+                        <div class="signInDiv" id="signInDiv"></div>
+                        {Object.keys(g_user).length>0 &&
+                            <button onClick={(e)=> handleSignOut()}>Sign Out</button>
+                        }
+                        
+                        {g_user &&
+                        <div>
+                            <img src={g_user.picture}></img>
+                            <h3>{g_user.name}</h3>
+							
+                        </div>
+                        }
+            </section>
+			<section>
+				<div id="uploadAvail"></div>
+				{Object.keys(g_user).length>0 &&
+					<div className="UploadWaitingRoom" id="uploadAvail">
+					<UploadControl
+						handle_add_pic={handle_add_pic}
+						numAddedPics={props.addedPics.length}
+						addingPic={addingPic}
+						uploadingPic={uploadingPic}
+						setAddingPic={setAddingPic}
+						upload_all_valid_images={upload_all_valid_images}
+						uploadDisabled={uploadDisabled}
+					/>
+					<WaitingRoom
+						unify_image_format={unify_image_format}
+						handle_remove_pic={handle_remove_pic}
+						addedPics={props.addedPics}
+						addedPicsUrl={props.addedPicsUrl}
+						completePercentages={props.completePercentages}
+						addedLabels={props.addedLabels}
+						setClickedUrl={setClickedUrl}
+					/>
+				</div>
+				}
+			</section>
+			
 			{(clickedUrl!="") ? (
 				<UploadPopUp
 					url={clickedUrl}
@@ -662,5 +714,6 @@ export default function UploadPage(props) {
 				/>
 			) : null}
 		</div>
+		
 	);
 }

@@ -12,6 +12,7 @@ import ExplorePage from './ExplorePage/ExplorePage';
 import AboutPage from './AboutPage/AboutPage';
 import LoginPage from './Login/LoginPage';
 import SignUpPage from './Login/SignUpPage';
+import { AuthProvider } from './Login/AuthProvider';
 
 /**
  * references:
@@ -47,10 +48,26 @@ export default function App() {
     console.log("picAnnotation has been updated:", picAnnotation);
   }, [picAnnotation])
 
+  function handleCallbackResponse(res){
+    console.log("Encoded JWT ID token:"+res.credential);
+  }
+  useEffect(()=>{
+    /*global google*/
+    google.accounts.id.initialize({
+        client_id:"1040045622206-ivnovfjcd4jq58rbrcrm49qd7ra52d2l.apps.googleusercontent.com",
+        callback: handleCallbackResponse
+    });
+    google.accounts.id.renderButton(
+        document.getElementById("signInDiv"),
+        {theme:"outline",size:"large"}
+    );
+},[]);
+
   /* Render */
   return (
     <Router>
       <Navbar />
+      <AuthProvider>
       <Routes>
         <Route path='/' element={<AboutPage />} />
         <Route path='/Login' element={<LoginPage
@@ -94,6 +111,7 @@ export default function App() {
         />
         <Route path='/explore' exact element={<ExplorePage />} />
       </Routes>
+      </AuthProvider>
     </Router>
   );
 }
