@@ -9,6 +9,7 @@ import { FilterStructure, FetchLabelList_helper } from "../components";
 import _, { filter, map } from "underscore";
 import Fuse from 'fuse.js';
 import { allModality, labels_data } from "../labels_data.js";
+import jwt_decode from "jwt-decode";
 
 //export var searchDataCopy = []; //TODO
 
@@ -238,14 +239,14 @@ export default function ExplorePage(props) {
 	//fuse.js
 	const options = {
 		includeScore: true,
-		// threshold: 0.4,
+		threshold: 0.4,
 		ignoreLocation: true,
 		minMatchCharLength: 3
 	};
 
 	const modalityOptions = {
 		includeScore: true,
-		// threshold: 0.3,
+		threshold: 0.3,
 		ignoreLocation: true,
 		keys: ['text']
 	};
@@ -273,9 +274,12 @@ export default function ExplorePage(props) {
 		// setSearchData((prev) => input.split(', ').map(item => item.trim()));
 		// console.log("searchData: ", searchData);
 		const inputArr = input.split(' ').map(item => item.trim());
-		console.log("ALL Postures: ", allPostures);
 		console.log("INPUTARR: ", inputArr);
 		let existingResult = [];
+		var token = "eyJ0eXAiO.../// jwt token";
+		var decoded = jwt_decode(token);
+
+		console.log(decoded);
 
 		//Add searchbar content to applied filters
 		if (inputArr.length !== 0) {
@@ -305,9 +309,11 @@ export default function ExplorePage(props) {
 					// if (fuseArchi.search(phrase).length !== 0) {
 					// 	result.push(...fuseArchi.search(phrase));
 					// }
-					// if (fuseAge.search(phrase).length !== 0) {
-					// 	result.push(...fuseAge.search(phrase));
-					// }
+					if (fuseAge.search(phrase).length !== 0) {
+						result.push(...fuseAge.search(phrase));
+						inputArr.splice(i, 1, '-1');
+						inputArr.splice(i+1, 1, '-1');
+					}
 					// if (fuseRole.search(phrase).length !== 0) {
 					// 	result.push(...fuseRole.search(phrase));
 					// }
