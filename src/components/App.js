@@ -54,12 +54,13 @@ export default function App() {
 	 * filterList
 	 * List of currently applied filters.
 	 * Structure of each filter item: { label, label_id, category, subcategory, color }
+	 * 
+	 * TODO: Remove "label_id" if found unnecessary. Right now all set as 0.
 	 */
 	const [filterList, setFilterList] = useState([]);
 	// DEBUG
 	useEffect(() => {
-		console.log("updated filterList:");
-		console.log(filterList);
+		console.log("updated filterList: ", filterList);
 	}, [filterList]);
 
 	/**
@@ -76,8 +77,7 @@ export default function App() {
 	});
 	// DEBUG
 	useEffect(() => {
-		console.log("updated facetList:");
-		console.log(facetList);
+		console.log("updated facetList: ", facetList);
 	}, [facetList]);
 
 

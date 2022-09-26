@@ -214,7 +214,7 @@ function AppliedFilters(props) {
 				>
 					{props.filterList.map((item) =>
 						<RemovableLabel
-							key={item.label_id}
+							key={item.label}
 							label={item.label}
 							color={item.color}
 							//category={item.category}
@@ -241,7 +241,7 @@ function AppliedFilters(props) {
 				>
 					{props.filterList.map((item) =>
 						<RemovableLabel
-							key={item.label_id}
+							key={item.label}
 							label={item.label}
 							color={item.color}
 							//category={item.category}

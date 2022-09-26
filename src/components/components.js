@@ -17,8 +17,6 @@ import ArrowDown_primary from "../assets/ArrowDown_primary@2x.png";
 import ArrowUp_tiny from "../assets/ArrowUp_tiny@2x.png";
 import ArrowDown_tiny from "../assets/ArrowDown_tiny@2x.png";
 
-const db = getDatabase();
-
 
 
 /**
@@ -605,7 +603,7 @@ function SearchableDropdown(props) {
  *	https://reactjs.org/docs/composition-vs-inheritance.html
  */
 function AccordionSection(props) {
-	const [expanded, setExpanded] = useState(true);	// whether the current AccordionSection is expanded, default as true.
+	const [expanded, setExpanded] = useState(false);	// whether the current AccordionSection is expanded, default as true.
 	return (
 		<div className="AccordionSection">
 			<div className="AccordionSectionHeaderBar">
@@ -631,7 +629,7 @@ function AccordionSection(props) {
 				</div>
 				{expanded ?
 					<img
-						srcSet={ArrowUp_primary+" 2x"} 
+						srcSet={ArrowDown_primary+" 2x"} 
 						onClick={(e) => {
 							e.preventDefault();
 							setExpanded(false);
@@ -639,7 +637,7 @@ function AccordionSection(props) {
 					/>
 				:
 					<img
-						srcSet={ArrowDown_primary+" 2x"} 
+						srcSet={ArrowUp_primary+" 2x"} 
 						onClick={(e) => {
 							e.preventDefault();
 							setExpanded(true);
@@ -695,6 +693,8 @@ const GalleryColumn_helper = (GallerySize) => {
  * @param category
  * @param subcategory: Optional. If undefined, will look only in the category level.
  * @return label list under labels/category/subcategory.
+ * 
+ * TODO: change to use the "reviewed_labels" folder instead of "labels"
  */
 const FetchLabelList_helper = (category, subcategory) => {
 	const db = getDatabase();
@@ -788,6 +788,21 @@ const LabelStructure_type2_only = Object.freeze({
 })
 
 /**
+ * LabelStructure_category_only
+ *
+ * The template of label structure for just catrgory structure.
+ * 
+ * Usage: Used in ExplorePage handle_searchbar() function to highlight keyterms by categories.
+ */
+const LabelStructure_category_only = Object.freeze({
+	location: [],
+	spectators: [],
+	demographic: [],
+	modality: [],
+	posture: [],
+})
+
+/**
  * FilterStructure
  * 
  * The template of facet filter structure to help filter and display (only the AccordionSection parts).
@@ -819,8 +834,22 @@ const FilterStructure = Object.freeze({
 	},
 })
 
+
+
+/**------------ STYLESHEET ------------**/
+const colors = Object.freeze({
+	demographic: "#ED5564",
+	spectators: "#FFCE54",
+	location: "#A0D568",
+	posture: "#AC92EB",
+	modality: "#4FC1E8",
+})
+
+
+
 export {
-	LabelStructure, LabelStructure_type2_only, FilterStructure,
+	LabelStructure, LabelStructure_type2_only, LabelStructure_category_only, FilterStructure,
 	CheckLabel, RemovableLabel, Checkbox, DescriptionHover, SearchableDropdown, AccordionSection,
-	GalleryColumn_helper, FetchLabelList_helper
+	GalleryColumn_helper, FetchLabelList_helper,
+	colors
 };
