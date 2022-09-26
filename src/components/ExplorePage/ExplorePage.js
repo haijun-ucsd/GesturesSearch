@@ -18,7 +18,6 @@ import ExploreGallery from "./ExploreGallery";
 import ExploreDetails from "./ExploreDetails";
 import { FilterStructure, LabelStructure_category_only, FetchLabelList_helper, colors } from "../components";
 import { allModality, labels_data } from "../labels_data.js";
-import jwt_decode from "jwt-decode";
 
 
 
