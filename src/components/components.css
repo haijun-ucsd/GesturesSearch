@@ -43,6 +43,19 @@
 
 /**------------ BASIC ITEMS ------------**/
 
+/* Hidden div */
+
+.Hidden_outer {
+  overflow: hidden;
+  position: relative;
+}
+
+.Hidden_inner {
+  position: absolute;
+  top: 0; left: 0;
+}
+
+
 /* Texts */
 
 .HintText {  /* right now font is same as SubsectionName */

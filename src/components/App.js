@@ -12,6 +12,7 @@ import ExplorePage from './ExplorePage/ExplorePage';
 import AboutPage from './AboutPage/AboutPage';
 import LoginPage from './Login/LoginPage';
 import SignUpPage from './Login/SignUpPage';
+import AdminPage from './AdminPage';
 import { FilterStructure } from "./components";
 
 
@@ -128,13 +129,17 @@ export default function App() {
         />
 				<Route
 					path='/explore'
-					exact
+					//exact // use 'exact' when there are multiple paths with similar names: https://stackoverflow.com/questions/49162311/react-difference-between-route-exact-path-and-route-path
 					element={<ExplorePage
 						filterList={filterList}
 						setFilterList={setFilterList}
 						facetList={facetList}
 						setFacetList={setFacetList}
 					/>}
+				/>
+				<Route
+					path='/admin'
+					element={<AdminPage />}
 				/>
 			</Routes>
 		</Router>
