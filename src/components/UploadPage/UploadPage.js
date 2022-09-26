@@ -14,6 +14,7 @@ import { storage } from "../../firebase";
 import { getDatabase, ref as ref_db, set, child, orderByChild, get } from "firebase/database";
 import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
 //import { v4 } from "uuid";
+import jwt_decode from "jwt-decode"; //decode json web token
 import heic2any from "heic2any";
 import reactImageSize from 'react-image-size';
 import Compressor from 'compressorjs';
@@ -22,7 +23,6 @@ import WaitingRoom from "./WaitingRoom";
 import UploadControl from "./UploadControl";
 import UploadPopUp from "./UploadPopUp";
 import { LabelStructure, LabelStructure_type2_only } from "../components";
-import jwt_decode from "jwt-decode"; //decode json web token
 
 
 
@@ -71,8 +71,8 @@ export default function UploadPage(props) {
 		console.log("Is any dragged and dropped items invalid? " + dragToAddInvalid); //DEBUG
 		if (dragToAddInvalid === true) { // let succeed msg stay for 3s
 			setTimeout(() => {
-		    setDragToAddInvalid(false);
-		  }, 3000); // 3s = 3000ms
+				setDragToAddInvalid(false);
+			}, 3000); // 3s = 3000ms
 		}
 	}, [dragToAddInvalid]);
 
@@ -207,16 +207,16 @@ export default function UploadPage(props) {
 
 		// During the dragging process.
 		if (e.type === "dragenter" || e.type === "dragover") {
-      setDraggingActive(true);
-    }
+			setDraggingActive(true);
+		}
 
-    // Dragged element moves out of the drag-to-add area.
-    else if (e.type === "dragleave") {
-      setDraggingActive(false);
-    }
+		// Dragged element moves out of the drag-to-add area.
+		else if (e.type === "dragleave") {
+			setDraggingActive(false);
+		}
 
-    // Dragged item is dropped within the drag-to-add area.
-    else if (e.type === "drop") {
+		// Dragged item is dropped within the drag-to-add area.
+		else if (e.type === "drop") {
 			setDraggingActive(false);
 			if (!e.dataTransfer.files) { return; } // check for existence of event.dataTransfer.files
 			let valid_pics = [];
@@ -232,7 +232,7 @@ export default function UploadPage(props) {
 				console.log("Valid new pictures added through drag:\n", valid_pics, "\nUpdating waiting room."); //DUBUG
 				handle_add_pic(valid_pics);
 			}
-    }
+		}
 	}
 
 	/** TODO */
@@ -253,7 +253,14 @@ export default function UploadPage(props) {
 		props.setPicAnnotation((prev) => prev.filter((item, i) => i!=idx));
 	}
 
-	/** TODO */
+	/**
+	 * unify_image_format
+	 * 
+	 * Function to unify the format of images and compress them.
+	 * This cannot run until the picture is loaded into WaitingRoom due to use of canvas during format conversion.
+	 * 
+	 * Usage: Runs immediately after an image is loaded into WaitingRoom.
+	 */
 	const unify_image_format = (e, idx) => {
 
 		const convert_to_format = "jpeg"; // or png or gif
@@ -295,17 +302,23 @@ export default function UploadPage(props) {
 
 			}, ("image/"+convert_to_format), 1); // mime=convert_to_format, quality=1.00
 		}
-   
-    // 2. Image compression.
-    new Compressor(props.addedPics[idx], {
-      quality: 0.6,
-      mimeType: ("image/"+convert_to_format),
-      convertSize: size_limit,
-      success(compressionResult) {
-      	console.log("Image is compressed at index " + idx + ".\ncompressionResult: ", compressionResult); //DEBUG
-        props.addedPics[idx] = compressionResult;
-      },
-    });
+	 
+		// 2. Image compression.
+		if (props.addedPics[idx].size > size_limit) {
+			new Compressor(props.addedPics[idx], {
+				quality: 0.6,
+				mimeType: ("image/"+convert_to_format),
+				convertSize: size_limit,
+				success(compressionResult) {
+					console.log("Image is compressed at index " + idx + ".\ncompressionResult: ", compressionResult); //DEBUG
+					props.setAddedPics(prev => {
+						let newAddedPics = [...prev];
+						newAddedPics[idx] = compressionResult;
+						return newAddedPics;
+					});
+				},
+			});
+		}
 
 		// TODO: if click too fast before image is fully loaded, will cause error
 		// idea: document ready
@@ -321,8 +334,8 @@ export default function UploadPage(props) {
 		console.log("Is during the process of uploading picture? " + uploadingPic); //DEBUG
 		if (uploadingPic === "succeed") { // let succeed msg stay for 3s
 			setTimeout(() => {
-		    setUploadingPic(false);
-		  }, 3000); // 3s = 3000ms
+				setUploadingPic(false);
+			}, 3000); // 3s = 3000ms
 		}
 	}, [uploadingPic]);
 
@@ -382,7 +395,6 @@ export default function UploadPage(props) {
 		setUploadingPic("succeed");
 
 		console.log("Uploaded pictures should have been cleared."); //DEBUG
-		console.log("addedPics:", props.addedPics); //DEBUG
 	}
 
 	/**
@@ -403,7 +415,7 @@ export default function UploadPage(props) {
 
 		// Set up database.
 		const db = getDatabase();
-    // Generate index (numeric id) for the picture according to publishing order.
+		// Generate index (numeric id) for the picture according to publishing order.
 		var finalPicIndex = 0;
 		await get(ref_db(db, "images")).then((snapshot) => {
 			if (snapshot.exists()) { // not first image case
@@ -537,13 +549,8 @@ export default function UploadPage(props) {
 						}
 					}
 				}
-				
-				
-				
 			});
 		});
-		
-		
 
 		// Prepare to clear the uploaded picture.
 		// For now, maintain a tombstone at the index to facilitate the upload loop.
@@ -714,37 +721,37 @@ export default function UploadPage(props) {
 
 
 	/*----Google OAuth----*/
-    const [ g_user, setG_user] = useState({});
-    const handleCallbackResponse=(res)=>{
-        
-        var userObject = jwt_decode(res.credential); //decoding the token
-        
+		const [ g_user, setG_user] = useState({});
+		const handleCallbackResponse=(res)=>{
+				
+		var userObject = jwt_decode(res.credential); //decoding the token
+				
 		// var token = "eyJ0eXAiO.../// jwt token";
 		// var decoded = jwt_decode(token);
 
 		// console.log(decoded);
 		console.log(userObject);
-        setG_user(jwt_decode(res.credential));
-        document.getElementById("signInDiv").hidden = true;
+				setG_user(jwt_decode(res.credential));
+				document.getElementById("signInDiv").hidden = true;
 		document.getElementById("uploadAvail").hidden = false;
-    }
-    const handleSignOut=(e)=>{
-        setG_user({});
-        document.getElementById("signInDiv").hidden = false;
+		}
+		const handleSignOut=(e)=>{
+				setG_user({});
+				document.getElementById("signInDiv").hidden = false;
 		
-    }
-    useEffect(()=>{
-        /*global google*/
-        google.accounts.id.initialize({
-            client_id:"1040045622206-ivnovfjcd4jq58rbrcrm49qd7ra52d2l.apps.googleusercontent.com",
-            callback: handleCallbackResponse //a function called after logged in
-        });
-        google.accounts.id.renderButton(
-            document.getElementById("signInDiv"),
-            {theme:"outline",size:"large",width: 100,text:"signin_with"}
-        );
-        // google.accounts.id.prompt();
-    },[]);
+		}
+		useEffect(()=>{
+				/*global google*/
+				google.accounts.id.initialize({
+						client_id:"1040045622206-ivnovfjcd4jq58rbrcrm49qd7ra52d2l.apps.googleusercontent.com",
+						callback: handleCallbackResponse //a function called after logged in
+				});
+				google.accounts.id.renderButton(
+						document.getElementById("signInDiv"),
+						{theme:"outline",size:"large",width: 100,text:"signin_with"}
+				);
+				// google.accounts.id.prompt();
+		},[]);
 
 
 /**--- Render ---**/
@@ -765,7 +772,7 @@ export default function UploadPage(props) {
 					<span>{g_user.name}</span>
 				</div>
 				}
-            </section>
+						</section>
 			<section>
 				<div id="uploadAvail"></div>
 				{Object.keys(g_user).length>0 &&

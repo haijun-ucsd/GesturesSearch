@@ -17,6 +17,7 @@ export default function Navbar() {
         <NavLink to="/login" className="Navtab">LogIn</NavLink>
         <NavLink to="/upload" className="Navtab">Upload</NavLink>
         <NavLink to="/explore" className="Navtab">Explore</NavLink>
+        <NavLink to="/admin" className="Navtab">Admin</NavLink>
       </nav>
     </div>
   );
