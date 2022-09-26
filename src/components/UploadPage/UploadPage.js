@@ -22,6 +22,7 @@ import WaitingRoom from "./WaitingRoom";
 import UploadControl from "./UploadControl";
 import UploadPopUp from "./UploadPopUp";
 import { LabelStructure, LabelStructure_type2_only } from "../components";
+import jwt_decode from "jwt-decode"; //decode json web token
 
 
 
@@ -712,37 +713,92 @@ export default function UploadPage(props) {
 	};
 
 
+	/*----Google OAuth----*/
+    const [ g_user, setG_user] = useState({});
+    const handleCallbackResponse=(res)=>{
+        
+        var userObject = jwt_decode(res.credential); //decoding the token
+        
+		// var token = "eyJ0eXAiO.../// jwt token";
+		// var decoded = jwt_decode(token);
+
+		// console.log(decoded);
+		console.log(userObject);
+        setG_user(jwt_decode(res.credential));
+        document.getElementById("signInDiv").hidden = true;
+		document.getElementById("uploadAvail").hidden = false;
+    }
+    const handleSignOut=(e)=>{
+        setG_user({});
+        document.getElementById("signInDiv").hidden = false;
+		
+    }
+    useEffect(()=>{
+        /*global google*/
+        google.accounts.id.initialize({
+            client_id:"1040045622206-ivnovfjcd4jq58rbrcrm49qd7ra52d2l.apps.googleusercontent.com",
+            callback: handleCallbackResponse //a function called after logged in
+        });
+        google.accounts.id.renderButton(
+            document.getElementById("signInDiv"),
+            {theme:"outline",size:"large",width: 100,text:"signin_with"}
+        );
+        // google.accounts.id.prompt();
+    },[]);
+
+
 /**--- Render ---**/
 	return (
 		<div className="PageBox PageBox_Upload">
-			<div className="UploadWaitingRoom">
-				<UploadControl
-					add_pic_by_click={add_pic_by_click}
-					add_pic_by_drag={add_pic_by_drag}
-					addingPic={addingPic}
-					draggingActive={draggingActive}
-					dragToAddInvalid={dragToAddInvalid}
-					numAddedPics={props.addedPics.length}
-					uploadingPic={uploadingPic}
-					setAddingPic={setAddingPic}
-					upload_all_valid_images={upload_all_valid_images}
-					uploadDisabled={uploadDisabled}
-				/>
-				{props.addedPics.length > 0 ?
-					<WaitingRoom
+			<section>
+				{/* If no user: show sign in button
+					If user exists: show log out button */}
+				{/* <h2 class="alert alert-success" id="loginPrompt">Sign-In With Google</h2> */}
+				<div class="signInDiv" id="signInDiv"></div>
+				{Object.keys(g_user).length>0 &&
+					<button onClick={(e)=> handleSignOut()}>Sign Out</button>
+				}
+				
+				{g_user &&
+				<div class="flex">
+					<img class="ProfilePic" src={g_user.picture}></img>
+					<span>{g_user.name}</span>
+				</div>
+				}
+            </section>
+			<section>
+				<div id="uploadAvail"></div>
+				{Object.keys(g_user).length>0 &&
+					<div className="UploadWaitingRoom">
+					<UploadControl
+						add_pic_by_click={add_pic_by_click}
 						add_pic_by_drag={add_pic_by_drag}
+						addingPic={addingPic}
 						draggingActive={draggingActive}
 						dragToAddInvalid={dragToAddInvalid}
-						unify_image_format={unify_image_format}
-						handle_remove_pic={handle_remove_pic}
-						addedPics={props.addedPics}
-						addedPicsUrl={props.addedPicsUrl}
-						completePercentages={props.completePercentages}
-						addedLabels={props.addedLabels}
-						setClickedUrl={setClickedUrl}
+						numAddedPics={props.addedPics.length}
+						uploadingPic={uploadingPic}
+						setAddingPic={setAddingPic}
+						upload_all_valid_images={upload_all_valid_images}
+						uploadDisabled={uploadDisabled}
 					/>
-				: null }
-			</div>
+					{props.addedPics.length > 0 ?
+						<WaitingRoom
+							add_pic_by_drag={add_pic_by_drag}
+							draggingActive={draggingActive}
+							dragToAddInvalid={dragToAddInvalid}
+							unify_image_format={unify_image_format}
+							handle_remove_pic={handle_remove_pic}
+							addedPics={props.addedPics}
+							addedPicsUrl={props.addedPicsUrl}
+							completePercentages={props.completePercentages}
+							addedLabels={props.addedLabels}
+							setClickedUrl={setClickedUrl}
+						/>
+					: null }
+				</div>
+				}
+			</section>
 			{(clickedUrl!="") ? (
 				<UploadPopUp
 					url={clickedUrl}

@@ -17,7 +17,8 @@ import Facet from "./Facet";
 import ExploreGallery from "./ExploreGallery";
 import ExploreDetails from "./ExploreDetails";
 import { FilterStructure, LabelStructure_category_only, FetchLabelList_helper, colors } from "../components";
-import { labels_data } from "../labels_data.js";
+import { allModality, labels_data } from "../labels_data.js";
+import jwt_decode from "jwt-decode";
 
 
 
@@ -71,9 +72,10 @@ export default function ExplorePage(props) {
 		if (props.filterList.some(
 			(item) => item.label === label
 		)) {
+
+			// Remove.
 			if (removable){
-				// Remove.
-				console.log("label exists, remove."); //DEBUG
+				console.log("label exists, removable is true, remove."); //DEBUG
 				remove_filter(label); // remove from both filterList and facetList
 			}
 		} else {
@@ -92,8 +94,21 @@ export default function ExplorePage(props) {
 				newFilter,
 			]));
 
-			// Special case: Location, no module in facet.
-			if (! (isLocation || category==="location")) {
+			// Update facetList accordingly.
+			if (category==="modality") { // Special case: Modality.
+				const currFacetList = props.facetList; // snapshot
+				const modality_label_str_arr = label.split(" ");
+    		const modality_label_last_word = modality_label_str_arr[modality_label_str_arr.length - 1];
+    		console.log("HEREHEREHERE!!!", currFacetList, modality_label_str_arr, modality_label_last_word);
+				props.setFacetList({
+					...currFacetList,
+					["modality"]: {
+						...currFacetList["modality"],
+						[subcategory]: modality_label_last_word
+					},
+				});
+			} else if (isLocation || category==="location") {} // Special case: Location, no module in facet.
+			else { // Default case.
 				props.setFacetList(prev => ({
 					...prev,
 					[category]: {
@@ -139,7 +154,12 @@ export default function ExplorePage(props) {
 					},
 				};
 			});
-		} else if (category === "location" || subcategory === "social_role") {}
+		}
+
+		// Special case: Location, Social role, not existing in Facet.
+		else if (category === "location" || subcategory === "social_role") {}
+
+		// Default case.
 		else {
 			props.setFacetList((prev) => {
 				let newSubcategoryList = prev[category][subcategory].filter(
@@ -201,15 +221,18 @@ export default function ExplorePage(props) {
 	const [searchText, setSearchText] = useState(""); // searchbar input, plain text
 	const [highlightOptions, setHighlightOptions] = useState([]); // highlight options to use along with HighlightWithinTextarea
 	const [searchbarDefaultResults, setSearchbarDefaultResults] = useState([]); // default search data to be accepted and append to filterList, if the user hits ENTER
-	const [searchbarRecommendations, setSearchbarRecommendations] = useState(LabelStructure_category_only); // recommended labels for selection in the dropdown menu
+
+	const [searchbarRecommendations, setSearchbarRecommendations] = useState(LabelStructure_category_only); // full list of recommended labels according to search input
+	const [searchbarDisplayRecs, setSearchbarDisplayRecs] = useState(LabelStructure_category_only); // trimmed list of recommendations to display on the dropdown menu of searchbar
 
 	// DEBUG
 	useEffect(() => { console.log("searchText: '", searchText); }, [searchText]);
 	useEffect(() => { console.log("highlightOptions: '", highlightOptions); }, [highlightOptions]);
 	useEffect(() => { console.log("searchbarDefaultResults: '", searchbarDefaultResults); }, [searchbarDefaultResults]);
 	useEffect(() => { console.log("searchbarRecommendations: '", searchbarRecommendations); }, [searchbarRecommendations]);
+	useEffect(() => { console.log("searchbarDisplayRecs: '", searchbarDisplayRecs); }, [searchbarDisplayRecs]);
 
-	// Fetch existing labels dynamically. //TODO: make sure existingLabelList is indeed dynamically updated.
+	// Fetch all existing labels in database dynamically. //TODO: make sure existingLabelList is indeed dynamically updated.
 	const [existingLabelList, setExistingLabelList] = useState([]);
 	useEffect(() => {
 		const db = getDatabase();
@@ -228,11 +251,41 @@ export default function ExplorePage(props) {
 		minMatchCharLength: 3
 	};
 
-	// Ideal length of recommended labels.
-	const recommendationMaxLength = 3;
+	// Special case: Modality.
+	const modality_fuse_options = {
+		includeScore: true,
+		threshold: 0.3,
+		ignoreLocation: true,
+		keys: ['text']
+	};
+	const fuseModality = new Fuse(allModality, modality_fuse_options);
 
 	// Update searchbar details whenever searchText changes.
 	useEffect(() => { handle_searchbar_input(); }, [searchText, props.filterList]);
+
+	// Update searchbarDisplayRecs whenever searchbarRecommendations or filterList changes.
+	const recommendationMaxLength = 3; // ideal length of recommended labels
+	useEffect(() => {
+		let newDisplayRecs = LabelStructure_category_only;	// to record the trimmed recommendations
+		Object.entries(searchbarRecommendations).map(([category, recs]) => {
+			if (recs.length <= 0) { return; } // skip empty categories
+			let count = 0;	// to count the number of recommended labels
+			for (let i = 0; i < recs.length; i++) {
+				if (! props.filterList.some(element => element.label===recs[i].item)) { // if not selected yet
+					newDisplayRecs = {
+						...newDisplayRecs,
+						[category]: [
+							...newDisplayRecs[category],
+							recs[i]
+						],
+					} // record the index of this valid recommendation
+					count++;	// increment count
+				}
+				if (count >= recommendationMaxLength) { break; } // control the max number of recommendations under each category
+			}
+		})
+		setSearchbarDisplayRecs(newDisplayRecs);
+	}, [searchbarRecommendations, props.filterList]);
 
 	/**
 	 * handle_searchbar_input
@@ -267,17 +320,18 @@ export default function ExplorePage(props) {
 		// Take a snapshot of the current search input and split it into an array of words.
 		const inputArr = searchText.split(' ').map(item => item.trim());
 		const inputArrLength = inputArr.length;
+		let maskArr = [...inputArr]; // an mutable mask-indicator array that corresponds to inputArr
 		console.log("inputArr: ", inputArr); //DEBUG
 
 		// Check for empty array.
 		if (searchText==="" || inputArrLength === 0) { return; }
 
 		/**
-		 * inputWithCategory
+		 * inputByCategory
 		 * Helper variable to store input strings that need to be highlighted by category.
-		 * Structure of inputWithCategory: [ [ <exact string>, <category> ], [...] ]
+		 * Structure of inputByCategory: [ [ <starting char idx>, <ending char idx>, <category> ], [...] ]
 		 */
-		let inputWithCategory = [];
+		let inputByCategory = [];
 
 		/**
 		 * recommendations
@@ -287,7 +341,8 @@ export default function ExplorePage(props) {
 		let recommendations = { ...LabelStructure_category_only };
 
 		/**
-		 * fuzzy_search
+		 * fuzzy_search()
+		 * 
 		 * Helper function to search a word or term within a certain range.
 		 */
 		const fuzzy_search = (term, range) => {
@@ -298,10 +353,9 @@ export default function ExplorePage(props) {
 			return all_fuzzy_search_outcome;
 		}
 
-		// Search over all words in inputArr and categorize the found labels into inputWithCategory.
-		// TODO: Add function to search multi-word terms.
-		for (let [inputArrIdx, inputArrSingleWord] of inputArr.entries()) { // get index
-			console.log("Performing search on word '" + inputArrSingleWord + "' at idx " + inputArrIdx + ".");
+		// Search over all words in inputArr and categorize the found labels into inputByCategory.
+		for (let inputArrIdx = 0; inputArrIdx < inputArrLength; inputArrIdx++) { // for each index in inputArr
+			console.log("Performing search on word '" + inputArr[inputArrIdx] + "' at idx " + inputArrIdx + ".");
 
 			/**
 			 * result
@@ -312,18 +366,89 @@ export default function ExplorePage(props) {
 			let result = [];
 
 			/**
-			 * update_result
-			 * Helper function to update result and append to searchbarRecommendations if necessary.
+			 * search_in_all_categories()
+			 * 
+			 * Helper function to search a phrase in all categories other than Modality, and update result array if necessary.
+			 * 
+			 * @return boolean: True if some search_outcome is found; False if no search_outcome found.
+			 */
+			const search_in_all_categories = (phrase) => {
+				let search_succeeds_flag = false;
+
+				for (let category in existingLabelList) {
+
+					// Special case: Posture, no subcategory.
+					if (category === "posture") {
+
+						// Perform fuzzy search on the current word within the current category.
+						let search_outcome = fuzzy_search(
+							phrase,
+							existingLabelList["posture"],
+						);
+
+						// If any match is found, update default search result list and recommendations.
+						if (search_outcome.length > 0) {
+							search_succeeds_flag = true;
+							update_result(search_outcome, "posture", "posture", phrase.split(" ").length);
+						}
+					}
+
+					// Default case.
+					else {
+						for (let subcategory in existingLabelList[category]) {
+
+							// Fuzzy search within the current subcategory.
+							let search_outcome = fuzzy_search(
+								phrase,
+								existingLabelList[category][subcategory],
+							);
+
+							// Again, if any match is found, update default search result list and recommendations.
+							if (search_outcome.length > 0) {
+								search_succeeds_flag = true;
+								update_result(search_outcome, category, subcategory, phrase.split(" ").length);
+							}
+						}
+					}
+				}
+
+				return search_succeeds_flag;
+			}
+
+			/**
+			 * update_result()
+			 * 
+			 * Helper function to update the result array according to fuzzy search outcome,
+			 * and append to searchbarRecommendations if necessary.
+			 * 
 			 * If called, search_outcome.length must >0.
 			 */
-			const update_result = (search_outcome, category, subcategory) => {
+			const update_result = (search_outcome, category, subcategory, gram) => {
 
 				// Append category and subcategory values to each search_outcome item.
 				for (let i = 0; i < search_outcome.length; i++) {
-					search_outcome[i] = {
-						...search_outcome[i],
-						category: category,
-						subcategory: subcategory,
+
+					// Special case: Modality, structure of search_outcome is different.
+					if (category === "modality") {
+						//modality_search_outcome[0]['item']['text'].split(' ').slice(1).join(' '));
+						search_outcome[i] = {
+							item: search_outcome[i]['item']['displaytext'],
+							refIndex: search_outcome[i]['refIndex'],
+							score: search_outcome[i]['score'],
+							category: category,
+							subcategory: search_outcome[i]['item']['bodypart'],
+							gram: gram,
+						}
+					}
+
+					// Default case.
+					else {
+						search_outcome[i] = {
+							...search_outcome[i],
+							category: category,
+							subcategory: subcategory,
+							gram: gram,
+						}
 					}
 				}
 
@@ -348,40 +473,42 @@ export default function ExplorePage(props) {
 				}
 			}
 
-			// Search through all possible categories.
-			for (let category in existingLabelList) {
-
-				// Special case: Posture, no subcategory.
-				if (category === "posture") {
-
-					// Perform fuzzy search on the current word within the current category.
-					let search_outcome = fuzzy_search(
-						inputArrSingleWord,
-						existingLabelList[category],
-					);
-
-					// If any match is found, update default search result list and recommendations.
-					if (search_outcome.length > 0) {
-						update_result(search_outcome, "posture", "posture");
-					}
+			// Search by 3-gram phrase in category: Modality.
+			if (inputArrIdx < inputArrLength - 2
+				&& maskArr[inputArrIdx] !== null
+				&& maskArr[inputArrIdx+1] !== null
+				&& maskArr[inputArrIdx+2] !== null
+			) {
+				const phrase = inputArr[inputArrIdx] + ' ' + inputArr[inputArrIdx+1] + ' ' + inputArr[inputArrIdx+2];
+				let modality_search_outcome = fuseModality.search(phrase);
+				if (modality_search_outcome.length > 0) {
+					console.log("Recognized modality phrase '", phrase, "': ", modality_search_outcome); //DEBUG
+					update_result(modality_search_outcome, "modality", undefined, 3);
+					maskArr.splice(inputArrIdx, 3, null, null, null);
+						 // mask the checked 3 indices, so they won't be searched again during the 2-gram and single-word rounds
 				}
+			}
 
-				// Default case.
-				else {
-					for (let subcategory in existingLabelList[category]) {
-
-						// Fuzzy search within the current subcategory.
-						let search_outcome = fuzzy_search(
-							inputArrSingleWord,
-							existingLabelList[category][subcategory],
-						);
-
-						// Again, if any match is found, update default search result list and recommendations.
-						if (search_outcome.length > 0) {
-							update_result(search_outcome, category, subcategory);
-						}
-					}
+			// Search by 2-gram phrase in all categories.
+			if (inputArrIdx < inputArrLength - 1
+				&& maskArr[inputArrIdx] !== null
+				&& maskArr[inputArrIdx+1] !== null
+			) {
+				const phrase = inputArr[inputArrIdx] + ' ' + inputArr[inputArrIdx+1];
+				const all_categories_search_succeeds = search_in_all_categories(phrase);
+				let modality_search_outcome = fuseModality.search(phrase);
+				if (modality_search_outcome.length > 0) {
+					console.log("Recognized modality phrase '", phrase, "': ", modality_search_outcome); //DEBUG
+					update_result(modality_search_outcome, "modality", undefined, 2);
 				}
+				if (all_categories_search_succeeds == true || modality_search_outcome.length > 0) {
+					maskArr.splice(inputArrIdx, 2, null, null); // mask the checked 2 indices
+				}
+			}
+
+			// Search by single words in all categories other than Modality.
+			if (maskArr[inputArrIdx] !== null) {
+				search_in_all_categories(inputArr[inputArrIdx]);
 			}
 
 			// Check for existence of result.
@@ -391,102 +518,50 @@ export default function ExplorePage(props) {
 			result.sort((a, b) => (a.score - b.score));
 			console.log("Cross-category results after sorting: ", result); //DEBUG
 
-			// Update inputWithCategory using the category of the most-relevant result item.
-			inputWithCategory.push([inputArrSingleWord, result[0].category]);
+			// Update inputByCategory using the category of the most-relevant result item.
+			const highlight_category = result[0].category;
+			let highlight_start_idx = 0;
+			for (let i = 0; i < inputArrIdx; i++) {
+				highlight_start_idx += (inputArr[i].length + 1); // white space // TODO: multiple white space?
+			}
+			let highlight_end_idx = highlight_start_idx;
+			for (let i = 0; i < result[0]['gram']; i++) {
+				highlight_end_idx += inputArr[inputArrIdx+i].length;
+				if (i < result[0]['gram']-1) {
+					highlight_end_idx += 1; // white space
+				}
+			}
+			inputByCategory.push([highlight_start_idx, highlight_end_idx, result[0].category]);
 
 			// Update searchbarDefaultResults according to the final result.
 			setSearchbarDefaultResults(prev => [ ...prev, result[0] ]);
 
-
-			// if (fuseSite.search(inputArrSingleWord).length !== 0) {
-			// 	result.push(...fuseSite.search(inputArrSingleWord));
-			// }
-			// if (fuseArchi.search(inputArrSingleWord).length !== 0) {
-			// 	result.push(...fuseArchi.search(inputArrSingleWord));
-			// }
-			// if (fuseIn_outdoor.search(inputArrSingleWord).length !== 0) {
-			// 	result.push(...fuseIn_outdoor.search(inputArrSingleWord));
-			// }
-			// if (fuseSex.search(inputArrSingleWord).length !== 0) {
-			// 	result.push(...fuseSex.search(inputArrSingleWord));
-			// }
-			// if (fuseAge.search(inputArrSingleWord).length !== 0) {
-			// 	result.push(...fuseAge.search(inputArrSingleWord));
-			// }
-			// if (fuseRole.search(inputArrSingleWord).length !== 0) {
-			// 	result.push(...fuseRole.search(inputArrSingleWord));
-			// }
-			// if (fusePosture.search(inputArrSingleWord).length !== 0) {
-			// 	result.push(...fusePosture.search(inputArrSingleWord));
-			// }
-			// if (fuseQuantity.search(inputArrSingleWord).length !== 0) {
-			// 	result.push(...fuseQuantity.search(inputArrSingleWord));
-			// }
-			// if (fuseDensity.search(inputArrSingleWord).length !== 0) {
-			// 	result.push(...fuseDensity.search(inputArrSingleWord));
-			// }
-			// result.sort(function(a, b){
-			// 	return a.score - b.score;
-			// });
-			// console.log("result after splitting and sorting: ", result); //DEBUG TODO:sorting???
-			// //TODO: Mark the category of each result and change filter directly
-			// if(result.length !== 0){
-			// 	if (allPostures.includes(result[0].item) && !props.filterList.includes(result[0].item)) {
-			// 		filter_change_handler(result[0].item, 0, "posture", "posture", postureColor, false);
-			// 	} else if (allSites.includes(result[0].item) && !props.filterList.includes(result[0].item)) {
-			// 		filter_change_handler(result[0].item, 0, "location", "site", locationColor, false, true);
-			// 	} else if (allArchi_compo.includes(result[0].item) && !props.filterList.includes(result[0].item)) {
-			// 		filter_change_handler(result[0].item, 0, "location", "archi_compo", locationColor, false, true);
-			// 	} else if (allIn_outdoor.includes(result[0].item) && !props.filterList.includes(result[0].item)) {
-			// 		filter_change_handler(result[0].item, 0, "location", "in_outdoor", locationColor, false, true);
-			// 	} else if (allSex.includes(result[0].item) && !props.filterList.includes(result[0].item)) {
-			// 		filter_change_handler(result[0].item, 0, "demographic", "sex", demographicColor, false);
-			// 	} else if (allAge.includes(result[0].item) && !props.filterList.includes(result[0].item)) {
-			// 		filter_change_handler(result[0].item, 0, "demographic", "age", demographicColor, false);
-			// 	} else if (allRoles.includes(result[0].item) && !props.filterList.includes(result[0].item)) {
-			// 		filter_change_handler(result[0].item, 0, "demographic", "social_role", demographicColor, false, true);
-			// 	} else if (allQuantities.includes(result[0].item) && !props.filterList.includes(result[0].item)) {
-			// 		filter_change_handler("spectators quantity: " + result[0].item, 0, "spectators", "quantity", spectatorColor, false);
-			// 	} else if (allDensities.includes(result[0].item) && !props.filterList.includes(result[0].item)) {
-			// 		filter_change_handler("spectators density: " + result[0].item, 0, "spectators", "density", spectatorColor, false);
-			// 	}
-			// }
-			// props.filterList.push(result[0].item);
-			// console.log("RESULT: ", result);
 		}
 
-		// Update searchbar highlights according to inputWithCategory.
-		// Structure of inputWithCategory is: [ [ <exact string>, <category> ], [...] ]
-		console.log("inputWithCategory : ", inputWithCategory); //DEBUG
+		// Update searchbar highlights according to inputByCategory.
+		// Structure of inputByCategory is: [ [ <starting char idx>, <ending char idx>, <category> ], [...] ]
+		console.log("inputByCategory : ", inputByCategory); //DEBUG
 		setHighlightOptions([
-			...(inputWithCategory.map(item => {
-				const exactstring = item[0];
-				const classname = "SearchBar_highlighter SearchBar_highlighter_" + item[1]/*category*/;
+			...(inputByCategory.map(item => {
+				const classname = "SearchBar_highlighter SearchBar_highlighter_" + item[2]/*category*/;
 				return ({
-					highlight: exactstring,
+					highlight: [item[0], item[1]],
 					className: classname
 				});
 			}))
 		]);
 
-		// Sort and trim recommendations to the ideal length.
+		// Sort and store recommendations.
 		let newSearchbarRecommendations = recommendations; // take a snapshot
 		Object.entries(newSearchbarRecommendations).map(([category, recs]) => {
 			recs.sort((a, b) => (a.score - b.score)); // sort
-			console.log(recs);
 			let uniqueRecs = [];
 			for (let i = 0; i < recs.length; i++) { // remove duplicates
 				if (! uniqueRecs.some(element => element.item===recs[i].item)) {
 					uniqueRecs.push(recs[i]);
-					console.log(uniqueRecs);
 				}
 			}
-			if (uniqueRecs.length > recommendationMaxLength) {
-				newSearchbarRecommendations[category]
-					= uniqueRecs.slice(0, recommendationMaxLength);
-			} else {
-				newSearchbarRecommendations[category] = uniqueRecs;
-			}
+			newSearchbarRecommendations[category] = uniqueRecs;
 		});
 		setSearchbarRecommendations(newSearchbarRecommendations);
 	}
@@ -613,9 +688,9 @@ export default function ExplorePage(props) {
 				// filtered = [...search_helper(props.filterList)];
 				for (let j = 0; j < props.filterList.length; j++){
 					for (let i = props.filterList.length; i > j; i--) {
-						console.log("Subfilter List: ", props.filterList.slice(j, i));
+						// console.log("Subfilter List: ", props.filterList.slice(j, i));
 						filtered.push(..._.difference(search_helper(props.filterList.slice(j, i)), filtered));
-						console.log("Filtering result: ", filtered);
+						// console.log("Filtering result: ", filtered);
 					}
 				}
 			}
@@ -670,7 +745,7 @@ export default function ExplorePage(props) {
 				handle_searchbar_input={handle_searchbar_input}
 				handle_searchbar_accept_default={handle_searchbar_accept_default}
 				highlightOptions={highlightOptions}
-				searchbarRecommendations={searchbarRecommendations}
+				searchbarDisplayRecs={searchbarDisplayRecs}
 				facetList={props.facetList}
 				setFacetList={props.setFacetList}
 			/>

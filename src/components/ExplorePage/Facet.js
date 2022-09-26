@@ -34,7 +34,7 @@ import SearchBtn from "../../assets/SearchBtn@2x.png";
  *			- _accept_default()
  *			- _select_recommendation()
  *	- highlightOptions
- *	- searchbarRecommendations
+ *	- searchbarDisplayRecs
  *  - [facetList, setFacetList]
  *
  * references:
@@ -83,7 +83,7 @@ export default function Facet(props) {
 				handle_searchbar_input={props.handle_searchbar_input}
 				handle_searchbar_accept_default={props.handle_searchbar_accept_default}
 				highlightOptions={props.highlightOptions}
-				searchbarRecommendations={props.searchbarRecommendations}
+				searchbarDisplayRecs={props.searchbarDisplayRecs}
 			/>
 			<div className="Facet">
 				<FacetModality
@@ -121,7 +121,7 @@ export default function Facet(props) {
  *	- handle_searchbar_input()
  *	- handle_searchbar_accept_default()
  *	- highlightOptions
- *	- searchbarRecommendations
+ *	- searchbarDisplayRecs
  * 
  * references:
  *  https://stackoverflow.com/questions/59016030/css-flexbox-or-grid-2-columns-row-wrapping-no-growth-inner-margins
@@ -141,17 +141,17 @@ function ExploreSearch(props) {
 	const [resultsExpanded, setResultsExpanded] = useState(false);
 	useEffect(() => {
 		let no_recs_flag = true;
-		Object.entries(props.searchbarRecommendations).map(([category, recs]) => {
+		Object.entries(props.searchbarDisplayRecs).map(([category, recs]) => {
 			if (recs.length > 0) {
-				console.log("Exists some searchbarRecommendations."); //DEBUG
+				console.log("Exists some searchbarDisplayRecs."); //DEBUG
 				setResultsExpanded(true);
 				no_recs_flag = false;
 			}
 		});
-		if (no_recs_flag==true) { // if props.searchbarRecommendations is completely empty
+		if (no_recs_flag==true) { // if props.searchbarDisplayRecs is completely empty
 			setResultsExpanded(false);
 		}
-	}, [props.searchbarRecommendations]);
+	}, [props.searchbarDisplayRecs]);
 
 	/* Render */
 	return (
@@ -205,7 +205,7 @@ function ExploreSearch(props) {
 							<span>
 								Press ENTER to accept all above, or select from following:
 							</span>
-							{Object.entries(props.searchbarRecommendations).map(([category, recs]) => {
+							{Object.entries(props.searchbarDisplayRecs).map(([category, recs]) => {
 								if (recs.length > 0) { // skip empty categories
 									return (
 										<div className="SearchBarRecommendations_category">
@@ -213,6 +213,7 @@ function ExploreSearch(props) {
 											<div className="LabelList">
 												{recs.map((element) =>
 													<CheckLabel
+														key={element.item} // use an unique key to avoid strange performance
 														value={element.item}
 														color={colors[element.category]}
 														onchange_handler={() =>
