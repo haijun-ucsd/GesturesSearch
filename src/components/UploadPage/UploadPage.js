@@ -14,7 +14,7 @@ import UploadControl from "./UploadControl";
 import UploadPopUp from "./UploadPopUp";
 import { LabelStructure, LabelStructure_type2_only } from "../components";
 import jwt_decode from "jwt-decode"; //decode json web token
-
+import Allocate from "../UploadPage/LabelValidation.js";
 
 
 /**
@@ -436,6 +436,7 @@ export default function UploadPage(props) {
 					...props.formDataList[idx],
 					annotation: props.picAnnotation[idx],
 					userID: props.user,
+					token: 0,
 				}
 				console.log("[Upload Step 1] Upload image, labels, and annotation."
 					+ "\nindex: " + finalPicIndex
@@ -701,11 +702,6 @@ export default function UploadPage(props) {
     const handleCallbackResponse=(res)=>{
         
         var userObject = jwt_decode(res.credential); //decoding the token
-        
-		// var token = "eyJ0eXAiO.../// jwt token";
-		// var decoded = jwt_decode(token);
-
-		// console.log(decoded);
 		console.log(userObject);
         setG_user(jwt_decode(res.credential));
         document.getElementById("signInDiv").hidden = true;
@@ -746,6 +742,7 @@ export default function UploadPage(props) {
 				<div class="flex">
 					<img class="ProfilePic" src={g_user.picture}></img>
 					<span>{g_user.name}</span>
+					{Allocate(4, "xxx")}
 				</div>
 				}
             </section>

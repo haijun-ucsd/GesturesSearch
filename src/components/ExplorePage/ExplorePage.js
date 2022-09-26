@@ -9,7 +9,6 @@ import { FilterStructure, FetchLabelList_helper } from "../components";
 import _, { filter, map } from "underscore";
 import Fuse from 'fuse.js';
 import { allModality, labels_data } from "../labels_data.js";
-import jwt_decode from "jwt-decode";
 
 //export var searchDataCopy = []; //TODO
 
@@ -276,10 +275,6 @@ export default function ExplorePage(props) {
 		const inputArr = input.split(' ').map(item => item.trim());
 		console.log("INPUTARR: ", inputArr);
 		let existingResult = [];
-		var token = "eyJ0eXAiO.../// jwt token";
-		var decoded = jwt_decode(token);
-
-		console.log(decoded);
 
 		//Add searchbar content to applied filters
 		if (inputArr.length !== 0) {
