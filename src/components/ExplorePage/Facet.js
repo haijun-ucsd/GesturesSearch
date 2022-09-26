@@ -1,9 +1,11 @@
 import React, { useState , useEffect, useLayoutEffect } from 'react';
 import { Autocomplete, TextField } from '@mui/material';
 //import Slider, { Range } from 'rc-slider';
+import HighlightWithinTextarea from "react-highlight-within-textarea"; import 'draft-js/dist/Draft.css';
+//import parse from 'html-react-parser';
 import '../components.css';
 import { labels_data } from "../labels_data.js";
-import { Filter, Checkbox, CheckLabel, AccordionSection, FetchLabelList_helper } from '../components';
+import { Filter, Checkbox, CheckLabel, AccordionSection, FetchLabelList_helper, colors } from '../components';
 import BodyComponent from '../BodyComponent';
 
 /* Assets: */
@@ -26,6 +28,13 @@ import SearchBtn from "../../assets/SearchBtn@2x.png";
  *  - [filterList, setFilterList]
  *	- filter_change_handler (label, label_id, category, subcategory, color): to update appliedFilters according to change in facet.
  *  - remove_filter(): To help remove from filterList.
+ *	- [searchText, setSearchText]
+ *	- handle_searchbar:
+ *			- _input()
+ *			- _accept_default()
+ *			- _select_recommendation()
+ *	- highlightOptions
+ *	- searchbarDisplayRecs
  *  - [facetList, setFacetList]
  *
  * references:
@@ -69,7 +78,12 @@ export default function Facet(props) {
 		<div className="FacetMenu">
 			<ExploreSearch
 				filter_change_handler={props.filter_change_handler}
-				handleSearch={props.handleSearch}
+				searchText={props.searchText}
+				setSearchText={props.setSearchText}
+				handle_searchbar_input={props.handle_searchbar_input}
+				handle_searchbar_accept_default={props.handle_searchbar_accept_default}
+				highlightOptions={props.highlightOptions}
+				searchbarDisplayRecs={props.searchbarDisplayRecs}
 			/>
 			<div className="Facet">
 				<FacetModality
@@ -77,22 +91,18 @@ export default function Facet(props) {
 					setFacetList={props.setFacetList} // will only set "modality"
 					setFilterList={props.setFilterList}
 					remove_filter={props.remove_filter}
-					handleSearch={props.handleSearch}
 				/>
 				<FacetPosture
 					facetList={props.facetList}
 					filter_change_handler={props.filter_change_handler}
-					handleSearch={props.handleSearch}
 				/>
 				<FacetSpectators
 					facetList={props.facetList}
 					filter_change_handler={props.filter_change_handler}
-					handleSearch={props.handleSearch}
 				/>
 				<FacetDemongraphic
 					facetList={props.facetList}
 					filter_change_handler={props.filter_change_handler}
-					handleSearch={props.handleSearch}
 				/>
 			</div>
 			{props.facetDisabled ?
@@ -105,6 +115,14 @@ export default function Facet(props) {
 /**
  * ExploreSearch
  * 
+ * parent props:
+ *	- filter_change_handler()
+ *	- [searchText, setSearchText]
+ *	- handle_searchbar_input()
+ *	- handle_searchbar_accept_default()
+ *	- highlightOptions
+ *	- searchbarDisplayRecs
+ * 
  * references:
  *  https://stackoverflow.com/questions/59016030/css-flexbox-or-grid-2-columns-row-wrapping-no-growth-inner-margins
  *  https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-columns
@@ -113,108 +131,103 @@ export default function Facet(props) {
  *	https://stackoverflow.com/questions/12875911/how-can-i-make-my-input-type-submit-an-image
  *	https://bobbyhadz.com/blog/react-get-input-value-on-button-click
  *	https://stackoverflow.com/questions/31272207/to-call-onchange-event-after-pressing-enter-key
+ *	https://www.w3schools.com/tags/att_global_contenteditable.asp
+ *	https://stackoverflow.com/questions/3593626/get-the-text-content-from-a-contenteditable-div-through-javascript
+ *	https://www.npmjs.com/package/react-highlight-within-textarea
+ *	https://github.com/facebook/draft-js/issues/403
  */
 function ExploreSearch(props) {
 
-	const [searchText, setSearchText] = useState(''); // the dynamically input text
-	useEffect(() => { console.log("searchText is: " + searchText); }, [searchText]); //DEBUG
-
-	const [submittedSearchText, setSubmittedSearchText] = useState(''); // text that is a snapshot to submit for search
-	useEffect(() => { console.log("submittedSearchText is: " + submittedSearchText); }, [submittedSearchText]); //DEBUG
-
-	// const handleSearch = (input) => {
-	// 	setSearchData(input);
-	// }
-
-	// Examples:
-	// TODO: make this not hard-coded
-	const locationLabels = [
-		{ label: 'library'},
-		{ label: 'hospital'},
-		{ label: 'shopping'},
-		{ label: 'public transportation'},
-		{ label: 'entertainment'},
-		{ label: 'sport'},
-		{ label: 'nature'},
-		{ label: 'parking lot'},
-		{ label: 'street'},
-		{ label: 'pedestrian'},
-		{ label: 'restaurant'},
-		{ label: 'work space'},
-		{ label: 'hostpital'},
-		{ label: 'indoor'},
-		{ label: 'outdoor'},
-		{ label: 'entrance'},
-		{ label: 'corridor'},
-		{ label: 'bench'},
-		{ label: 'cabin'},
-		{ label: 'waiting room'},
-		{ label: 'shelf'},
-		{ label: 'pool'},
-		{ label: 'poolside'},
-		{ label: 'table'},
-		{ label: 'zebra walk'},
-		{ label: 'rock climbing wall'}
-	];
+	const [resultsExpanded, setResultsExpanded] = useState(false);
+	useEffect(() => {
+		let no_recs_flag = true;
+		Object.entries(props.searchbarDisplayRecs).map(([category, recs]) => {
+			if (recs.length > 0) {
+				console.log("Exists some searchbarDisplayRecs."); //DEBUG
+				setResultsExpanded(true);
+				no_recs_flag = false;
+			}
+		});
+		if (no_recs_flag==true) { // if props.searchbarDisplayRecs is completely empty
+			setResultsExpanded(false);
+		}
+	}, [props.searchbarDisplayRecs]);
 
 	/* Render */
 	return (
-		<div className="Module">
+		<div className="Module ExploreSearchSection">
 			<div className="SearchBar_container">
 				<div className="SearchBar">
-					{/* <input
-						type="text"
-						className="SearchBarInput"
-						id={props.id} name={props.id}
-						placeholder=""
-						value={searchText}
-						onChange={(e) => {
-							setSearchText(e.target.value);
-						}}
-						onKeyDown={(e) => {	// pressing ENTER == clicking search icon
-							if (e.key==='Enter') {
-								setSubmittedSearchText(searchText);
-							}
-						}}
-					/> */}
-					<Autocomplete
-						disablePortal
-						id="combo-box-demo"
-						options={locationLabels}
-						sx={{ width: 300 }}
-						renderInput={
-							(params) => <TextField {...params} label="Search"/>
-						}
-						onKeyPress= {(e, value) => {
-							if (e.key === 'Enter') {
-								console.log('Enter key pressed');
-								// write your functionality here
-								// search for relevant images here
-								// send inputed location back to Facet and re-render images
-								// console.log(e.target.value);
-								props.handleSearch(e.target.value);
-							}
-						}}
-					/>
-					{searchText.length > 0 ?
+
+					{/* Input bar for search. */}
+					<div className="SearchBarInput_container">
+						<div
+							className="SearchBarInput"
+							id={props.id} name={props.id}
+						>
+							<HighlightWithinTextarea
+								placeholder="eg. student sitting in library"
+								value={props.searchText}
+								highlight={props.highlightOptions}
+								onChange={(value) => {
+									props.setSearchText(value);
+								}}
+								/*onKeyDown={(e) => {	// pressing ENTER == clicking search icon
+									if (e.key==='Enter') {
+										props.handle_searchbar_accept_default();
+									}
+								}}*/ //onKeyDown not working within HighlightWithinTextarea
+							/>
+						</div>
+						{props.searchText.length > 0 ?
+							<img
+								srcSet={NoBtn+" 2x"}
+								className="SearchBar_clearbtn Btn"
+								onClick={(e) => { // clear input field
+									e.preventDefault();
+									props.setSearchText('');
+								}}
+							/>
+						: null }
 						<img
-							srcSet={NoBtn+" 2x"}
-							className="SearchBar_clearbtn Btn"
-							onClick={(e) => { // clear input field
+							srcSet={SearchBtn+" 2x"}	// <input type="image"> defines an image as a submit button
+							className="SearchBar_searchbtn Btn"
+							onClick={(e) => {
 								e.preventDefault();
-								setSearchText('');
-								setSubmittedSearchText('');
+								props.handle_searchbar_input();
 							}}
 						/>
+					</div>
+
+					{/* Search results by category */
+					resultsExpanded ?
+						<div className="SearchBar_rec_container"><div className="SearchBarRecommendations HintText">
+							<span>
+								Press ENTER to accept all above, or select from following:
+							</span>
+							{Object.entries(props.searchbarDisplayRecs).map(([category, recs]) => {
+								if (recs.length > 0) { // skip empty categories
+									return (
+										<div className="SearchBarRecommendations_category">
+											<span>{category}: </span>
+											<div className="LabelList">
+												{recs.map((element) =>
+													<CheckLabel
+														key={element.item} // use an unique key to avoid strange performance
+														value={element.item}
+														color={colors[element.category]}
+														onchange_handler={() =>
+															props.filter_change_handler(element.item, 0, element.category, element.subcategory, colors[element.category])
+														}
+													/>
+												)}
+											</div>
+										</div>
+									);
+								}
+							})}
+						</div></div>
 					: null }
-					<img
-						srcSet={SearchBtn+" 2x"}	// <input type="image"> defines an image as a submit button
-						className="SearchBar_searchbtn Btn"
-						onClick={(e) => {
-							e.preventDefault();
-							setSubmittedSearchText(searchText);
-						}}
-					/>
 				</div>
 			</div>
 		</div>
@@ -263,7 +276,7 @@ function FacetModality(props) {
 					['label_id']: 0, // TODO: label_id
 					['category']: "modality",
 					['subcategory']: bodypart,
-					['color']: "#4FC1E8",
+					['color']: colors["modality"],
 				},
 			]));
 		} else if (currBodypartState==="available") {
@@ -283,7 +296,7 @@ function FacetModality(props) {
 					['label_id']: 0, // TODO: label_id
 					['category']: "modality",
 					['subcategory']: bodypart,
-					['color']: "#4FC1E8",
+					['color']: colors["modality"],
 				},
 			]));
 		} else { // currBodypartState==="unavailable"
@@ -312,7 +325,7 @@ function FacetModality(props) {
 	return (
 		<AccordionSection
 			title="Modality"
-			color="#4FC1E8"
+			color={colors["modality"]}
 			icon="CategoryIcon_Modality"
 			//description=""
 		>
@@ -343,7 +356,7 @@ function FacetModality(props) {
  */
 function FacetPosture(props) {
 	const allPostures = FetchLabelList_helper("posture", undefined);
-	const postureColor = "#AC92EB";
+	const postureColor = colors["posture"];
 	return (
 		<AccordionSection
 			title="Posture"
@@ -351,9 +364,7 @@ function FacetPosture(props) {
 			icon="CategoryIcon_Posture"
 			//description=""
 		>
-			<div
-				className="LabelList"
-			>
+			<div className="LabelList">
 				{allPostures.map((label) =>
 					<CheckLabel
 						value={label}
@@ -386,7 +397,7 @@ function FacetSpectators(props) {
 	const allQuantities = ["none", "small", "large"];
 	const allDensities = ["none", "sparse", "dense"];
 	const allAttentives = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '>8'];
-	const spectatorsColor = "#FFCE54";
+	const spectatorsColor = colors["spectators"];
 
 	// Attentive slider helper
 	// const Slider = require('rc-slider');
@@ -505,7 +516,7 @@ function FacetSpectators(props) {
 function FacetDemongraphic(props) {
 	const allAges = ["baby", "child", "teen", "young adult", "adult", "senior"];
 	const allSexes = ["male", "female"];
-	const demographicColor = "#ED5564";
+	const demographicColor = colors["demographic"];
 	return (
 		<AccordionSection
 			title="Demongraphic"
