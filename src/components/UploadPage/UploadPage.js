@@ -23,7 +23,7 @@ import WaitingRoom from "./WaitingRoom";
 import UploadControl from "./UploadControl";
 import UploadPopUp from "./UploadPopUp";
 import { LabelStructure, LabelStructure_type2_only } from "../components";
-import Allocate from "../UploadPage/LabelValidation.js";
+import {Allocate, LabelMatch} from "../UploadPage/LabelValidation.js";
 
 
 /**
@@ -767,7 +767,6 @@ export default function UploadPage(props) {
 				<div class="flex">
 					<img class="ProfilePic" src={g_user.picture}></img>
 					<span>{g_user.name}</span>
-					{Allocate(4, "xxx")}
 				</div>
 				}
 						</section>
