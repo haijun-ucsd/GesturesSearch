@@ -1123,6 +1123,38 @@ button {
     margin-bottom: 0.5rem;
 }
 
+.login_navbar {
+	position: relative;
+	border: 1px solid var(--gray-mid);
+	border-radius: 4px;
+	background-color: #F0FFF0;
+	cursor: pointer;
+	/* as a container */
+	display: inline-flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	padding: 4px 16px;
+	gap: 8px;
+	top: 3%;
+	margin-right: 10px;
+}
+.login_center {
+	background-color: white;
+	border: 0px;
+	border-radius: 8px;
+	cursor: pointer;
+	/* as a container */
+	display: inline-flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	padding: 16px 16px;
+	gap: 8px;
+	margin-left:43%;
+	margin-top:21%;
+}
+
 
 /* UploadPage WaitingRoom */
 

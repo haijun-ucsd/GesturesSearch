@@ -758,19 +758,20 @@ export default function UploadPage(props) {
 				{/* If no user: show sign in button
 					If user exists: show log out button */}
 				{/* <h2 class="alert alert-success" id="loginPrompt">Sign-In With Google</h2> */}
-				<div class="signInDiv" id="signInDiv"></div>
-				{Object.keys(g_user).length>0 &&
-					<button onClick={(e)=> handleSignOut()}>Sign Out</button>
-				}
 				
-				{g_user &&
+				{/* {Object.keys(g_user).length>0 &&
+					<button onClick={(e)=> handleSignOut()}>Sign Out</button>
+				} */}
+				
+				{/* {g_user &&
 				<div class="flex">
 					<img class="ProfilePic" src={g_user.picture}></img>
 					<span>{g_user.name}</span>
 					{Allocate(4, "xxx")}
 				</div>
-				}
-						</section>
+				} */}
+				{/* <button type="button" id="signInDiv" class="login_navbar2"> Click here</button> */}
+			</section>
 			<section>
 				<div id="uploadAvail"></div>
 				{Object.keys(g_user).length>0 &&
