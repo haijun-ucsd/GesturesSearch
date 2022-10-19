@@ -253,8 +253,9 @@ export default function ExplorePage(props) {
 	// Special case: Modality.
 	const modality_fuse_options = {
 		includeScore: true,
-		threshold: 0.3,
+		threshold: 0.2,
 		ignoreLocation: true,
+		minMatchCharLength: 3,
 		keys: ['text']
 	};
 	const fuseModality = new Fuse(allModality, modality_fuse_options);
