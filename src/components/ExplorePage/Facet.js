@@ -157,7 +157,7 @@ function ExploreSearch(props) {
 	return (
 		<div className="Module ExploreSearchSection">
 			<div className="SearchBar_container">
-				<div className="SearchBar">
+				<div className="ExploreSearchBar">
 
 					{/* Input bar for search. */}
 					<div className="SearchBarInput_container">

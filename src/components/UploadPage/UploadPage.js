@@ -23,7 +23,7 @@ import WaitingRoom from "./WaitingRoom";
 import UploadControl from "./UploadControl";
 import UploadPopUp from "./UploadPopUp";
 import { LabelStructure, LabelStructure_type2_only } from "../components";
-import Allocate from "../UploadPage/LabelValidation.js";
+import {Allocate, LabelMatch} from "../UploadPage/LabelValidation.js";
 
 
 /**
@@ -723,32 +723,30 @@ export default function UploadPage(props) {
 
 	/*----Google OAuth----*/
 
-    const [ g_user, setG_user] = useState({});
-    const handleCallbackResponse=(res)=>{
-        
-    var userObject = jwt_decode(res.credential); //decoding the token
+	const [ g_user, setG_user] = useState({});
+	const handleCallbackResponse=(res)=>{
+		var userObject = jwt_decode(res.credential); //decoding the token
 		console.log(userObject);
-				setG_user(jwt_decode(res.credential));
-				document.getElementById("signInDiv").hidden = true;
+			setG_user(jwt_decode(res.credential));
+			document.getElementById("signInDiv").hidden = true;
 		document.getElementById("uploadAvail").hidden = false;
-		}
-		const handleSignOut=(e)=>{
-				setG_user({});
-				document.getElementById("signInDiv").hidden = false;
-		
-		}
-		useEffect(()=>{
-				/*global google*/
-				google.accounts.id.initialize({
-						client_id:"1040045622206-ivnovfjcd4jq58rbrcrm49qd7ra52d2l.apps.googleusercontent.com",
-						callback: handleCallbackResponse //a function called after logged in
-				});
-				google.accounts.id.renderButton(
-						document.getElementById("signInDiv"),
-						{theme:"outline",size:"large",width: 100,text:"signin_with"}
-				);
-				// google.accounts.id.prompt();
-		},[]);
+	}
+	const handleSignOut=(e)=>{
+		setG_user({});
+		document.getElementById("signInDiv").hidden = false;
+	}
+	useEffect(()=>{
+		/*global google*/
+		google.accounts.id.initialize({
+			client_id:"1040045622206-ivnovfjcd4jq58rbrcrm49qd7ra52d2l.apps.googleusercontent.com",
+			callback: handleCallbackResponse //a function called after logged in
+		});
+		google.accounts.id.renderButton(
+			document.getElementById("signInDiv"),
+			{ theme:"outline", size:"large", width: 100, text:"signin_with" }
+		);
+		// google.accounts.id.prompt();
+	},[]);
 
 
 /**--- Render ---**/
@@ -767,7 +765,6 @@ export default function UploadPage(props) {
 				<div class="flex">
 					<img class="ProfilePic" src={g_user.picture}></img>
 					<span>{g_user.name}</span>
-					{Allocate(4, "xxx")}
 				</div>
 				} */}
 				{/* <button type="button" id="signInDiv" class="login_navbar2"> Click here</button> */}

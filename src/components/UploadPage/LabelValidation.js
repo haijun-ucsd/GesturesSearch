@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { storage } from "../../firebase";
 import { getDatabase, onValue, ref as ref_db, update, set, child, orderByChild, push, get, Database } from "firebase/database";
-import { timeDay } from "d3";
 
 /**
  * What this file does:
@@ -29,7 +28,7 @@ import { timeDay } from "d3";
   */
 
 // after checking the user has no value under the "allocated" attribute
-export default function Allocate(emptyTotal, userID) {
+function Allocate(emptyTotal, userID) {
     const db = getDatabase();
     var index = 0;
 
@@ -111,4 +110,82 @@ function shuffle(array) {
     }
   
     return array;
-  }
+}
+
+const qualitycheck_criteria = {
+    'demographic': 0,
+    'modality': 0,
+    'spectators': 0,
+    'location': 0,
+    'posture': 0
+}
+
+const crossvalid_criteria = {
+    'demographic': 0,
+    'modality': 0,
+    'spectators': 0,
+    'location': 0,
+    'posture': 0
+}
+
+//quality check and cross validation may follow different protocols
+const LabelMatch = (img1, img2, is_qualitycheck=true) => {//paths of images
+    const db = getDatabase();
+    const criteria = is_qualitycheck ? qualitycheck_criteria : crossvalid_criteria;
+    
+    onValue(ref_db(db, img1), (snapshot1) => {
+        if (snapshot1.exists()) {
+            onValue(ref_db(db, img2), (snapshot2) => {
+                if (snapshot2.exists()) {
+                    if (CategoryMatch(snapshot1.val()['demographic'], snapshot2.val()['demographic'], criteria['demographic'])
+                    && CategoryMatch(snapshot1.val()['modality'], snapshot2.val()['modality'], criteria['modality'])
+                    && CategoryMatch(snapshot1.val()['spectators'], snapshot2.val()['spectators'], criteria['spectators'])
+                    && CategoryMatch(snapshot1.val()['location'], snapshot2.val()['location'], criteria['location'], true)
+                    && CategoryMatch(snapshot1.val()['posture'], snapshot2.val()['posture'], criteria['posture'], false, true)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    console.log("Image 2 does not exist");
+                }
+            });
+        } else {
+            console.log("Image 1 does not exist");
+        }
+    });
+}
+
+const CategoryMatch = (label_dic1, label_dic2, threshold, is_location=false, is_posture=false) => {
+    var match = 0;
+    var total = 0;
+    if (is_location) {
+        if (label_dic1['in_outdoor'] !== label_dic2['in_outdoor']) {//in_outdoor field has to match
+            return false;
+        } else {
+            for (const [key, value] of Object.entries(label_dic1['site'])) {
+                total++;
+                if (label_dic1['site'][key] === label_dic2['site'][key]) {
+                    match++;
+                }
+            }
+            console.log(match/total);
+            
+            return (match/total <= threshold) ? false : true;
+        }
+    } else if (is_posture) {
+        console.log((label_dic1.filter(element => label_dic2.includes(element)).length * 2) / (label_dic1.length + label_dic2.length));
+        return ((label_dic1.filter(element => label_dic2.includes(element)).length * 2) / (label_dic1.length + label_dic2.length) <= threshold) ? false : true;
+    } else {
+        for (const [key, value] of Object.entries(label_dic1)) {
+            total++;
+            if (label_dic1[key] === label_dic2[key]) {
+                match++;
+            }
+        }
+        console.log(match/total);
+        return (match/total <= threshold) ? false : true;
+    }
+}
+
+export {Allocate, LabelMatch};
