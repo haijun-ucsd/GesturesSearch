@@ -14,7 +14,7 @@ export default function Navbar() {
     <div>
       <nav className="Navbar">
         <NavLink to="/" className="Navtab">About</NavLink>
-        <NavLink to="/login" className="Navtab">LogIn</NavLink>
+        {/* <NavLink to="/login" className="Navtab">LogIn</NavLink> */}
         <NavLink to="/upload" className="Navtab">Upload</NavLink>
         <NavLink to="/explore" className="Navtab">Explore</NavLink>
         <NavLink to="/admin" className="Navtab">Admin</NavLink>
