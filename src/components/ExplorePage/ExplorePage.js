@@ -106,7 +106,7 @@ export default function ExplorePage(props) {
 						[subcategory]: modality_label_last_word
 					},
 				});
-			} else if (isLocation || category==="location") {} // Special case: Location, no module in facet.
+			} else if (isLocation || category === "location" || subcategory === "social_role") {} // Special case: Location, no module in facet.
 			else { // Default case.
 				props.setFacetList(prev => ({
 					...prev,
