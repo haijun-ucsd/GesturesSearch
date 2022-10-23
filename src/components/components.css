@@ -2238,11 +2238,30 @@ button {
 }
 
 .column1 {
-	width: 50%;
+	width: 40%;
 	height: 100%;
 }
 
+.column1 h5 {
+	color: #5A5A5A;
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+}
+
 .column2 {
-	width: 50%;
+	width: 40%;
+	height: 100%;
+}
+
+.column2 h5 {
+	color: #5A5A5A;
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.column3 {
+	width: 20%;
 	height: 100%;
 }
