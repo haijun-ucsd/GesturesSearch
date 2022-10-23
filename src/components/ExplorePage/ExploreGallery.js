@@ -10,7 +10,7 @@ import ClearAllBtn from "../../assets/ClearAllBtn@2x.png";
 import RearrangePriorityBtn from "../../assets/RearrangePriorityBtn@2x.png";
 import TwoBinPriorityBtn from "../../assets/TwoBinPriorityBtn@2x.png";
 //import GrabToOrderIcon from "../../assets/GrabToOrderIcon@2x.png";
-
+import Vis from "./ExploreVis.js";
 
 
 /**

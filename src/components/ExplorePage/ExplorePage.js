@@ -16,6 +16,7 @@ import "../components.css";
 import Facet from "./Facet";
 import ExploreGallery from "./ExploreGallery";
 import ExploreDetails from "./ExploreDetails";
+import Visualization from "./ExploreVis.js";
 import { FilterStructure, LabelStructure_category_only, FetchLabelList_helper, colors } from "../components";
 import { allModality, labels_data } from "../labels_data.js";
 
@@ -758,6 +759,8 @@ export default function ExplorePage(props) {
 				click_picture={click_picture}
 				pictureClicked={pictureClicked}
 			/>
+			<Visualization
+				imageList={imageList}/>
 			{pictureClicked !== undefined ? (
 				<ExploreDetails
 					pictureClicked={pictureClicked}

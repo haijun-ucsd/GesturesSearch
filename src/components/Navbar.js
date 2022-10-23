@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import './components.css';
 import jwt_decode from "jwt-decode"; //decode json web token
-import Allocate from "./UploadPage/LabelValidation.js";
 
 /**
  * references:
@@ -45,7 +44,8 @@ export default function Navbar() {
   return (
     <div>
       <nav className="Navbar">
-        <NavLink to="/" className="Navtab">About</NavLink>
+        <NavLink to="/about" className="Navtab">About</NavLink>
+        {/* <NavLink to="/" className="Navtab">Upload</NavLink> */}
         <NavLink to="/upload" className="Navtab">Upload</NavLink>
         <NavLink to="/explore" className="Navtab">Explore</NavLink>
         <NavLink to="/admin" className="Navtab">Admin</NavLink>
@@ -59,7 +59,6 @@ export default function Navbar() {
 				<span>
 					<img class="ProfilePic" src={g_user.picture}></img>
 					<span>{g_user.name}</span>
-					{Allocate(4, "xxx")}
 				</span>
         }
         </section>

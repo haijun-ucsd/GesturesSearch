@@ -1976,11 +1976,13 @@ button {
 }
 
 .HistoryTitle h5 {
+	margin-top: 80px;
 	margin-left: 400px;
 	margin-right: 100px;
 }
 
 .LineChart {
+	margin-top: 80px;
 	margin-left: 100px;
 	margin-right: 50px;
 }
@@ -2217,4 +2219,30 @@ button {
 	border-radius: 50%;
 	width: 30px;
 	margin: 1%;
+}
+
+.Visbutton {
+	z-index: 1000;
+	margin-left: auto; 
+	margin-right: 0;
+	/* background: var(--gray-light); */
+}
+
+.popup-content {
+	margin: auto;
+	display: flex;
+	background: rgb(255, 255, 255);
+	width: 1200px;
+	height: 700px;
+	padding: 5px;
+}
+
+.column1 {
+	width: 50%;
+	height: 100%;
+}
+
+.column2 {
+	width: 50%;
+	height: 100%;
 }
