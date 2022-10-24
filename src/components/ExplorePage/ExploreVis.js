@@ -4,14 +4,6 @@ import '../components.css';
 import BodyComponent from '../BodyComponent';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Label, LabelList, Treemap, RadialBar, Legend, ResponsiveContainer, PieChart, Pie, Sector, Cell } from 'recharts';
 
-
-const style = {
-    top: '50%',
-    right: 0,
-    transform: 'translate(0, -50%)',
-    lineHeight: '24px',
-};
-
 export default function Visualization(props) {
     // const contentStyle = { background: '#FFFFFF' };
     const overlayStyle = { background: 'rgba(0,0,0,0.5)' };
@@ -27,7 +19,12 @@ export default function Visualization(props) {
     const sexAgeNest = UndefinedMarker(NestedConverter(props.imageList, ageData, 'demographic', 'age', 'sex'));
     const siteArchiNest = JsonConverter(UndefinedMarker(NestedConverter(props.imageList, siteData, 'location', 'site', 'archi_compo', true)));
     return (
-        <Popup trigger={<button className="Visbutton"> Visualization </button>}
+        <Popup trigger={
+        <button className="Visbutton">
+        Visualization
+        <img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAJPSURBVHgB7dw7TiNBFIXhO6MJZ/YwITEEZgdshD3AEkhI2AsB6yAhJgchUgKoK2gJLEx3PU+V+/+kymZ4nN+0bTCYAQAAAAAAYC1+Wb5Xq/8+9tZvgxQBxAggRgAxAogRQIwAYgQQI0C+TTjnJvQ6c/bZUTiP9v55XpjIWgN8Hn86kghrDPDd+LIIawvw0/iSCD0F2Hycmm//yeY/Zz/N7ph7CTDdMn2gYytvyS1/Ov4x1LwhfNFDgO1xSkfodnxb8AHVtmucUhG6Ht9MG2BunNwI3Y9vpguwdJzUCEOMb6YJEDNOSoRhxjdrHyB2/NgIQ41v1jZA6vhLIww3vmsVIHf8uQhDju9aBCg1/q4Iw47vageIefr/FPlvNwlvv6vxXc0AKePUDtadWgFyLguH4Tws/L9Dj+9qBChxTS4VoevxXekAJe8QcyN0P74rGaDGo5HUCEOM70oFqPlQMDbCMOO7EgFaPA5fGmGo8V1ugJZPguYiDDe+ywmgeAa6K8KQ47vUAMqn/9sRhh3fpQTo4XsvU4Shx3cpAc5NO/6k9stYmki9BJ2Zdvy9kRrA7YrA+BFyArjtCIwfKTeAmyIwfoISAZzfMa9ufP5UgRi/oiRGADECiBFAjABiBBAjgBgBxAggRgAxAogRQIwAYgQQI4AYAcRK/LDkOZx/hknUpiW+Au4NyUoEuDEkK3EJOgjnNpw/Btf8EnQXzpVBym/917bs9Z77fmQ8wmU4LzbeaLIANV6z4/cJp+GchPM/nL+2LrwOCgAAAAAAAAAAfPEGyqDaH6ZOtVIAAAAASUVORK5CYII=' />
+        
+        </button>}
         {...{ overlayStyle, arrowStyle }} modal>
             <div className='popup-content'>
             <div className='column1'>
@@ -72,6 +69,7 @@ export default function Visualization(props) {
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
+                <Legend />
                 <Bar dataKey="female" stackId="a" fill="#8884d8" />
                 <Bar dataKey="male" stackId="a" fill="#82ca9d" />
                 <Bar dataKey="unknown" stackId="a" fill="#ADD8E6" />

@@ -2221,11 +2221,34 @@ button {
 	margin: 1%;
 }
 
-.Visbutton {
+/* .Visbutton {
 	z-index: 1000;
 	margin-left: auto; 
 	margin-right: 0;
-	/* background: var(--gray-light); */
+	/* background: var(--gray-light); */ 
+
+
+.Visbutton {
+	margin-left: auto; 
+	margin-right: 0;
+    font-size: 0.7em;
+    font-weight: bold;
+    line-height: 1;
+    text-transform: uppercase;
+    position: relative;
+    border: 0.18em solid;
+    padding: 0.3em;
+	color: #3b68c1;
+    background: transparent;
+    border-radius: .125em;
+    transition: .3s;
+    
+}
+
+.Visbutton img {
+	height: 30px;
+	width: 30px;
+	filter: invert(35%) sepia(52%) saturate(1384%) hue-rotate(194deg) brightness(92%) contrast(84%);
 }
 
 .popup-content {
