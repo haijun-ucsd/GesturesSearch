@@ -2231,7 +2231,7 @@ button {
 .Visbutton {
 	margin-left: auto; 
 	margin-right: 0;
-    font-size: 0.7em;
+    font-size: 0.8em;
     font-weight: bold;
     line-height: 1;
     text-transform: uppercase;
@@ -2242,12 +2242,25 @@ button {
     background: transparent;
     border-radius: .125em;
     transition: .3s;
-    
 }
 
-.Visbutton img {
-	height: 30px;
-	width: 30px;
+.Visbutton:hover, .Visbutton:focus {
+	color: white;
+	background: #3b68c1;
+	border-color: #3b68c1;
+} 
+
+.Visbutton:hover .statIcon{
+    filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(309deg) brightness(104%) contrast(101%);  
+}
+
+.Visbutton:focus .statIcon{
+    filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(309deg) brightness(104%) contrast(101%);  
+}
+
+.statIcon {
+	height: 25px;
+	width: 25px;
 	filter: invert(35%) sepia(52%) saturate(1384%) hue-rotate(194deg) brightness(92%) contrast(84%);
 }
 
@@ -2287,4 +2300,85 @@ button {
 .column3 {
 	width: 20%;
 	height: 100%;
+}
+
+.Human_container {
+	/*margin-top: -275px; /* to correct for the top margin caused by svg? TODO: improve*/
+	position: relative;
+	height: 250px;
+	width: 250px;
+	margin-left: -46.5px; /*TODO*/
+}
+
+/* reference: https://stackoverflow.com/questions/6300635/how-to-make-an-element-transparent-to-clicks-but-still-visible */
+.Human_outline {
+	position: absolute;
+	margin-left: 20px;
+	top: 36px;
+	/*top: 278px;*/
+	z-index: 1;
+	pointer-events: none;
+	/*height: 120%;
+	width: auto;*/
+}
+
+.Human_highlight {
+	position: absolute;
+	width: 250px;
+	padding-top: 10px;
+	height: 250px;
+	display: block;
+	margin: 40px auto;
+	margin-left: 86.7px;
+}
+
+.head {
+	margin-left: -25.4px;
+	top: -5px;
+	position:absolute
+}
+.l_arm {
+	margin-left: -50px;
+	top: 58px;
+	position:absolute
+}
+.r_arm {
+	margin-left: 13.5px;
+	top: 58px;
+	position:absolute
+}
+.l_hand {
+	margin-left: -66.7px;
+	top: 109px;
+	position:absolute
+}
+.r_hand {
+	margin-left: 36.5px;
+	top: 109px;
+	position:absolute
+}
+.facial_expression {
+	margin-left: -17.5px;
+	top: 1px;
+	position:absolute
+}
+.eyes {
+	margin-left: -15.5px;
+	top: 20px;
+	position:absolute
+}
+.voice {
+	margin-left: -9.5px;
+	top: 38px;
+	position:absolute
+}
+.legs {
+	margin-left: -25.4px;
+	top: 120px;
+	position:absolute
+}
+.feet {
+	margin-left: -26.5px;
+	top: 215px;
+	position:absolute
 }
