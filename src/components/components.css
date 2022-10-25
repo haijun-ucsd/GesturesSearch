@@ -2302,6 +2302,10 @@ button {
 	height: 100%;
 }
 
+.column3 h5 {
+	color: #5A5A5A;
+}
+
 .Human_container {
 	/*margin-top: -275px; /* to correct for the top margin caused by svg? TODO: improve*/
 	position: relative;
