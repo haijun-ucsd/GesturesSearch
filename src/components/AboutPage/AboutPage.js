@@ -9,10 +9,6 @@
 import React, { useState , useEffect , useRef} from 'react';
 import '../components.css';
 import { Slide } from 'react-reveal';
-import { PieChart } from 'react-minimal-pie-chart';
-import * as d3 from "d3";
-import {FileAttachment} from './FIleAttachment.js';
-import { async } from '@firebase/util';
 
 export const chartOptions = {
     scaleShowGridLines : true,
@@ -78,108 +74,13 @@ var RoleData = {
 	]
 };
 
-// const Bubble = () => {
-//     d3 = require("d3@6");
-//     const data = FileAttachment("./flare.json").json();
-//     pack = data => d3.pack()
-//     .size([width, height])
-//     .padding(3)
-//     (d3.hierarchy(data)
-//         .sum(d => d.value)
-//         .sort((a, b) => b.value - a.value));
-//     const root = pack(data);
-//     let focus = root;
-//     let view;
-  
-//     const svg = d3.create("svg")
-//         .attr("viewBox", `-${width / 2} -${height / 2} ${width} ${height}`)
-//         .style("display", "block")
-//         .style("margin", "0 -14px")
-//         .style("background", color(0))
-//         .style("cursor", "pointer")
-//         .on("click", (event) => zoom(event, root));
-  
-//     const node = svg.append("g")
-//       .selectAll("circle")
-//       .data(root.descendants().slice(1))
-//       .join("circle")
-//         .attr("fill", d => d.children ? color(d.depth) : "white")
-//         .attr("pointer-events", d => !d.children ? "none" : null)
-//         .on("mouseover", function() { d3.select(this).attr("stroke", "#000"); })
-//         .on("mouseout", function() { d3.select(this).attr("stroke", null); })
-//         .on("click", (event, d) => focus !== d && (zoom(event, d), event.stopPropagation()));
-  
-//     const label = svg.append("g")
-//         .style("font", "10px sans-serif")
-//         .attr("pointer-events", "none")
-//         .attr("text-anchor", "middle")
-//       .selectAll("text")
-//       .data(root.descendants())
-//       .join("text")
-//         .style("fill-opacity", d => d.parent === root ? 1 : 0)
-//         .style("display", d => d.parent === root ? "inline" : "none")
-//         .text(d => d.data.name);
-  
-//     zoomTo([root.x, root.y, root.r * 2]);
-  
-//     function zoomTo(v) {
-//       const k = width / v[2];
-  
-//       view = v;
-  
-//       label.attr("transform", d => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`);
-//       node.attr("transform", d => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`);
-//       node.attr("r", d => d.r * k);
-//     }
-  
-//     function zoom(event, d) {
-//       const focus0 = focus;
-  
-//       focus = d;
-  
-//       const transition = svg.transition()
-//           .duration(event.altKey ? 7500 : 750)
-//           .tween("zoom", d => {
-//             const i = d3.interpolateZoom(view, [focus.x, focus.y, focus.r * 2]);
-//             return t => zoomTo(i(t));
-//           });
-  
-//       label
-//         .filter(function(d) { return d.parent === focus || this.style.display === "inline"; })
-//         .transition(transition)
-//           .style("fill-opacity", d => d.parent === focus ? 1 : 0)
-//           .on("start", function(d) { if (d.parent === focus) this.style.display = "inline"; })
-//           .on("end", function(d) { if (d.parent !== focus) this.style.display = "none"; });
-//     }
-//     const svgx = useRef(null);
-//     useEffect(()=>{
-//         if(svgx.current){
-//             svgx.current.appendChild(svg.node())
-//         } 
-//     }, []);
-//     console.log(svgx);
-//     return (
-//         <div ref={svgx}/>
-//     )
-// }
-
 export default function AboutPage() {
     var LineChart = require("react-chartjs").Line;
     var VerticalBarChart = require("react-chartjs").Bar;
     var RoleBar = require("react-chartjs").Bar;
-    // const FileAttachment = FileAttachments((name) =>
-    //     new URL(`https://example.com/${name}.js`));
-    // const flare = FileAttachment("./flare.json").json();
     var flare = Object({"name" : "flare",
                 "children" : [{"name" : "analytics", "size" : 2},
                               {"name" : "shapes", "size" : 3}]});
-    // let flare = d3.json('./flare.json', function (d) {
-    //     console.log(d);
-    // });
-    // const file = require('./flare.json');
-    // var flare = require('./flare.json');
-    // var flare = {   
-
     console.log(flare);
 
     return (
@@ -189,49 +90,6 @@ export default function AboutPage() {
                 <img
                     src="https://mb.cision.com/Public/14959/3307223/99660166e82b8824_800x800ar.png"
                 />
-            </div> */}
-            <div className='Bubble_container'>
-            {/* <Pack className='Bubble'
-                    data={flare}
-                    width={'1152'}
-                    height={'1152'}/> */}
-            {/* <Bubble/> */}
-            </div>
-            {/* <div className='Vis'>
-                <PieChart className='Age'
-                    data={[
-                        { title: 'Baby', value: 1, color: '#e1f7d5' },
-                        { title: 'Child', value: 5, color: '#ffbdbd' },
-                        { title: 'Teen', value: 21, color: '#ffffff' },
-                        { title: 'Adult', value: 58, color: '#c9c9ff' },
-                        { title: 'Senior', value: 19, color: '#f1cbff' },
-                    ]}
-                    animate={true}
-                    label={({ dataEntry }) => dataEntry.title}
-                    labelStyle={(index) => ({
-                        fontSize: '5px',
-                        fontFamily: 'sans-serif',
-                      })}
-                    labelPosition={75}/>
-                <PieChart className='Pie'
-                    data={[
-                        { title: 'Standing', value: 10, color: '#01a7c2' },
-                        { title: 'Sitting', value: 15, color: '#007090' },
-                        { title: 'Walking', value: 20, color: '#8AE28D' },
-                        { title: 'Squatting', value: 5, color: '#eaebed' },
-                        { title: 'Pulling sth', value: 7, color: '#605e5e' },
-                    ]}
-                    animate={true}
-                    label={({ dataEntry }) => dataEntry.title}
-                    labelStyle={(index) => ({
-                        fontSize: '5px',
-                        fontFamily: 'sans-serif',
-                      })}
-                    labelPosition={75}
-                />
-            </div> */}
-            {/* <div className='VisBar'>
-                <RoleBar className='RoleBar' data={RoleData} width="300" height="300"/>
             </div> */}
             <div className='HistoryTitle'>
                 <h5>Total Uploads</h5>
