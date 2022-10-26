@@ -20,6 +20,7 @@
     "colcade": "^0.2.0",
     "compressorjs": "^1.1.1",
     "d3": "^4.13.0",
+    "dompurify": "^2.4.0",
     "draft-js": "^0.11.7",
     "firebase": "^9.9.1",
     "firebase-tools": "^11.4.2",

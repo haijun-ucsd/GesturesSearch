@@ -14,6 +14,7 @@ import LoginPage from './Login/LoginPage';
 import SignUpPage from './Login/SignUpPage';
 import AdminPage from './AdminPage';
 import { FilterStructure } from "./components";
+import jwt_decode from "jwt-decode"; //decode json web token
 
 
 /**
@@ -81,6 +82,43 @@ export default function App() {
 		console.log("updated facetList: ", facetList);
 	}, [facetList]);
 
+  
+
+  /*----Google OAuth----*/
+
+	const [ g_user, setG_user] = useState({});
+	const handleCallbackResponse=(res)=>{
+		var userObject = jwt_decode(res.credential); //decoding the token
+		console.log(userObject);
+			setG_user(jwt_decode(res.credential));
+      console.log(g_user);
+			document.getElementById("signInDiv").hidden = true;
+		  document.getElementById("uploadAvail").hidden = false;
+	}
+	const handleSignOut=(e)=>{
+		setG_user({});
+		document.getElementById("signInDiv").hidden = false;
+	}
+
+	useEffect(()=>{
+		/*global google*/
+		google.accounts.id.initialize({
+			client_id:"1040045622206-ivnovfjcd4jq58rbrcrm49qd7ra52d2l.apps.googleusercontent.com",
+			callback: handleCallbackResponse, //a function called after logged in
+			auto_select: true
+		});
+   
+		google.accounts.id.renderButton(
+			document.getElementById("signInDiv"),
+			{ theme:"outline", size:"large", width: 100, text:"signin_with" }
+		);
+		
+		google.accounts.id.prompt();
+	},[g_user]);
+  useEffect(()=>{
+    console.log("G_user:",g_user);
+  },g_user)
+
 
 /**--- Render --**/
 	return (
@@ -123,6 +161,8 @@ export default function App() {
             picAnnotation={picAnnotation}
             setPicAnnotation={setPicAnnotation}
             user={user}
+            g_user={g_user}
+            setG_user={setG_user}
             // success={success}
             // setSuccess={setSuccess}
           />}
@@ -135,6 +175,7 @@ export default function App() {
 						setFilterList={setFilterList}
 						facetList={facetList}
 						setFacetList={setFacetList}
+            g_user={g_user}
 					/>}
 				/>
 				<Route
