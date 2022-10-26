@@ -1,8 +1,7 @@
 import React, { PureComponent } from 'react';
 import Popup from 'reactjs-popup';
 import '../components.css';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Label, LabelList, Treemap, RadialBar, Legend, ResponsiveContainer, PieChart, Pie, Sector, Cell } from 'recharts';
-import { event } from 'jquery';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, LabelList, Treemap, Legend, ResponsiveContainer, PieChart, Pie } from 'recharts';
 
 export default function Visualization(props) {
     // const contentStyle = { background: '#FFFFFF' };
