@@ -47,7 +47,7 @@ export default function UploadControl(props) {
 				<div
 					className="UploadControl_addpic_bigbox HintText"
 					style={{backgroundColor: props.draggingActive==true ? "#EDECED"/*gray-bg*/ : "transparent"}}
-					onDragEnter={props.add_pic_by_drag}
+					onDragEnter={(e) => { props.add_pic_by_drag(e); }}
 				>
 					<span> Drag picture here </span>
 					<span> or </span>
@@ -72,19 +72,22 @@ export default function UploadControl(props) {
 					props.draggingActive==true ?
 						<div
 							style={{ position:"absolute", width:"100%", height:"100%" }}
-							onDragEnter={props.add_pic_by_drag}
-							onDragLeave={props.add_pic_by_drag}
-							onDragOver={props.add_pic_by_drag}
-							onDrop={props.add_pic_by_drag}
+							onDragEnter={(e) => { props.add_pic_by_drag(e); }}
+							onDragLeave={(e) => { props.add_pic_by_drag(e); }}
+							onDragOver={(e) => { props.add_pic_by_drag(e); }}
+							onDrop={(e) => { props.add_pic_by_drag(e); }}
 						></div> // empty div to cover the draggable field and help the add_pic_by_drag function
 					: null }
 
-					{/* Notification when some of the drag-to-add pictures is invalid */
-					props.dragToAddInvalid==true ?
-						<div className="AddPicBigBox_notification">
-							Some or all added picture is invalid.
-						</div>
-					: null }
+					{/**--- Information about added pics and messages ---**/}
+					<div className="AddPicBigBox_notification">
+						<UploadMessage
+							numAddedPics={props.numAddedPics}
+							addingPic={props.addingPic}
+							dragToAddInvalid={props.dragToAddInvalid}
+							uploadingPic={props.uploadingPic}
+						/>
+					</div>
 				</div>
 			:
 				<>
@@ -110,59 +113,12 @@ export default function UploadControl(props) {
 						</div>
 
 						{/**--- Information about added pics and messages ---**/}
-						<div className="HintText">
-
-							{/* Custom messages */
-							(() => {
-
-								// priority 1: uploading picture
-								if (props.uploadingPic === "succeed") {
-									return (
-										<>
-											<img srcSet={SucceedIcon+" 2x"} />
-											<span style={{color: "#A0D568"}}>
-												Pictures have been uploaded!
-											</span>
-										</>
-									);
-								} else if (props.uploadingPic == true) {
-									return (
-										<>
-											<Icon icon="line-md:loading-twotone-loop" />
-											Uploading Pictures...
-										</>
-									);
-								}
-
-								// priority 2: adding to waiting room
-								if (props.addingPic == true) {
-									return (
-										<>
-											<Icon icon="line-md:loading-twotone-loop" />
-											Adding Pictures...
-										</>
-									);
-								}
-
-								// priority 3: invalid adding
-								if (props.dragToAddInvalid == true) {
-									return (
-										<>
-											Some or all added picture is invalid.
-										</>
-									);
-								}
-
-								// priority 3: usual state, show number of pictures added
-								if (props.numAddedPics !==0) {
-									return (
-										<>Total {props.numAddedPics} pictures</>
-									);
-								}
-								// TODO: add number of incompletion
-							})()}
-
-						</div>
+						<UploadMessage
+							numAddedPics={props.numAddedPics}
+							addingPic={props.addingPic}
+							dragToAddInvalid={props.dragToAddInvalid}
+							uploadingPic={props.uploadingPic}
+						/>
 					</div>
 
 					{/**--- Upload picture section ---**/}
@@ -189,6 +145,74 @@ export default function UploadControl(props) {
 
 				</>
 			}
+		</div>
+	);
+}
+
+/**
+ * UploadMessage
+ * 
+ * Custom messages to show the state of picture upload.
+ * 
+ * parent props:
+ *	- numAddedPics
+ *	- addingPic: whether currently in the process of adding picture to WaitingRoom
+ *	- dragToAddInvalid: whether any of the pictures just dragged and uploaded is invalid
+ *	- uploadingPic: whether currently in the process of uploading picture
+ * 
+ * Usage: Parent component is UploadPage.
+ */
+function UploadMessage(props) {
+	return (
+		<div className="HintText">
+			{(() => {
+
+				// priority 1: uploading picture
+				if (props.uploadingPic === "succeed") {
+					return (
+						<>
+							<img srcSet={SucceedIcon+" 2x"} />
+							<span style={{color: "#A0D568"}}>
+								Pictures have been uploaded!
+							</span>
+						</>
+					);
+				} else if (props.uploadingPic == true) {
+					return (
+						<>
+							<Icon icon="line-md:loading-twotone-loop" />
+							Uploading Pictures...
+						</>
+					);
+				}
+
+				// priority 2: adding to waiting room
+				if (props.addingPic == true) {
+					return (
+						<>
+							<Icon icon="line-md:loading-twotone-loop" />
+							Adding Pictures...
+						</>
+					);
+				}
+
+				// priority 3: invalid adding
+				if (props.dragToAddInvalid == true) {
+					return (
+						<>
+							Some or all added picture is invalid.
+						</>
+					);
+				}
+
+				// priority 3: usual state, show number of pictures added
+				if (props.numAddedPics !==0) {
+					return (
+						<>Total {props.numAddedPics} pictures</>
+					);
+				}
+				// TODO: add number of incompletion
+			})()}
 		</div>
 	);
 }

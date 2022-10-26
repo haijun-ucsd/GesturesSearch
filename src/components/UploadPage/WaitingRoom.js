@@ -106,7 +106,7 @@ export default function WaitingRoom(props) {
 										<div className="DescriptionTextBox_container">
 											<div className="DescriptionTextBox" style={{"--desbox-color":"#FFFFFF"}}>
 												<div className="DescriptionText">
-													{props.addedLabels[idx].split('\n').map(str => <>{str}<br/></>)}
+													{props.addedLabels[idx] ? props.addedLabels[idx].split('\n').map(str => <>{str}<br/></>) : ""}
 												</div>
 											</div>
 										</div>
