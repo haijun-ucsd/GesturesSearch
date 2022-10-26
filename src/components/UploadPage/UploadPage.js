@@ -158,7 +158,7 @@ export default function UploadPage(props) {
 	};
 
 	// DEBUG
-	console.log("userName:"+ props.user)
+	// console.log("userName:"+ props.user)
 	useEffect(() => {
 		console.log("\n「");
 		console.log("addedPics:", props.addedPics);
@@ -723,30 +723,13 @@ export default function UploadPage(props) {
 
 	/*----Google OAuth----*/
 
-	const [ g_user, setG_user] = useState({});
-	const handleCallbackResponse=(res)=>{
-		var userObject = jwt_decode(res.credential); //decoding the token
-		console.log(userObject);
-			setG_user(jwt_decode(res.credential));
-			document.getElementById("signInDiv").hidden = true;
-		document.getElementById("uploadAvail").hidden = false;
-	}
 	const handleSignOut=(e)=>{
-		setG_user({});
+		props.setG_user({});
 		document.getElementById("signInDiv").hidden = false;
+		console.log("g_user:",props.g_user);
 	}
-	useEffect(()=>{
-		/*global google*/
-		google.accounts.id.initialize({
-			client_id:"1040045622206-ivnovfjcd4jq58rbrcrm49qd7ra52d2l.apps.googleusercontent.com",
-			callback: handleCallbackResponse //a function called after logged in
-		});
-		google.accounts.id.renderButton(
-			document.getElementById("signInDiv"),
-			{ theme:"outline", size:"large", width: 100, text:"signin_with" }
-		);
-		// google.accounts.id.prompt();
-	},[]);
+
+
 
 
 /**--- Render ---**/
@@ -754,24 +737,26 @@ export default function UploadPage(props) {
 		<div className="PageBox PageBox_Upload">
 			<section>
 				{/* If no user: show sign in button
-					If user exists: show log out button */}
-				{/* <h2 class="alert alert-success" id="loginPrompt">Sign-In With Google</h2> */}
+					If user exists: show log out button */ }
 				
-				{/* {Object.keys(g_user).length>0 &&
-					<button onClick={(e)=> handleSignOut()}>Sign Out</button>
-				} */}
+				{Object.keys(props.g_user).length>0 &&
+					<button onClick={(e)=> handleSignOut()} className="login_navbar">Sign Out</button>
+				} 
+				{Object.keys(props.g_user).length==0 &&
+				<button type="button" id="signInDiv" class="login_navbar"> Click here</button>	
+				} 
 				
-				{/* {g_user &&
-				<div class="flex">
-					<img class="ProfilePic" src={g_user.picture}></img>
-					<span>{g_user.name}</span>
-				</div>
-				} */}
-				{/* <button type="button" id="signInDiv" class="login_navbar2"> Click here</button> */}
+				{props.g_user &&
+				<span className="signout_navbar">
+					<img class="ProfilePic" src={props.g_user.picture}></img>
+					<span>{props.g_user.name}</span>
+				</span>
+				} 
+				
 			</section>
 			<section>
 				<div id="uploadAvail"></div>
-				{Object.keys(g_user).length>0 &&
+				{Object.keys(props.g_user).length>0 &&
 					<div className="UploadWaitingRoom">
 					<UploadControl
 						add_pic_by_click={add_pic_by_click}

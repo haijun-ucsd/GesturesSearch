@@ -72,6 +72,7 @@ export default function Facet(props) {
 			});
 		}
 	};
+	console.log("facet g_user:",props.g_user);
 
 	/* Render */
 	return (

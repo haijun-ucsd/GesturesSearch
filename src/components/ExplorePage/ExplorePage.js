@@ -8,6 +8,8 @@
 
 
 import React, { useState, useEffect } from "react";
+
+import {useNavigate} from 'react-router-dom';
 import { getDatabase, onValue, ref as ref_db, set } from "firebase/database";
 import "bootstrap/dist/css/bootstrap.min.css";
 import _, { filter, map } from "underscore";
@@ -733,6 +735,7 @@ export default function ExplorePage(props) {
 /**--- Render ---**/
 	return (
 		<div className="PageBox PageBox_Explore">
+			<button onClick={navigateToUpload}>Upload</button>
 			<Facet
 				facetDisabled={facetDisabled}
 				setFilterList={props.setFilterList}

@@ -11,35 +11,37 @@ import jwt_decode from "jwt-decode"; //decode json web token
  *  https://www.codegrepper.com/code-examples/javascript/In+React+Router+v6%2C+activeStyle+will+be+removed+and+you+should+use+the+function+style+to+apply+inline+styles+to+either+active+or+inactive+NavLink+components.
  */
 export default function Navbar() {
-  /*----Google OAuth----*/
+  // /*----Google OAuth----*/
 
-  const [ g_user, setG_user] = useState({});
-  const handleCallbackResponse=(res)=>{
+  // const [ g_user, setG_user] = useState({});
+  // const handleCallbackResponse=(res)=>{
       
-  var userObject = jwt_decode(res.credential); //decoding the token
-  console.log(userObject);
-      setG_user(jwt_decode(res.credential));
-      document.getElementById("signInDiv").hidden = true;
-  document.getElementById("uploadAvail").hidden = false;
-  }
+  //   setTimeout(() => {
+  //     var userObject = jwt_decode(res.credential); //decoding the token
+  //     console.log("userObject:",userObject);
+  //     setG_user(jwt_decode(res.credential));
+  //     document.getElementById("signInDiv").hidden = true;
+  //     document.getElementById("uploadAvail").hidden = false;
+  //   }, 5)}
   
-  const handleSignOut=(e)=>{
-      setG_user({});
-      document.getElementById("signInDiv").hidden = false;
   
-  }
-  useEffect(()=>{
-      /*global google*/
-      google.accounts.id.initialize({
-          client_id:"1040045622206-ivnovfjcd4jq58rbrcrm49qd7ra52d2l.apps.googleusercontent.com",
-          callback: handleCallbackResponse //a function called after logged in
-      });
-      google.accounts.id.renderButton(
-          document.getElementById("signInDiv"),
-          {theme:"outline",size:"large",width: 100,text:"signin_with"}
-      );
-      // google.accounts.id.prompt();
-  },[]);
+  // const handleSignOut=(e)=>{
+  //     setG_user({});
+  //     document.getElementById("signInDiv").hidden = false;
+  
+  // }
+  // useEffect(()=>{
+  //     /*global google*/
+  //     google.accounts.id.initialize({
+  //         client_id:"1040045622206-ivnovfjcd4jq58rbrcrm49qd7ra52d2l.apps.googleusercontent.com",
+  //         callback: handleCallbackResponse //a function called after logged in
+  //     });
+  //     google.accounts.id.renderButton(
+  //         document.getElementById("signInDiv"),
+  //         {theme:"outline",size:"large",width: 100,text:"signin_with"}
+  //     );
+  //     // google.accounts.id.prompt();
+  // },[]);
 
   return (
     <div>
@@ -50,7 +52,8 @@ export default function Navbar() {
         <NavLink to="/explore" className="Navtab">Explore</NavLink>
         <NavLink to="/admin" className="Navtab">Admin</NavLink>
         
-        <section>
+        {/* <section>
+        <div id="uploadAvail"></div>
 				<div id="signInDiv"> Click here</div>
         {Object.keys(g_user).length>0 &&
 					<button onClick={(e)=> handleSignOut()} className="login_navbar">Sign Out</button>
@@ -61,7 +64,7 @@ export default function Navbar() {
 					<span>{g_user.name}</span>
 				</span>
         }
-        </section>
+        </section> */}
       </nav>
     </div>
   );

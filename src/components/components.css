@@ -1124,20 +1124,24 @@ button {
 }
 
 .login_navbar {
-	position: relative;
+	position: absolute;
+	z-index: 10;
 	border: 1px solid var(--gray-mid);
-	border-radius: 4px;
-	background-color: #F0FFF0;
+	border-radius: 0px;
+	background-color: #FFFFFF;
 	cursor: pointer;
+	font-size: large;
+	height: 40px;
+	width: 100px;
 	/* as a container */
 	display: inline-flex;
 	flex-direction: row;
 	justify-content: center;
 	align-items: center;
-	padding: 4px 16px;
+	padding: 0px 0px;
 	gap: 8px;
-	top: 3%;
-	margin-right: 10px;
+	top: 0%;
+	margin-left: 100px;
 }
 .login_center {
 	background-color: white;
@@ -1153,6 +1157,25 @@ button {
 	gap: 8px;
 	margin-left:43%;
 	margin-top:21%;
+}
+.signout_navbar {
+	position: absolute;
+	z-index: 10;
+	border-radius: 0px;
+	background-color: #FFFFFF;
+	cursor: pointer;
+	font-size: large;
+	height: 38px;
+	width: 180px;
+	/* as a container */
+	display: inline-flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	padding: 0px 0px;
+	gap: 8px;
+	top: 0%;
+	margin-left: 250px;
 }
 
 
@@ -1754,7 +1777,6 @@ button {
 }
 .FacetAttentiveSlider_track {
 	content: "";
-	color: ;
 	position: absolute;
 	border-bottom: 2px solid var(--gray-solid);
 	height: 0px;
