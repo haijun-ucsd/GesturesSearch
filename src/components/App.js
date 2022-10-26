@@ -12,7 +12,7 @@ import ExplorePage from './ExplorePage/ExplorePage';
 import AboutPage from './AboutPage/AboutPage';
 import LoginPage from './Login/LoginPage';
 import SignUpPage from './Login/SignUpPage';
-import AdminPage from './AdminPage';
+import AdminPage, { AdminEmptyImages, AdminQualityCheck } from './AdminPage';
 import { FilterStructure } from "./components";
 import jwt_decode from "jwt-decode"; //decode json web token
 
@@ -181,7 +181,10 @@ export default function App() {
 				<Route
 					path='/admin'
 					element={<AdminPage />}
-				/>
+				>
+					<Route path="empty_images" element={<AdminEmptyImages />} />
+					<Route path="quality_check" element={<AdminQualityCheck />} />
+				</Route>
 			</Routes>
 		</Router>
 	);
