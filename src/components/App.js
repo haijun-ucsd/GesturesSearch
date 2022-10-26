@@ -125,7 +125,7 @@ export default function App() {
 		<Router>
 			<Navbar />
 			<Routes>
-				<Route path='/' element={<AboutPage />} />
+				<Route path='/about' element={<AboutPage />} />
         <Route path='/Login' element={<LoginPage
           user={user}
           setUser={setUser}

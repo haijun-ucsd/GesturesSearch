@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { storage } from "../../firebase";
-import { getDatabase, onValue, ref as ref_db, update, set, child, orderByChild, push, get, Database } from "firebase/database";
+import { getDatabase, onValue, ref as ref_db, set } from "firebase/database";
 
 /**
  * What this file does:
