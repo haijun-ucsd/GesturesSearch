@@ -1898,6 +1898,17 @@ button {
 	border-bottom: 1px solid var(--gray-mid);
 }
 
+.SubNavbar {
+	margin: 16px 0px;
+	/* as a container */
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	align-items: center;
+	padding: 0px 40px;
+	gap: 64px;
+}
+
 .Navtab {
 	/* as an element */
 	flex-grow: 0;
@@ -2185,4 +2196,25 @@ button {
 	border-radius: 50%;
 	width: 30px;
 	margin: 1%;
-  }
+}
+
+
+/* Admin */
+
+.PageBox_Admin {
+	height: 100vh;
+	flex-direction: column;
+}
+
+.AdminOutletContainer {
+	align-self: stretch;
+	flex-grow: 1;
+	margin: 0px 40px;
+	background-color: var(--gray-bg);
+	/* as a container */
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 16px;
+	padding: 16px;
+}

@@ -158,7 +158,7 @@ export default function UploadPage(props) {
 	};
 
 	// DEBUG
-	console.log("userName:"+ props.user)
+	console.log("userName:"+ props.user);
 	useEffect(() => {
 		console.log("\n「");
 		console.log("addedPics:", props.addedPics);
@@ -230,6 +230,7 @@ export default function UploadPage(props) {
 			}
 			if (valid_pics.length > 0) {
 				console.log("Valid new pictures added through drag:\n", valid_pics, "\nUpdating waiting room."); //DUBUG
+				setAddingPic(true);
 				handle_add_pic(valid_pics);
 			}
 		}
@@ -362,11 +363,12 @@ export default function UploadPage(props) {
 					if (props.completePercentages[i] === 100) { // valid picture, can upload
 						console.log("addedPics[" + i + "] is valid"); //DEBUG
 						console.log(props.addedPics.length); //DEBUG
-						upload_single_image(i);
+						await upload_single_image(i);
 					}
 				}
 
 				// Clear the uploaded images according to "undefined" tombstones.
+				console.log("Clear the uploaded images according to 'undefined' tombstones."); //DEBUG
 				props.setAddedPics(prev => { return (prev.filter((item) => item !== undefined)); });
 				props.setAddedPicsUrl(prev => { return (prev.filter((item) => item !== undefined)); });
 				props.setFormDataList(prev => { return (prev.filter((item) => item !== undefined)); });
@@ -723,7 +725,7 @@ export default function UploadPage(props) {
 
 	/*----Google OAuth----*/
 
-	const [ g_user, setG_user] = useState({});
+	const [g_user, setG_user] = useState({});
 	const handleCallbackResponse=(res)=>{
 		var userObject = jwt_decode(res.credential); //decoding the token
 		console.log(userObject);
