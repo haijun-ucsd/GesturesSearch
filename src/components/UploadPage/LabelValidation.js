@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { storage } from "../../firebase";
-import { getDatabase, onValue, ref as ref_db, update, set, child, orderByChild, push, get, Database } from "firebase/database";
+import { getDatabase, onValue, ref as ref_db, set } from "firebase/database";
 
 /**
  * What this file does:
@@ -112,7 +110,7 @@ function shuffle(array) {
     return array;
 }
 
-var qualitycheck_criteria = {
+const qualitycheck_criteria = {
     'demographic': 0,
     'modality': 0,
     'spectators': 0,
@@ -120,7 +118,7 @@ var qualitycheck_criteria = {
     'posture': 0
 }
 
-var crossvalid_criteria = {
+const crossvalid_criteria = {
     'demographic': 0,
     'modality': 0,
     'spectators': 0,
@@ -129,7 +127,7 @@ var crossvalid_criteria = {
 }
 
 //quality check and cross validation may follow different protocols
-function LabelMatch(img1, img2, is_qualitycheck=true) {//paths of images
+const LabelMatch = (img1, img2, is_qualitycheck=true) => {//paths of images
     const db = getDatabase();
     const criteria = is_qualitycheck ? qualitycheck_criteria : crossvalid_criteria;
     
@@ -170,11 +168,12 @@ const CategoryMatch = (label_dic1, label_dic2, threshold, is_location=false, is_
                 }
             }
             console.log(match/total);
-            return (match/total < threshold) ? false : true;
+            
+            return (match/total <= threshold) ? false : true;
         }
     } else if (is_posture) {
         console.log((label_dic1.filter(element => label_dic2.includes(element)).length * 2) / (label_dic1.length + label_dic2.length));
-        return ((label_dic1.filter(element => label_dic2.includes(element)).length * 2) / (label_dic1.length + label_dic2.length) < threshold) ? false : true;
+        return ((label_dic1.filter(element => label_dic2.includes(element)).length * 2) / (label_dic1.length + label_dic2.length) <= threshold) ? false : true;
     } else {
         for (const [key, value] of Object.entries(label_dic1)) {
             total++;
@@ -183,7 +182,7 @@ const CategoryMatch = (label_dic1, label_dic2, threshold, is_location=false, is_
             }
         }
         console.log(match/total);
-        return (match/total < threshold) ? false : true;
+        return (match/total <= threshold) ? false : true;
     }
 }
 

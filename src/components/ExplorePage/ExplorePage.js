@@ -8,6 +8,8 @@
 
 
 import React, { useState, useEffect } from "react";
+
+import {useNavigate} from 'react-router-dom';
 import { getDatabase, onValue, ref as ref_db, set } from "firebase/database";
 import "bootstrap/dist/css/bootstrap.min.css";
 import _, { filter, map } from "underscore";
@@ -98,7 +100,6 @@ export default function ExplorePage(props) {
 				const currFacetList = props.facetList; // snapshot
 				const modality_label_str_arr = label.split(" ");
     		const modality_label_last_word = modality_label_str_arr[modality_label_str_arr.length - 1];
-    		console.log("HEREHEREHERE!!!", currFacetList, modality_label_str_arr, modality_label_last_word);
 				props.setFacetList({
 					...currFacetList,
 					["modality"]: {
@@ -106,7 +107,7 @@ export default function ExplorePage(props) {
 						[subcategory]: modality_label_last_word
 					},
 				});
-			} else if (isLocation || category==="location") {} // Special case: Location, no module in facet.
+			} else if (isLocation || category === "location" || subcategory === "social_role") {} // Special case: Location, no module in facet.
 			else { // Default case.
 				props.setFacetList(prev => ({
 					...prev,
@@ -607,7 +608,7 @@ export default function ExplorePage(props) {
 							break;
 						case 'demographic':
 							if (facetLabel.subcategory === "age") {
-								if (labels.demographic.age !== undefined && labels.demographic.age === facetLabel.label) {
+								if (labels.demographic.age !== undefined && labels.demographic.age.replace(/_/g, ' ') === facetLabel.label) {
 									matchDict[imgKey] = (matchDict[imgKey] === undefined) ? true : (true && matchDict[imgKey]);
 								} else {matchDict[imgKey] = (matchDict[imgKey] === undefined) ? false : false && matchDict[imgKey];}
 							} else if (facetLabel.subcategory === "sex") {
@@ -734,6 +735,7 @@ export default function ExplorePage(props) {
 /**--- Render ---**/
 	return (
 		<div className="PageBox PageBox_Explore">
+			<button onClick={navigateToUpload}>Upload</button>
 			<Facet
 				facetDisabled={facetDisabled}
 				setFilterList={props.setFilterList}
