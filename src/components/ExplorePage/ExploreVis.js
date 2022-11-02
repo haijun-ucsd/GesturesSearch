@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, linearGradient } from 'react';
 import Popup from 'reactjs-popup';
 import '../components.css';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, LabelList, Treemap, Legend, ResponsiveContainer, PieChart, Pie } from 'recharts';
@@ -96,6 +96,15 @@ export default function Visualization(props) {
             <div className='column3'>
             <h5>Modality</h5>
             <ModalityGradient data={modalityData} />
+            {/* <svg className='gradient' height="150" width="400">
+            <defs>
+                <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" fill='red'/>
+                <stop offset="100%" fill='yellow' />
+                </linearGradient>
+            </defs>
+            <rect cx="200" cy="70" rx="85" ry="55" fill="url(#grad2)" />
+            </svg> */}
             </div>
             </div>
         </Popup>
@@ -472,7 +481,6 @@ const JsonConverter = (data) => {
             }
         }
         if (data[i]['children'] !== undefined) {
-            console.log(data[i]['children'].length);
             var total = data[i]['size'];
             for (var j=0; j < data[i]['children'].length; j++) {
                 total = total - data[i]['children'][j]['size'];
