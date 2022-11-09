@@ -734,6 +734,8 @@ const FetchLabelList_helper = (category, subcategory) => {
  * LabelStructure
  *
  * The template of label structure to help display and upload.
+ * 
+ * Usage: Used in UploadPage and AdminPage as initialFormData.
  *
  * references:
  *	https://medium.com/@alifabdullah/never-confuse-json-and-javascript-object-ever-again-7c32f4c071ad
@@ -803,6 +805,33 @@ const LabelStructure_category_only = Object.freeze({
 })
 
 /**
+ * LabelStructure_subcategory_as_string
+ *
+ * The template of label structure to help store notes correponding to each subcategory.
+ * 
+ * Usage: Used in UploadPage for side-notes during annotation.
+ */
+const LabelStructure_subcategory_as_string = Object.freeze({
+	location: {
+		in_outdoor: "",
+		site: "",
+		archi_compo: "",
+	},
+	spectators: {
+		quantity: "",
+		density: "",
+		attentive: "",
+	},
+	demographic: {
+		age: "",
+		sex: "",
+		social_role: "",
+	},
+	modality: "",
+	posture: "",
+})
+
+/**
  * FilterStructure
  * 
  * The template of facet filter structure to help filter and display (only the AccordionSection parts).
@@ -848,7 +877,7 @@ const colors = Object.freeze({
 
 
 export {
-	LabelStructure, LabelStructure_type2_only, LabelStructure_category_only, FilterStructure,
+	LabelStructure, LabelStructure_type2_only, LabelStructure_category_only, LabelStructure_subcategory_as_string, FilterStructure,
 	CheckLabel, RemovableLabel, Checkbox, DescriptionHover, SearchableDropdown, AccordionSection,
 	GalleryColumn_helper, FetchLabelList_helper,
 	colors

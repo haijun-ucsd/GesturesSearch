@@ -27,6 +27,7 @@ export default function App() {
   const [addedPics, setAddedPics] = useState([]);
   const [addedPicsUrl, setAddedPicsUrl] = useState([]);
   const [formDataList, setFormDataList] = useState([]);
+  const [notesDataList, setNotesDataList] = useState([]);
   const [completePercentages, setCompletePercentages] = useState([]);
   const [addedLabels, setAddedLabels] = useState([]);
   const [picAnnotation, setPicAnnotation] = useState([]); // element structure: [ annotateStartX, annotateStartY, annotateEndX, annotateEndY ]
@@ -42,6 +43,7 @@ export default function App() {
 		console.log("current addedPics list:", addedPics);
 		console.log("current addedPicsUrl list:", addedPicsUrl);
 		console.log("current formDataList list:", formDataList);
+		console.log("current notesDataList list:", notesDataList);
 	}, [addedPics]);
 	useEffect(() => {
 		console.log("formDataList has been updated:", formDataList);
@@ -154,6 +156,8 @@ export default function App() {
             setAddedPicsUrl={setAddedPicsUrl}
             formDataList={formDataList}
             setFormDataList={setFormDataList}
+            notesDataList={notesDataList}
+            setNotesDataList={setNotesDataList}
             completePercentages={completePercentages}
             setCompletePercentages={setCompletePercentages}
             addedLabels={addedLabels}

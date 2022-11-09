@@ -23,6 +23,8 @@ import EditPicIcon from "../../assets/EditPicIcon@2x.png";
  *	- closePop()
  *	- formDataList: Full list of formData, will only use and modify at dataIndex.
  *	- setFormDataList(): To update formDataList, will only use on formDataList[dataIndex].
+ *	- notesDataList: Full list of notesData, will only use and modify at dataIndex.
+ *	- setNotesDataList(): To update notesData, will only use on notesData[dataIndex].
  *	- setCompletePercentages(): To update completePercentages.
  *	- completePercentages: For progress bar and validation.
  *	- picAnnotation: Annotation on pictures.
@@ -130,12 +132,19 @@ export default function UploadPopUp(props) {
 			return newPicAnnotation;
 		});
 
+		// Update notesDataList.
+		props.setNotesDataList((prev) => {
+			let newNotesDataList = [...prev];
+			newNotesDataList[props.dataIndex] = notesData;
+			return newNotesDataList;
+		})
+
 		// Close the pop-up window.
 		props.closePop();
 	}
 
 
-/* To handle update of formData */
+/* To handle update of formData and notesData */
 
 	/**
 	 * formData of this individual picture, will store into formDataList upon closing.
@@ -146,6 +155,15 @@ export default function UploadPopUp(props) {
 		console.log("updated formData:", formData);
 		//console.log("current formDataList:", props.formDataList);
 	}, [formData]);
+
+	/**
+	 * notesData of this individual picture, will store into notesDataList upon closing.
+	 */
+	const [notesData, setNotesData] = useState(props.notesDataList[props.dataIndex]);
+	// DEBUG
+	useEffect(() => {
+		console.log("updated notesData:", notesData);
+	}, [notesData]);
 
 	/**
 	 * Handle update in type 1 subcategories.
@@ -384,6 +402,32 @@ export default function UploadPopUp(props) {
 		});
 	};
 
+	/**
+	 * Handle notes update.
+	 * 
+	 * references:
+	 *	https://stackoverflow.com/questions/58478289/react-hooks-cannot-assign-to-read-only-property
+	 */
+	const notes_change_handler = (e, categoryname, subcategoryname) => {
+		//e.preventDefault();
+		console.log("notes_change_handler, e: ", e); //DEBUG
+
+		if (subcategoryname !== "") {
+			setNotesData((prev) => ({
+				...prev,
+				[categoryname]: {
+					...prev[categoryname],
+					[subcategoryname]: e.target.value,
+				},
+			}));
+		} else {
+			setNotesData((prev) => ({
+				...prev,
+				[categoryname]: e.target.value,
+			}));
+		}
+	};
+
 
 /* To handle canvas overlay for image annotation */
 
@@ -526,7 +570,9 @@ export default function UploadPopUp(props) {
 						add_label_handler_type2={add_label_handler_type2}
 						remove_label_handler_type2={remove_label_handler_type2}
 						form_change_handler_type3={form_change_handler_type3}
+						notes_change_handler={notes_change_handler}
 						formData={formData}
+						notesData={notesData}
 						annotated={annotated}
 						clear_annotation={clear_annotation}
 					/>
@@ -544,7 +590,6 @@ export default function UploadPopUp(props) {
 }
 
 
-
 /**
  * AnnotationForm
  *
@@ -557,7 +602,9 @@ export default function UploadPopUp(props) {
  *		- add_label_handler_type2
  *		- remove_label_handler_type2
  *  - form_change_handler_type3 (e, categoryname)
+ *	- notes_change_handler (e, categoryname, subcategoryname)
  *  - formData: Up-to-date form data for displaying preview (eg. modality states).
+ *	- notesData: Up-to-date notes data.
  *	- annotated: Whether the picture has been annotated by drawing rectangle.
  *	- clear_annotation: To clear annotation on picture.
  *
@@ -610,21 +657,29 @@ function AnnotationForm(props) {
 					// Special case: modality.
 					if (category.category === 'modality') {
 						return (
-							<div className="ModalityDisplay">
-								<div>
-									<BodyComponent
-										parts={props.formData.modality}
-										defaultState="available"
-										form_change_handler={props.form_change_handler_type3}
-									/>
+							<>
+								<div className="ModalityDisplay">
+									<div>
+										<BodyComponent
+											parts={props.formData.modality}
+											defaultState="available"
+											form_change_handler={props.form_change_handler_type3}
+										/>
+									</div>
+									<div className="FormSubcategories ModalityDisplay_statelist">
+										{category.subcategories.map(
+											(subcategory) =>
+											render_subcategory(subcategory, category.category, color)
+										)}
+									</div>
 								</div>
-								<div className="FormSubcategories ModalityDisplay_statelist">
-									{category.subcategories.map(
-										(subcategory) =>
-										render_subcategory(subcategory, category.category, color)
-									)}
-								</div>
-							</div>
+								<FormInputBar
+									notesText={props.notesData["modality"]}
+									notes_change_handler={props.notes_change_handler}
+									category={"modality"}
+									subcategory={""}
+								/>
+							</>
 						);
 					}
 
@@ -632,9 +687,10 @@ function AnnotationForm(props) {
 					else {
 						return (
 							<div className="FormSubcategories">
-								{category.subcategories.map(
-									(subcategory) =>
-									render_subcategory(subcategory, category.category, color)
+								{category.subcategories.map((subcategory) =>
+									<>
+										{render_subcategory(subcategory, category.category, color)}
+									</>
 								)}
 							</div>
 						);
@@ -731,6 +787,12 @@ function AnnotationForm(props) {
 								}
 							})}
 						</select>
+						<FormInputBar
+							notesText={props.notesData[categoryname][subcategory.subcategory]}
+							notes_change_handler={props.notes_change_handler}
+							category={categoryname}
+							subcategory={subcategory.subcategory}
+						/>
 					</div>
 				);
 				break;
@@ -772,6 +834,12 @@ function AnnotationForm(props) {
 							//label_change_handler={props.form_change_handler_type2}
 							label_add_handler={props.add_label_handler_type2}
 							label_remove_handler={props.remove_label_handler_type2}
+						/>
+						<FormInputBar
+							notesText={props.notesData[categoryname][subcategory.subcategory]}
+							notes_change_handler={props.notes_change_handler}
+							category={categoryname}
+							subcategory={subcategory.subcategory}
 						/>
 					</div>
 				);
@@ -829,4 +897,50 @@ function AnnotationForm(props) {
 			)}
 		</Form>
 	);
+}
+
+
+/**
+ * FormInputBar
+ * 
+ * props:
+ *	- notesText
+ *	- notes_change_handler()
+ *	- category
+ *	- subcategory
+ */
+function FormInputBar(props) {
+
+	const [notesAdded, setNotesAdded] = useState(props.notesText && props.notesText!=="" ? true : false);
+
+	return (<>
+		{ notesAdded==true ?
+			<div className="InputBar FormNotes">
+				<div className="HintText FormNotesHint">
+					notes:
+				</div>
+				<input
+					// ref={searchbarRef}
+					type="text"
+					className="SearchBarInput"
+					// id={props.id} name={props.id}
+					placeholder=""
+					value={props.notesText}
+					onChange={(e) => {
+						props.notes_change_handler(e, props.category, props.subcategory);
+					}}
+				/>
+			</div>
+		:
+			<btn
+				className="Link FormNotesBtn"
+				onClick={(e) => {
+					e.preventDefault();
+					setNotesAdded(true);
+				}}
+			>
+				+ notes
+			</btn>
+		}
+	</>);
 }
