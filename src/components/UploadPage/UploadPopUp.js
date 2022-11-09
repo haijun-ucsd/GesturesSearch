@@ -174,6 +174,17 @@ export default function UploadPopUp(props) {
 					[subcategoryname]: e.target.value,
 				},
 			};
+			console.log(e.target.value, typeof e.target.value);
+			if (e.target.value === 'none' || e.target.value === '0') { //auto-fill spectators
+				newFormData = {
+					...newFormData,
+					['spectators']: {
+						['quantity']: 'none',
+						['density']: 'none',
+						['attentive']: '0'
+					}
+				}
+			}
 			console.log(
 				"after change: " +
 					categoryname +

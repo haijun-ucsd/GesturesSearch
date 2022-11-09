@@ -735,7 +735,7 @@ export default function ExplorePage(props) {
 /**--- Render ---**/
 	return (
 		<div className="PageBox PageBox_Explore">
-			{/*<button onClick={navigateToUpload}>Upload</button>*/}
+			{/* <button onClick={navigateToUpload}>Upload</button> */}
 			<Facet
 				facetDisabled={facetDisabled}
 				setFilterList={props.setFilterList}
