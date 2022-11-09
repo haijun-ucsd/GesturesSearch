@@ -10,8 +10,8 @@ import React, { useState , useEffect , useRef} from 'react';
 import '../components.css';
 import { Slide } from 'react-reveal';
 import { PieChart } from 'react-minimal-pie-chart';
-import * as d3 from "d3";
-import {FileAttachment} from './FIleAttachment.js';
+// import * as d3 from "d3";
+// import {FileAttachment} from './FIleAttachment.js';
 import { async } from '@firebase/util';
 
 export const chartOptions = {
