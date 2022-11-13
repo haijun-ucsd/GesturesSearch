@@ -377,7 +377,9 @@ const CustomTooltip = ({ active, payload, label }) => {
 const SingleConverter = (imageList, category, subcategory) => {
     var obj = {};
     for (var i=0; i < imageList.length; i++) {
-        obj[imageList[i][1][category][subcategory]] = (obj[imageList[i][1][category][subcategory]] || 0 ) +1;
+        if (imageList[i][1][category] !== undefined && imageList[i][1][category][subcategory] !== undefined) {
+            obj[imageList[i][1][category][subcategory]] = (obj[imageList[i][1][category][subcategory]] || 0 ) +1;
+        }
     }
     var list = [];
     for (const [key, value] of Object.entries(obj)) {
@@ -391,15 +393,17 @@ const NestedConverter = (imageList, parentData, category, parentcategory, subcat
     if (isArchi) {
         for (var i=0; i < imageList.length; i++) {
             for (var j=0; j < parentData.length; j++) {
-                if (imageList[i][1][category][subcategory] !== undefined) {
-                    for (var l=0; l < imageList[i][1][category][parentcategory].length; l++) {
-                        if (imageList[i][1][category][parentcategory][l] === parentData[j]['name']) {
+                if (imageList[i][1][category] !== undefined && imageList[i][1][category][subcategory] !== undefined) {
+                    if (imageList[i][1][category][subcategory] !== undefined) {
+                        for (var l=0; l < imageList[i][1][category][parentcategory].length; l++) {
+                            if (imageList[i][1][category][parentcategory][l] === parentData[j]['name']) {
 
-                            for (var k=0; k < imageList[i][1][category][subcategory].length; k++){
-                                if (imageList[i][1][category][subcategory][k] in parentData[j]) {
-                                    parentData[j][imageList[i][1][category][subcategory][k]]++;
-                                } else {
-                                    parentData[j][imageList[i][1][category][subcategory][k]] = 1;
+                                for (var k=0; k < imageList[i][1][category][subcategory].length; k++){
+                                    if (imageList[i][1][category][subcategory][k] in parentData[j]) {
+                                        parentData[j][imageList[i][1][category][subcategory][k]]++;
+                                    } else {
+                                        parentData[j][imageList[i][1][category][subcategory][k]] = 1;
+                                    }
                                 }
                             }
                         }
@@ -412,13 +416,15 @@ const NestedConverter = (imageList, parentData, category, parentcategory, subcat
     }
     for (var i=0; i < imageList.length; i++) {
         for (var j=0; j < parentData.length; j++) {
-            if (imageList[i][1][category][parentcategory] === parentData[j]['name']) {
-                if (parentData[j][imageList[i][1][category][subcategory]] !== undefined) {
-                    parentData[j][imageList[i][1][category][subcategory]]++;
-                } else {
-                    parentData[j][imageList[i][1][category][subcategory]] = 1;
+            if (imageList[i][1][category] !== undefined && imageList[i][1][category][parentcategory] !== undefined) {
+                if (imageList[i][1][category][parentcategory] === parentData[j]['name']) {
+                    if (parentData[j][imageList[i][1][category][subcategory]] !== undefined) {
+                        parentData[j][imageList[i][1][category][subcategory]]++;
+                    } else {
+                        parentData[j][imageList[i][1][category][subcategory]] = 1;
+                    }
+                    break;
                 }
-                break;
             }
         }
     }
@@ -430,14 +436,18 @@ const ListConverter = (imageList, category, subcategory) => {
     var obj = {};
     if (category === 'posture') {
         for (var i=0; i < imageList.length; i++) {
-            for (var j=0; j < imageList[i][1][category].length; j++) {
-                obj[imageList[i][1][category][j]] = (obj[imageList[i][1][category][j]] || 0 ) +1;
+            if (imageList[i][1][category] !== undefined) {
+                for (var j=0; j < imageList[i][1][category].length; j++) {
+                    obj[imageList[i][1][category][j]] = (obj[imageList[i][1][category][j]] || 0 ) +1;
+                }
             }
         }
     } else {
         for (var i=0; i < imageList.length; i++) {
-            for (var j=0; j < imageList[i][1][category][subcategory].length; j++) {
-                obj[imageList[i][1][category][subcategory][j]] = (obj[imageList[i][1][category][subcategory][j]] || 0 ) +1;
+            if (imageList[i][1][category] !== undefined && imageList[i][1][category][subcategory] !== undefined) {
+                for (var j=0; j < imageList[i][1][category][subcategory].length; j++) {
+                    obj[imageList[i][1][category][subcategory][j]] = (obj[imageList[i][1][category][subcategory][j]] || 0 ) +1;
+                }
             }
         }
     }
@@ -511,8 +521,10 @@ const ModalityConverter = (imageList) => {
     };
     for (var i=0; i < imageList.length; i++) {
         for (const [key, value] of Object.entries(obj)) {
-            if (imageList[i][1]['modality'][key] === false) {
-                obj[key]++;
+            if (imageList[i][1]['modality'] !== undefined && imageList[i][1]['modality'][key] !== undefined) {
+                if (imageList[i][1]['modality'][key] === false) {
+                    obj[key]++;
+                }
             }
         }
     }
