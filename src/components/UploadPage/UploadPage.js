@@ -22,8 +22,8 @@ import "../components.css";
 import WaitingRoom from "./WaitingRoom";
 import UploadControl from "./UploadControl";
 import UploadPopUp from "./UploadPopUp";
-import { LabelStructure, LabelStructure_type2_only } from "../components";
-import {Allocate, LabelMatch} from "../UploadPage/LabelValidation.js";
+import { LabelStructure, LabelStructure_type2_only, LabelStructure_subcategory_as_string } from "../components";
+import { Allocate, LabelMatch } from "../UploadPage/LabelValidation.js";
 
 
 /**
@@ -33,6 +33,7 @@ import {Allocate, LabelMatch} from "../UploadPage/LabelValidation.js";
  *  - [addedPics, setAddedPics]
  *  - [addedPicsUrl, setAddedPicsUrl]
  *  - [formDataList, setFormDataList]
+ *	- [notesDataList, setNotesDataList]
  *  - [completePercentages, setCompletePercentages]
  *  - [addedLabels, setAddedLabels]
  *  - [picAnnotation, setPicAnnotation]
@@ -93,6 +94,7 @@ export default function UploadPage(props) {
 		var pics_to_store = [...props.addedPics];
 		var urls_to_store = [...props.addedPicsUrl];
 		var forms_to_store = [...props.formDataList];
+		var notes_to_store = [...props.notesDataList];
 		var percentages_to_store = [...props.completePercentages];
 		var added_labels_to_store = [...props.addedLabels];
 		var annotations_to_store = [...props.picAnnotation];
@@ -142,6 +144,7 @@ export default function UploadPage(props) {
 			pics_to_store.push(currPic);
 			urls_to_store.push(URL.createObjectURL(currPic));
 			forms_to_store.push(defaultFormData);
+			notes_to_store.push(LabelStructure_subcategory_as_string);
 			percentages_to_store.push(0);
 			added_labels_to_store.push("");
 			annotations_to_store.push([0,0,0,0]);
@@ -150,6 +153,7 @@ export default function UploadPage(props) {
 		props.setAddedPics(pics_to_store);
 		props.setAddedPicsUrl(urls_to_store);
 		props.setFormDataList(forms_to_store);
+		props.setNotesDataList(notes_to_store);
 		props.setCompletePercentages(percentages_to_store);
 		props.setAddedLabels(added_labels_to_store);
 		props.setPicAnnotation(annotations_to_store);
@@ -163,6 +167,7 @@ export default function UploadPage(props) {
 		console.log("addedPics:", props.addedPics);
 		console.log("addedPicsUrl:", props.addedPicsUrl);
 		console.log("formDataList:", props.formDataList);
+		console.log("notesDataList:", props.notesDataList);
 		console.log("completePercentages:", props.completePercentages);
 		console.log("addedLabels:", props.addedLabels);
 		console.log("picAnnotation:", props.picAnnotation);
@@ -171,6 +176,7 @@ export default function UploadPage(props) {
 		props.addedPics,
 		props.addedPicsUrl,
 		props.formDataList,
+		props.notesDataList,
 		props.completePercentages,
 		props.addedLabels,
 		props.picAnnotation
@@ -248,6 +254,7 @@ export default function UploadPage(props) {
 		props.setAddedPics((prev) => prev.filter((item, i) => i!=idx));
 		props.setAddedPicsUrl((prev) => prev.filter((item, i) => i!=idx));
 		props.setFormDataList((prev) => prev.filter((item, i) => i!=idx));
+		props.setNotesDataList((prev) => prev.filter((item, i) => i!=idx));
 		props.setCompletePercentages((prev) => prev.filter((item, i) => i!=idx));
 		props.setAddedLabels((prev) => prev.filter((item, i) => i!=idx));
 		props.setPicAnnotation((prev) => prev.filter((item, i) => i!=idx));
@@ -371,6 +378,7 @@ export default function UploadPage(props) {
 				props.setAddedPics(prev => { return (prev.filter((item) => item !== undefined)); });
 				props.setAddedPicsUrl(prev => { return (prev.filter((item) => item !== undefined)); });
 				props.setFormDataList(prev => { return (prev.filter((item) => item !== undefined)); });
+				props.setNotesDataList(prev => { return (prev.filter((item) => item !== undefined)); });
 				props.setCompletePercentages(prev => { return (prev.filter((item) => item !== undefined)); });
 				props.setAddedLabels(prev => { return (prev.filter((item) => item !== undefined)); });
 				props.setPicAnnotation(prev => { return (prev.filter((item) => item !== undefined)); });
@@ -387,6 +395,7 @@ export default function UploadPage(props) {
 			props.setAddedPics([]);
 			props.setAddedPicsUrl([]);
 			props.setFormDataList([]);
+			props.setNotesDataList([]);
 			props.setCompletePercentages([]);
 			props.setAddedLabels([]);
 			props.setPicAnnotation([]);
@@ -450,13 +459,14 @@ export default function UploadPage(props) {
 		await uploadBytes(image_ref, props.addedPics[idx]).then((snapshot) => {
 			getDownloadURL(snapshot.ref).then(async (url) => {
 
-				// 1. Store data to firebase realtime database under "images". Data includes: form data, URL, annotation info.
+				// 1. Store data to firebase realtime database under "images". Data includes: form data, URL, annotation info, notes.
 				let finalPicData = {
 					index: finalPicIndex,
 					url: url,
 					timestamp: Math.floor(Date.now() / 1000), // upload time
 					...props.formDataList[idx],
 					annotation: props.picAnnotation[idx],
+					notes: {...props.notesDataList[idx]},
 					userID: props.user,
 					token: 0,
 				}
@@ -560,6 +570,7 @@ export default function UploadPage(props) {
 		props.setAddedPics(prev => { let newList=[...prev]; newList[idx] = undefined; return (newList); });
 		props.setAddedPicsUrl(prev => { let newList=[...prev]; newList[idx] = undefined; return (newList); });
 		props.setFormDataList(prev => { let newList=[...prev]; newList[idx] = undefined; return (newList); });
+		props.setNotesDataList(prev => { let newList=[...prev]; newList[idx] = undefined; return (newList); });
 		props.setCompletePercentages(prev => { let newList=[...prev]; newList[idx] = undefined; return (newList); });
 		props.setAddedLabels(prev => { let newList=[...prev]; newList[idx] = undefined; return (newList); });
 		props.setPicAnnotation(prev => { let newList=[...prev]; newList[idx] = undefined; return (newList); });
@@ -794,6 +805,8 @@ export default function UploadPage(props) {
 					closePop={closePop}
 					formDataList={props.formDataList}
 					setFormDataList={props.setFormDataList}
+					notesDataList={props.notesDataList}
+					setNotesDataList={props.setNotesDataList}
 					setCompletePercentages={props.setCompletePercentages}
 					completePercentages={props.completePercentages}
 					refresh_added_labels={refresh_added_labels}
